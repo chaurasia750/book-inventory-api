@@ -1,10 +1,10 @@
 # Spec: school - School master
 
 - **Module:** `school` (PostgreSQL schema `school`)
-- **Status:** R1-R15 Approved by the owner on 2026-11-14 (AC1-AC11, D1-D7 with them)
-- **Last updated:** 2026-11-14
+- **Status:** R1-R15 Approved by the owner on 2026-11-14 (AC1-AC11, D1-D7 with them); R16 and AC12 Approved by abhishek on 2026-11-14 (for the customer spec, its decision D4)
+- **Last updated:** 2026-11-14 (R16, AC12 added for the customer master)
 - **Source docs:** [BRD §1.2, §3, §4.2 School Master (FR-SCH-01 to FR-SCH-08), §5.1 BR-SES, §5.4 BR-GST, §7.1, §8 Data Model (School, SchoolClass)](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P22; [specs/company.md](company.md)
-- **Plans:** [school#01](../plans/school/2026-11-14-01-school-master.md) (Done), [school#02](../plans/school/2026-11-14-02-ui-school-screens.md) (In progress); the platform mechanism it needs: [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Done)
+- **Plans:** [school#03](../plans/school/2026-11-14-03-school-directory.md) (Approved, R16, AC12), [school#01](../plans/school/2026-11-14-01-school-master.md) (Done), [school#02](../plans/school/2026-11-14-02-ui-school-screens.md) (In progress); the platform mechanism it needs: [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Done)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -43,6 +43,10 @@ Out of scope for this feature: Excel import of schools (FR-SCH-07, NFR-12: its o
 - **R13** The mobile number is stored as digits only (10-15 digits), an Indian number with a leading `91` on 12 digits or `0` on 11 digits is stored without it, the same way `iam` stores mobile numbers (Q10). The email is checked for the usual shape and length.
 - **R15** The **code** is generated when the school is created: `SCH-` and a number of at least four digits from a counter that belongs to the company (`SCH-0001`, `SCH-0002`, ...). A number is never given twice, also not after the school is deactivated, and two schools created at the same moment get different numbers. The code is unique inside the company and cannot be changed (D5). A `code` sent in a request is ignored.
 - **R14** Changing a school's name, state or GSTIN does not touch documents already issued: later modules copy what they must keep (BRD §8 design decision 3, price and party snapshots).
+
+
+**Reading schools from other modules**
+- **R16** Other modules (the customer master first) read schools only through the school module's **directory capability**, never by joining its tables: it tells whether a school exists in the session's company and is active, gives the names of a list of school ids, and tells whether a class name is in a school's class list (ignoring case and extra spaces, R6) and gives that class's name as the school writes it. It answers only for the company of the session (platform P19), returns plain values and never the aggregate, and changes nothing. Proposed by the assistant on 2026-11-14 for the customer spec (decision D4 there); Approved by abhishek on 2026-11-14.
 
 ## 4. Data
 
@@ -93,6 +97,7 @@ Raised by the `School` aggregate (past tense, ids and values only): `SchoolCreat
 - **AC9** The list is paged and capped at 200, and the search, status, sale type, session type and state filters and the sorts work; an unknown sort column is ignored (R11).
 - **AC10** Every create and change of a school appears in the audit trail with the actor and company A (R12).
 - **AC11** Mobile `+91 98765 00001`, `0 98765 00001` and `9876500001` are stored as `9876500001`; an invalid email is `400` (R13).
+- **AC12** The directory capability, called for the Owner of A, finds A's school (id, name, active) and returns nothing for B's school id; the names of two ids come back; the text ` 5TH ` matches the school's class and comes back as `5th`, as the school writes it, and an unknown class matches nothing (R16).
 
 ## 10. Decisions
 
