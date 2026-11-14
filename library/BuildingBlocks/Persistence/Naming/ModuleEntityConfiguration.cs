@@ -8,7 +8,7 @@ namespace BookInventory.BuildingBlocks.Persistence.Naming
     /// snake_case table name derived from the class (<c>AppUser</c> in schema <c>iam</c> -> <c>iam.app_user</c>).
     /// Derive per entity and implement <see cref="ConfigureEntity"/>; never call <c>ToTable</c> by hand.
     /// </summary>
-    /// <param name="schema">The module schema, e.g. <c>iam</c>, <c>mlm</c>, <c>finance</c>, <c>realty</c>, <c>core</c>.</param>
+    /// <param name="schema">The module schema, e.g. <c>iam</c>, <c>finance</c>, <c>core</c>.</param>
     public abstract class ModuleEntityConfiguration<T>(string schema) : IEntityTypeConfiguration<T> where T : class
     {
         public void Configure(EntityTypeBuilder<T> builder)

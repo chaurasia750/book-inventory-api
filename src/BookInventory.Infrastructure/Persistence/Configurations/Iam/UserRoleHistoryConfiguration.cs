@@ -6,7 +6,7 @@ using BookInventory.Domain.Iam;
 namespace BookInventory.Infrastructure.Persistence.Configurations.Iam;
 
 /// <summary>
-/// <c>iam.user_role_history</c> (ERD §1): the append-only record of R6, read the same way as the status history.
+/// <c>iam.user_role_history</c>: the append-only record of R6, read the same way as the status history.
 /// </summary>
 public sealed class UserRoleHistoryConfiguration() : ModuleEntityConfiguration<UserRoleHistory>("iam")
 {

@@ -8,7 +8,7 @@ using BookInventory.Domain.Iam;
 namespace BookInventory.Application.Iam.Accounts;
 
 /// <summary>
-/// The five status transitions and the role change of R28/R30/R6, as use cases for <c>users/{id}/...</c> (Plan 0006).
+/// The five status transitions and the role change of R28/R30/R6, as use cases for <c>users/{id}/...</c>.
 /// <para>
 /// Each method is deliberately the same three steps: load the tracked account, call the one aggregate behaviour that
 /// decides whether the change is allowed, and write the history row of R33. Whether a transition is legal, whether a
@@ -18,7 +18,7 @@ namespace BookInventory.Application.Iam.Accounts;
 /// <para>
 /// The session revocations are made here and not from the domain event, because a handler runs after the request
 /// transaction has already saved (see <c>UserSessionRevoker</c>). The events of R40 are still raised by the aggregate,
-/// for <c>mlm</c> and <c>finance</c>.
+/// for the modules that react to them.
 /// </para>
 /// </summary>
 [AutoRegister(ServiceLifetime.Scoped)]

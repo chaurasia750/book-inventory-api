@@ -3,7 +3,7 @@ using BookInventory.Domain.Iam;
 namespace BookInventory.Application.Iam.Accounts;
 
 /// <summary>
-/// The persistence port of the Super Admin account management (Plan 0006). It exists next to
+/// The persistence port of the Super Admin account management. It exists next to
 /// <c>IAuthenticationStore</c> because these use cases need three things the login use cases do not: the <em>tracked</em>
 /// aggregate they are about to change, the two append-only history roots of R6/R33, and the uniqueness lookups of R1.
 /// <para>
@@ -16,7 +16,7 @@ public interface IAccountStore
 {
     /// <summary>
     /// R42/R43: the account a Super Admin is about to <em>change</em>. The hidden system account is <em>not</em> found, so
-    /// every command against its id answers the same 404 as an unknown id (owner decision, Plan 0014) and its existence
+    /// every command against its id answers the same 404 as an unknown id (owner decision) and its existence
     /// never shows. The aggregate's own guard (403) stays as a second line of defence for code that reaches it another way.
     /// </summary>
     Task<AppUser?> FindForManagementAsync(Guid id, CancellationToken cancellationToken = default);

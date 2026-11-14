@@ -12,8 +12,8 @@ namespace BookInventory.Application.Iam.Authentication;
 /// alive?" answer is dropped, which is what makes the next request of that user a 401.
 /// <para>
 /// It is a plain use-case collaborator rather than a domain-event handler on purpose: handlers are dispatched
-/// <em>after</em> the save of the request transaction, so anything they change is never written (see the follow-up in
-/// Plan 0006). Calling it from the use case that performs the change keeps the status change, the history row and the
+/// <em>after</em> the save of the request transaction, so anything they change is never written.
+/// Calling it from the use case that performs the change keeps the status change, the history row and the
 /// session revocations in one transaction.
 /// </para>
 /// </summary>

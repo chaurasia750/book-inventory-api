@@ -106,7 +106,7 @@ public partial class AppUser : AggregateRoot
 
     // ---------------------------------------------------------------- status lifecycle
 
-    /// <summary>R3/R28: an agent application is approved. The agent chose the password at registration, so no change is forced (owner decision, Plan 0014).</summary>
+    /// <summary>R3/R28: an agent application is approved. The agent chose the password at registration, so no change is forced (owner decision).</summary>
     public void Approve(Guid actorId, DateTime utcNow, string? note = null)
     {
         EnsureNotSystemAccount();

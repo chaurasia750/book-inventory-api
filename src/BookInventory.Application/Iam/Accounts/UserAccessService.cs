@@ -8,7 +8,7 @@ using BookInventory.Domain.Iam;
 namespace BookInventory.Application.Iam.Accounts;
 
 /// <summary>
-/// The three Super Admin actions on a live account that are not a status change (Plan 0006, task 3): clear a lockout
+/// The three Super Admin actions on a live account that are not a status change: clear a lockout
 /// (R34), force a logout (R36) and force a password change on the next login (R36).
 /// <para>
 /// Unlock and force-password-change <em>change</em> the account, so they load it through <see cref="IAccountStore"/> and

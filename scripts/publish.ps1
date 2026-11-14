@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Builds the three Angular apps and publishes the API with them in its wwwroot, ready for IIS (Plan 0010).
+  Builds the three Angular apps and publishes the API with them in its wwwroot, ready for IIS.
 .DESCRIPTION
   1. builds public-site (/), admin (/admin/) and member (/member/) with the production configuration in the UI repository,
   2. publishes the API (Release) to -Output,

@@ -4,7 +4,7 @@ using BookInventory.Application.Iam.Authentication;
 namespace BookInventory.Api.Auth;
 
 /// <summary>
-/// R49: the policy the money-moving and approval endpoints of <c>finance</c>/<c>mlm</c> put next to their role, as
+/// R49: the policy the money-moving and approval endpoints of <c>finance</c> put next to their role, as
 /// <c>[Authorize(Policy = AuthPolicies.FinancialAction)]</c>. It only ever refuses the hidden system account, and only
 /// while <c>SystemAccount:AllowFinancialActions</c> is <c>false</c>; every other caller is judged by their role alone.
 /// </summary>

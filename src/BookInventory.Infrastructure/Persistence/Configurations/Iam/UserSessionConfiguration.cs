@@ -6,7 +6,7 @@ using BookInventory.Domain.Iam;
 namespace BookInventory.Infrastructure.Persistence.Configurations.Iam;
 
 /// <summary>
-/// <c>iam.user_session</c> (ERD §1). The refresh token hash is unique, which is what makes "find the session by its
+/// <c>iam.user_session</c>. The refresh token hash is unique, which is what makes "find the session by its
 /// token" a single-row lookup; the session duration lives in <c>expires_at</c> and is never duplicated (R24).
 /// </summary>
 public sealed class UserSessionConfiguration() : ModuleEntityConfiguration<UserSession>("iam")

@@ -3,7 +3,7 @@ using BookInventory.BuildingBlocks.Domain.Models;
 namespace BookInventory.Application.Iam.History;
 
 /// <summary>
-/// The read side of the login history, the own-sessions screen and the Super Admin's login-log search (Plan 0007): only
+/// The read side of the login history, the own-sessions screen and the Super Admin's login-log search: only
 /// projections, never an entity, and no tracking. It looks past the hidden-account filter for one reason - a log row of
 /// the system account has to be recognised in order to be <em>relabelled</em> (R48), never to be shown as it is.
 /// </summary>

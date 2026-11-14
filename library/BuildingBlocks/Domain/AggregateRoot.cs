@@ -11,7 +11,7 @@ namespace BookInventory.BuildingBlocks.Domain
     /// <item><see cref="RowVersion"/> is an optimistic concurrency token (PostgreSQL <c>xmin</c>): two users editing the
     /// same aggregate concurrently cannot silently overwrite each other.</item>
     /// </list>
-    /// Prefer <c>private set</c> on properties and expose behaviour (<c>wallet.Credit(amount)</c>) instead of setters.
+    /// Prefer <c>private set</c> on properties and expose behaviour (<c>invoice.Issue(schoolId)</c>) instead of setters.
     /// </summary>
     public abstract class AggregateRoot : AuditableDomainBase, IAggregateRoot
     {

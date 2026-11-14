@@ -7,7 +7,7 @@ namespace BookInventory.Api.Hosting;
 /// <summary>
 /// R32: a suspension whose <c>suspended_until</c> has passed lifts to <c>ACTIVE</c> by itself, recorded with actor
 /// <c>SYSTEM</c> and with a row in the status timeline (R33), so the user list is right again without anybody touching it.
-/// Login lifts such a suspension lazily as well (Plan 0004), and that is the part that matters for security: this job
+/// Login lifts such a suspension lazily as well, and that is the part that matters for security: this job
 /// exists so the <em>screens</em> do not keep showing a stale SUSPENDED.
 /// </summary>
 public sealed class SuspensionLiftSweeper(IServiceScopeFactory scopeFactory, ILogger<SuspensionLiftSweeper> logger)

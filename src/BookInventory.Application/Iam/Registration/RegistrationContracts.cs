@@ -13,7 +13,7 @@ public enum RegistrationMode
 public sealed record RegistrationSettings(RegistrationMode Mode);
 
 /// <summary>
-/// What <c>mlm</c> hands over when an agent registers (R53): the user id it generated (R1), the values that must be
+/// What the registering module hands over when an agent registers (R53): the user id it generated (R1), the values that must be
 /// unique, the password the agent chose and the client the request came from (for the login-log row of an instant sign-in).
 /// </summary>
 public sealed record MemberRegistration(

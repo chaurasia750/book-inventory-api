@@ -7,7 +7,7 @@ namespace BookInventory.Domain.Iam;
 /// <summary>
 /// One row per login attempt, success or failure, including unknown identifiers and locked accounts (R20, R22). It is
 /// its own root because a failed attempt has no user to hang it under. Apart from the one-time logout columns the row
-/// is never edited and never deleted (R25). The class is named after the ERD table <c>user_login_log</c>.
+/// is never edited and never deleted (R25). The table is <c>user_login_log</c>.
 /// <list type="bullet">
 /// <item><see cref="UserId"/> is null when the identifier matched nothing, so the row records only the masked
 /// identifier that was tried - never a password.</item>

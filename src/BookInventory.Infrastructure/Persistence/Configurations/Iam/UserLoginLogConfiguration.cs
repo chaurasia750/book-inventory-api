@@ -6,7 +6,7 @@ using BookInventory.Domain.Iam;
 namespace BookInventory.Infrastructure.Persistence.Configurations.Iam;
 
 /// <summary>
-/// <c>iam.user_login_log</c> (ERD §1). The indexes are the query patterns of R25/§4: a user's own logins newest first,
+/// <c>iam.user_login_log</c>. The indexes are the query patterns of R25/§4: a user's own logins newest first,
 /// the security search by IP and by result, and a time-ordered scan. The table is kept partition-ready by
 /// <c>login_at</c> (R25) - no partition exists yet, adding one later needs no rewrite.
 /// <para>

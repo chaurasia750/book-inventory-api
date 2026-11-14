@@ -25,7 +25,7 @@ public static partial class IdentityNormalizer
 
     /// <summary>
     /// Digits only (no <c>+</c>, spaces, dashes or brackets), and an Indian number has exactly one stored form
-    /// (owner decision, Plan 0013): a leading <c>91</c> on 12 digits or a leading <c>0</c> on 11 digits is dropped, so
+    /// (owner decision): a leading <c>91</c> on 12 digits or a leading <c>0</c> on 11 digits is dropped, so
     /// <c>+91 98765 00001</c>, <c>098765 00001</c> and <c>98765 00001</c> are the same number and cannot register twice.
     /// </summary>
     public static string? NormalizeMobile(string? value)

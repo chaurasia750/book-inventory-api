@@ -5,7 +5,7 @@ namespace BookInventory.Infrastructure.Iam.Configuration;
 /// user-secrets, an environment variable or another secret store - never from a committed appsettings file - and the
 /// seeder refuses to seed without it. Nothing here is required at startup: once a Super Admin exists the values may be
 /// removed again, and only an empty database needs them. The seeded account is a normal, <em>visible</em> Super Admin
-/// with <c>must_change_password = true</c>; it is not the hidden system account (R42, which Plan 0009 seeds from
+/// with <c>must_change_password = true</c>; it is not the hidden system account (R42, which is seeded from
 /// <c>SystemAccount:*</c>).
 /// </summary>
 public sealed class SuperAdminSeedOptions

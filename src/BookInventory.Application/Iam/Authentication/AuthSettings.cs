@@ -60,7 +60,7 @@ public sealed record TokenSettings(
         return (remaining, remaining);
     }
 
-    /// <summary>R13: when a session ends for good, however often it was refreshed (owner decision, Plan 0014).</summary>
+    /// <summary>R13: when a session ends for good, however often it was refreshed (owner decision).</summary>
     public DateTime AbsoluteEnd(UserSession session) => session.CreatedAt + AbsoluteSession;
 
     /// <summary>R11: the cookie never outlives the token it carries, nor its own lifetime, on a login as on every rotation.</summary>
