@@ -41,13 +41,14 @@ Ye document Phase 1 ki saari business requirement, business rules, flows aur khu
 | 9 | Vendor Order (Purchase Order) | PO |
 | 10 | Maal Aaya (Purchase) | PUR |
 | 11 | School Order aur Invoice | ORD |
-| 12 | Counter Sale | CNT |
+| 12 | Counter Sale (School Counter aur Dukaan Direct) | CNT |
 | 13 | Sample | SMP |
 | 14 | Return (School aur Vendor) | RET |
 | 15 | Payment (Receive aur Pay) | PAY |
 | 16 | Ledger | LED |
 | 17 | Reports aur Dashboard | RPT |
 | 18 | Barcode Scan (Scanner + Mobile) | SCN |
+| 19 | Customer Master (Dukaan ke udhaar wale customer) | CUS |
 
 ---
 
@@ -142,6 +143,16 @@ flowchart LR
 | FR-VEN-01 | Vendor: naam, code, address, contact, mobile, email, GSTIN, state, bank details |
 | FR-VEN-02 | Opening balance |
 | FR-VEN-03 | Excel se bulk import |
+
+### 4.3A Customer Master (Dukaan ke direct customer) — CUS
+
+| ID | Requirement |
+| --- | --- |
+| FR-CUS-01 | Customer: naam, mobile, address, (optional) school aur class, opening balance |
+| FR-CUS-02 | Customer **sirf udhaar wale** ke liye banta hai. Walk-in customer jo turant paisa deta hai, uska master banana zaroori nahi |
+| FR-CUS-03 | Bill banate waqt naam ya mobile type karte hi customer suggest, ya wahi se naya customer jodna |
+| FR-CUS-04 | Udhaar limit (optional), paar hone par warning |
+| FR-CUS-05 | Customer ka alag ledger aur outstanding report |
 
 ### 4.4 Item Master — ITM
 
@@ -262,6 +273,20 @@ flowchart LR
 | FR-CNT-12 | **Din ka close**: kitni bikri, kitna Cash, kitna UPI, kitni books |
 | FR-CNT-13 | Counter par student return (khula sawal Q-06) |
 
+**Direct Sale (Dukaan par student ya customer ko seedha bikri)**
+
+| ID | Requirement |
+| --- | --- |
+| FR-CNT-14 | Counter ke **2 type**: **School Counter** (school ke naam se, FR-CNT-01 se 13) aur **Dukaan (Direct)** (dukaan par seedha student ya customer) |
+| FR-CNT-15 | Dukaan (Direct) me school, class aur student **zaroori nahi**. Walk-in customer ke liye naam aur mobile **optional** |
+| FR-CNT-16 | Chahein to school aur class chun sakte hain (student kisi school ka hai, report ke liye), par zaroori nahi |
+| FR-CNT-17 | Billing wahi: scan, search, category button, item aur total discount (% ya ₹), GST toggle (default band), receipt |
+| FR-CNT-18 | Payment 2 tarah: (a) **Turant** Cash/UPI (ya mix), walk-in customer, naam optional. (b) **Udhaar ya aadha paisa**: customer **chunna zaroori** (Customer master), jitna diya utna payment, baaki customer ledger me |
+| FR-CNT-19 | Stock − (stock wale items). **School ledger me nahi** chadhega. Udhaar ka baaki **Customer ledger** me chadhega (dekhein 4.3A) |
+| FR-CNT-20 | Dukaan counter ka alag number series aur din ka close (Cash aur UPI), School Counter se alag |
+| FR-CNT-21 | **Rate**: direct customer ko **MRP** par bikri. Us par **discount % ya ₹** (item aur total, dono), jaise BR-DIS. Line par rate seedha badal bhi sakte hain |
+| FR-CNT-22 | Dukaan ki bikri ka alag report: din-wise, item-wise, Cash/UPI. Class-wise aur student-wise report me sirf wahi bills aayenge jin par class aur student bhara ho |
+
 ### 4.12 Return — RET
 
 **A. School Return (Sales Return / Credit Note)**
@@ -338,6 +363,14 @@ flowchart LR
 | FR-PAY-11 | Vendor ledger **Debit** |
 | FR-PAY-12 | Payment voucher PDF |
 
+**C. Customer se Payment Receive (Dukaan ke udhaar wale customer, PAY-C)**
+
+| ID | Requirement |
+| --- | --- |
+| FR-PAY-13 | Customer chuno, baaki turant dikhe. Tarike: Cash, UPI, Bank transfer, Cheque (cheque ka status Pending/Clear/Bounce wahi) |
+| FR-PAY-14 | Partial aur advance payment, bill par adjust (sabse purana pehle) |
+| FR-PAY-15 | Receipt PDF, **Customer ledger Credit** |
+
 ### 4.15 Ledger — LED
 
 | ID | Requirement |
@@ -351,7 +384,8 @@ flowchart LR
 | FR-LED-07 | Session ke baad baaki naye session me **opening balance** |
 | FR-LED-08 | **PDF print** (company logo, school/vendor details, filter, summary: total Dr, total Cr, closing balance) aur Excel |
 | FR-LED-09 | Ledger se document par click karke invoice/receipt kholna |
-| FR-LED-10 | **Outstanding report**: sab schools ka baaki ek list me, sab vendors ka dena ek list me |
+| FR-LED-10 | **Outstanding report**: sab schools ka baaki ek list me, sab vendors ka dena ek list me, sab customers ka baaki ek list me |
+| FR-LED-11 | **Customer ledger**: Dukaan bill ka udhaar (Dr), payment (Cr), return (Cr), cheque bounce (Dr), opening balance. School ledger jaise filter (tareekh, FY), PDF aur Excel |
 
 ### 4.16 Reports aur Dashboard — RPT
 
@@ -366,6 +400,8 @@ flowchart LR
 | Sales report | School, session, tareekh, item | School Order + Counter |
 | Purchase report | Vendor, tareekh, item | Screen, Excel |
 | Counter report | School, session, class, student, tareekh | School-wise, class-wise, student-wise, din-wise (Cash/UPI) |
+| Dukaan (Direct) sales report | Tareekh, item, Cash/UPI | Din-wise, item-wise |
+| Customer ledger aur outstanding | Customer, tareekh | Screen, PDF, Excel |
 | Sample report | School, vendor, status | 30 din se zyada laal |
 | Planning report | School, session | Zarurat, stock, kami |
 | Vendor order pending | Vendor | Kya aana baaki |
@@ -463,7 +499,8 @@ flowchart LR
 | Maal Aaya | + | | | | Cr |
 | Vendor Order | | | | | |
 | School Invoice | − | | | Dr | |
-| Counter Sale | − | | | | |
+| Counter Sale (turant paisa) | − | | | | |
+| Dukaan Bill (udhaar) | − | | | | (Customer ledger Dr) |
 | School Return (Achhi) | + | | | Cr | |
 | School Return (Kharab) | | + | | Cr | |
 | Vendor Return | − (ya Kharab −) | | | | Dr |
@@ -482,7 +519,7 @@ flowchart LR
 | --- | --- |
 | BR-LED-01 | School ledger: Dr = school ko dena hai, Cr = school ne diya ya wapas kiya |
 | BR-LED-02 | Vendor ledger: Cr = hume vendor ko dena hai, Dr = humne diya ya wapas kiya |
-| BR-LED-03 | Counter Sale school ledger me nahi |
+| BR-LED-03 | Counter Sale school ledger me nahi. Dukaan (Direct) ka udhaar **Customer ledger** me chadhta hai, turant paise wali bikri kisi ledger me nahi |
 | BR-LED-04 | Sample (free) kisi ledger me nahi, sirf bill banne par school ledger me |
 | BR-LED-05 | Koi bhi posted document delete nahi hoga, sirf cancel (ulti entry) |
 
@@ -559,16 +596,17 @@ flowchart LR
 | Purchase + Lines | VendorId, BillNo, BillDate, PoId; Lines: ItemId, Qty, Rate, Discount |
 | SalesOrder + Lines | SchoolId, SessionId, Status (Draft/Confirmed), GstApplied |
 | Invoice + Lines | SchoolId, SessionId, FinancialYear, InvoiceNo, Date, Source (Order/Sample), Subtotal, ItemDiscount, TotalDiscountType/Value, GST, RoundOff, Total, Status; Lines: ItemId, PriceVersionId, MRP, Rate, Qty, DiscType/Value, GstRate, Amount (snapshot) |
-| Counter | SchoolId, SessionId, Name, StartDate, EndDate |
+| Counter | CounterType (School/Dukaan), SchoolId (Dukaan me khali), SessionId, Name, StartDate, EndDate |
 | Student | SchoolId, Name, ClassName, Section, RollNo, Mobile |
-| CounterBill + Lines + Payments | CounterId, StudentId, ClassName, Total; payments Cash/UPI |
+| CounterBill + Lines + Payments | CounterId, StudentId (khali ho sakta hai), ClassName (khali ho sakta hai), CustomerId (udhaar ke liye), CustomerName, CustomerMobile (optional), Total, PaidAmount, DueAmount; payments Cash/UPI |
 | SalesReturn + Lines | SchoolId, InvoiceId?, Reason; Lines: ItemId, Qty, Rate, Condition (Good/Damaged) |
 | PurchaseReturn + Lines | VendorId, Reason; Lines: ItemId, Qty, Rate, FromStock (Main/Damaged) |
 | SampleTransaction + Lines | Type (FromVendor/ToSchool/FromSchool/ToVendor/Billed), PartyId, SessionId, Date; Lines: ItemId, Qty, Status |
 | PaymentReceipt + Modes | SchoolId, Date, Total; Modes: Mode (Bank/UPI/Cash/Cheque), Amount, RefNo, ChequeNo, ChequeDate, Bank, ChequeStatus |
 | PaymentAllocation | ReceiptId, InvoiceId, Amount |
 | VendorPayment + Modes | VendorId, Date; Modes: Bank/Cheque |
-| PartyLedger | PartyType (School/Vendor), PartyId, SessionId, FinancialYear, Date, DocType, DocId, Debit, Credit |
+| Customer | Name, Mobile, Address, SchoolId?, ClassName?, OpeningBalance, CreditLimit? |
+| PartyLedger | PartyType (School/Vendor/Customer), PartyId, SessionId, FinancialYear, Date, DocType, DocId, Debit, Credit |
 | AuditLog | Entity, EntityId, Action, OldValue, NewValue, User, Time |
 
 **Design ke mukhya faisle:**
@@ -597,6 +635,10 @@ Jab tak client na bole, ye **default** maan kar chalenge:
 | Q-10 | Users kitne honge (approx) | Owner 1-2, Staff 3-5 |
 | Q-11 | Purana data (school, books, baaki) Excel me milega? | Excel import ready |
 | Q-12 | SMS/WhatsApp par invoice ya ledger bhejna | Phase 1 me nahi |
+| Q-13 | Dukaan ke direct customer ko udhaar | **Tay: haan hoga.** Customer master, customer ledger aur customer se payment (4.3A, PAY-C) |
+| Q-14 | Direct customer ko rate | **Tay: MRP**, us par discount % ya ₹ |
+| Q-15 | Customer ko udhaar ki **limit** (jaise max ₹10,000) aur limit paar par warning | Limit optional, paar hone par sirf warning |
+| Q-16 | Direct customer se payment ke tarike | Cash, UPI, Bank, Cheque (school jaise) |
 
 ---
 
