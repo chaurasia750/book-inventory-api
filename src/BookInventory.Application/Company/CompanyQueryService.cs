@@ -26,12 +26,16 @@ public sealed class CompanyQueryService(ICompanyStore store, IUserDirectory user
         return ToDetail(company, accounts);
     }
 
-    /// <summary>R6/R10: the company of this request's session; the id is never read from the request.</summary>
-    public async Task<CurrentCompanyResponse> GetCurrentAsync(CancellationToken cancellationToken)
+    /// <summary>R6/R10: the company of this request's session (none for a Super Admin who has not entered one); the id is never read from the request.</summary>
+    public async Task<CurrentCompanyView> GetCurrentAsync(CancellationToken cancellationToken)
     {
-        var id = currentCompany.CompanyId ?? throw new NotFoundException(CompanyMessages.NotFound);
+        if (currentCompany.CompanyId is not { } id)
+        {
+            return new CurrentCompanyView(null);
+        }
+
         var company = await RequireAsync(id, cancellationToken);
-        return new CurrentCompanyResponse(company.Id, company.Name, company.Status, company.State);
+        return new CurrentCompanyView(new CurrentCompanyResponse(company.Id, company.Name, company.Status, company.State));
     }
 
     private async Task<CompanyRoot> RequireAsync(Guid id, CancellationToken cancellationToken) =>

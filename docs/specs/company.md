@@ -2,7 +2,7 @@
 
 - **Module:** `company` (PostgreSQL schema `company`)
 - **Status:** R1-R14 Approved by the owner on 2026-11-14 (AC1-AC15, D1-D10 with them)
-- **Last updated:** 2026-11-14
+- **Last updated:** 2026-11-14 (R10: `companies/current` answers `company: null`, not 404, when there is none)
 - **Source docs:** [BRD §3 Users aur Roles, §4.1 Company (FR-CMP-01, FR-CMP-05), §7 (NFR-07, NFR-08, NFR-11), §8 Data Model](../bussiness/BRD-Book-Inventory-Phase1.md); the owner's requests and answers of 2026-11-14 (each company has its own account and logs in; the company creates its staff logins; one Super Admin manages the companies)
 - **Plans:** [company#01](../plans/company/2026-11-14-01-company-master-and-owner-account.md) (Done), [company#02](../plans/company/2026-11-14-02-ui-company-management-screens.md), [company#03](../plans/company/2026-11-14-03-super-admin-enters-a-company.md) (Done), [company#04](../plans/company/2026-11-14-04-ui-company-picker.md) (all Approved 2026-11-14); in `iam`: [iam#01](../plans/iam/2026-11-14-01-company-linked-accounts.md), [iam#02](../plans/iam/2026-11-14-02-ui-company-account-login.md), [iam#03](../plans/iam/2026-11-14-03-owner-manages-staff-accounts.md), [iam#04](../plans/iam/2026-11-14-04-ui-owner-staff-screens.md) (all Approved 2026-11-14)
 
@@ -78,7 +78,7 @@ Dates and the financial year (April-March, BRD BR-SES-01) are not used by this f
 | `POST companies/{id}/activate` | `SUPER_ADMIN` | optional note; `409` when already active |
 | `POST companies/{id}/enter` | `SUPER_ADMIN` | R13 -> `200` `{company, accessToken, accessTokenExpiresAt}`: the company now entered and the access token that carries it (the access cookie is refreshed too); `409 company.not_active` when the company is inactive; `404` for an unknown id |
 | `POST companies/leave` | `SUPER_ADMIN` | R13 -> `200` `{company: null, accessToken, ...}`; harmless when nothing is entered |
-| `GET companies/current` | any caller with a company context | name, status, state of the company of the session (R10); `404` when there is none |
+| `GET companies/current` | any caller with a company context | `{ company }`: name, status, state of the company of the session (R10); `company` is `null` when there is none (a Super Admin who has not entered one) |
 
 Errors are `ProblemDetails` with a message code from the module's catalogue (platform rules). Validation failures are `400`.
 
@@ -110,7 +110,7 @@ Raised by the `Company` aggregate (past tense, ids and values only): `CompanyCre
 - **AC10** The list is paged and filters by name and status; an Owner calling `GET companies` gets `403` (R2, R9).
 - **AC11** `GET companies/current?companyId=<B>` (or a `companyId` header or body field) called by the Owner of A still returns company A, never B (R6).
 - **AC12** The Owner of A cannot edit A's master data: `PUT companies/{A}` answers `403` (R2, R10).
-- **AC13** A Super Admin enters A: `GET companies/current` returns A; entering B afterwards returns B; after `leave` it answers `404` (R13).
+- **AC13** A Super Admin enters A: `GET companies/current` returns A; entering B afterwards returns B; after `leave` it answers `200` with `company: null` (R13).
 - **AC14** An Owner or Staff calling `POST companies/{id}/enter` gets `403`; entering an inactive company answers `409` (R13).
 - **AC15** Every enter and every leave that changed something appears in `company.company_entry` with the Super Admin's real id and the company id; a leave when nothing was entered adds nothing (R12, R13, D10).
 

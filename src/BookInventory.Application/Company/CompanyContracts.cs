@@ -93,5 +93,8 @@ public sealed record CreatedCompanyResponse(Guid Id, string Name, CompanyStatus 
 /// <summary>R10: what a caller with a company context may read about its company.</summary>
 public sealed record CurrentCompanyResponse(Guid Id, string Name, CompanyStatus Status, string? State);
 
+/// <summary>R10: the answer of `companies/current`: the company of the session, or null for a Super Admin who has not entered one.</summary>
+public sealed record CurrentCompanyView(CurrentCompanyResponse? Company);
+
 /// <summary>R13: the answer of entering or leaving a company: the company now entered (null after leaving) and the access token that carries it.</summary>
 public sealed record SessionCompanyResponse(CurrentCompanyResponse? Company, string AccessToken, DateTime AccessTokenExpiresAt) : IAccessTokenResponse;
