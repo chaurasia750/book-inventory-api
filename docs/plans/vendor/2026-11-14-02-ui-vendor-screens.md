@@ -4,10 +4,10 @@
 - **Kind:** UI (repository `book-inventory-ui`; build `npx nx run-many -t build`, lint `npx nx run-many -t lint`)
 - **Spec:** [../../specs/vendor.md](../../specs/vendor.md) - rules covered: R2-R8, R10 (the screen side); AC1, AC4-AC8, AC10
 - **Owner:** abhishek
-- **Status:** Draft
+- **Status:** Approved
 - **Depends on:** `vendor#01`
 - **UI plan:** this is itself a UI plan
-- **Approved by / on:** pending
+- **Approved by / on:** abhishek / 2026-11-14 (chat: "approved hai kro implement")
 - **Created:** 2026-11-14
 - **Base branch:** `feature/school-screens-ui` (UI repo, owner's standing instruction)
 

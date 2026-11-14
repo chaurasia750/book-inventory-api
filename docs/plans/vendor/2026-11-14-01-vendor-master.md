@@ -4,10 +4,10 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/vendor.md](../../specs/vendor.md) - rules covered: R1-R14; AC1-AC12
 - **Owner:** abhishek
-- **Status:** Draft
-- **Depends on:** `platform#01` (Done), `platform#07` (Draft)
+- **Status:** Approved
+- **Depends on:** `platform#01` (Done), `platform#07` (Approved)
 - **UI plan:** vendor#02
-- **Approved by / on:** pending (spec R1-R14 are Draft, Q1-Q10 open)
+- **Approved by / on:** abhishek / 2026-11-14 (chat: "approved hai kro implement")
 - **Created:** 2026-11-14
 - **Base branch:** `docs/school-master` (owner's standing instruction: work on the current branch)
 
@@ -19,7 +19,7 @@ Touches: new `BookInventory.Domain/Vendor`, `BookInventory.Application/Vendor`, 
 Leaves out: Excel import, the vendor ledger and payments, purchase documents, the Super Admin's screens in `admin`, any UI (vendor#02).
 
 ## 3. Approach
-`Vendor` derives from `CompanyOwnedRoot`, so its company is stamped and filtered by the platform; the code comes from `ICompanyCodes` (platform#07) with prefix `VEN`. Mobile and email reuse `IdentityNormalizer` like school; GSTIN, IFSC and account-number shapes are value rules inside `VendorRules`, written once. The bank block is a value object of five values that are all present or all absent; the account number carries the audit secret marker and is masked by one function used by the list and the detail. Names are compared in normalised form for R4.
+`Vendor` derives from `CompanyOwnedRoot`, so its company is stamped and filtered by the platform; the code comes from `ICompanyCodes` (platform#07) with prefix `VEN`. Mobile and email reuse `IdentityNormalizer` like school; GSTIN, IFSC and account-number shapes are value rules inside `VendorRules`, written once. The bank block is a value object of five values that are all present or all absent; the account number carries the audit secret marker (never written to the trail) and is masked by one function used by the list and the detail. Names are compared in normalised form for R4.
 
 ## 4. Tasks (at most 8)
 - [ ] 1. Domain: `Vendor` (create, edit, activate, deactivate), `VendorBank` value object, `VendorRules`, the state list (Indian states), events, message codes (R2-R7, R13).

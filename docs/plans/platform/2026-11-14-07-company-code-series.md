@@ -4,10 +4,10 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/platform.md](../../specs/platform.md) - rules covered: P23; PAC18
 - **Owner:** abhishek
-- **Status:** Draft
+- **Status:** Approved
 - **Depends on:** `platform#01` (Done), `school#01` (Done)
 - **UI plan:** none, it adds no screen or endpoint: it is the mechanism every generated code uses
-- **Approved by / on:** pending (rule P23 is Draft, vendor spec Q6)
+- **Approved by / on:** abhishek / 2026-11-14 (chat: "approved hai kro implement")
 - **Created:** 2026-11-14
 - **Base branch:** `docs/school-master` (owner's standing instruction: work on the current branch)
 
