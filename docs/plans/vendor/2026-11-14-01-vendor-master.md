@@ -4,8 +4,8 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/vendor.md](../../specs/vendor.md) - rules covered: R1-R14; AC1-AC12
 - **Owner:** abhishek
-- **Status:** Approved
-- **Depends on:** `platform#01` (Done), `platform#07` (Approved)
+- **Status:** Done
+- **Depends on:** `platform#01` (Done), `platform#07` (Done)
 - **UI plan:** vendor#02
 - **Approved by / on:** abhishek / 2026-11-14 (chat: "approved hai kro implement")
 - **Created:** 2026-11-14   **Completed:** 2026-11-14

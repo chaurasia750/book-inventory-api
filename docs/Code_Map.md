@@ -12,7 +12,7 @@ For the agent and new developers. Every path below exists; copy the neighbouring
 | `src/BookInventory.Infrastructure/` | EF configurations, stores (port adapters), options, migrations |
 | `src/BookInventory.Api/` | `src/BookInventory.Api/Program.cs`, controllers, hosted services, auth wiring |
 
-Modules present today: `Iam`, `Core`, `Company`, `School`, `Vendor`, `Item` (folders match the schemas `iam`, `core`, `company`, `school`, `vendor`, `item`). The aggregate class `Company` shares its name with its namespace, so files that use it add `using CompanyRoot = BookInventory.Domain.Company.Company;`.
+Modules present today: `Iam`, `Core`, `Company`, `School`, `Vendor`, `Item`, `Price` (folders match the schemas `iam`, `core`, `company`, `school`, `vendor`, `item`, `price`). The aggregate class `Company` shares its name with its namespace, so files that use it add `using CompanyRoot = BookInventory.Domain.Company.Company;`.
 
 ## Base types of the shared library
 
@@ -34,6 +34,7 @@ Modules present today: `Iam`, `Core`, `Company`, `School`, `Vendor`, `Item` (fol
 | Aggregate with an append-only child timeline | `src/BookInventory.Domain/Company/Company.cs` with `src/BookInventory.Domain/Company/CompanyStatusHistory.cs` |
 | Domain events | `src/BookInventory.Domain/Iam/UserEvents.cs` |
 | Audit marks on an entity | `[AuditIgnore]` and `[AuditSecret]` (`src/BookInventory.Domain/Core/AuditIgnoreAttribute.cs`, `src/BookInventory.Domain/Core/AuditSecretAttribute.cs`) used on `src/BookInventory.Domain/Iam/AppUser.cs`; company scope: `src/BookInventory.Domain/Core/IAuditCompanyScope.cs` |
+| A money calculation (exact decimal, rounded once) | copy `src/BookInventory.Domain/Price/PriceChange.cs` (`Apply` returns the new value or why it was skipped); amounts are `numeric(18,2)` with `HasPrecision(18, 2)` |
 | Read another module's items | inject `src/BookInventory.Application/Item/IItemDirectory.cs` (exists/active, codes and names by id, a page of ids for a search and a selection, all ids of a selection up to 5000); never join the item tables (item R16); implementation `src/BookInventory.Application/Item/ItemDirectory.cs` |
 | Read another module's vendors | inject `src/BookInventory.Application/Vendor/IVendorDirectory.cs` (exists/active, names by id, ids matching a text); never join the vendor tables (vendor R15); adapter `src/BookInventory.Infrastructure/Vendor/VendorDirectory.cs` |
 | Generated code `PREFIX-0001` (P23) | inject `src/BookInventory.Application/Core/ICompanyCodes.cs` and call `NextAsync("VEN")`; never keep a counter of your own; copy the use of it in `src/BookInventory.Application/School/SchoolRegistrationService.cs` (adapter: `src/BookInventory.Infrastructure/Core/CompanyCodes.cs`) |
