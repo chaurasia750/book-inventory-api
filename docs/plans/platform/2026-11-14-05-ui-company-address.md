@@ -22,12 +22,12 @@ Leaves out: a stored slug, redirects from an old slug after a rename, any route 
 The router's base address is dynamic: `base-href.js` (an external script, because the API's content-security policy forbids inline scripts) writes `<base href="/<first segment>/">`. All existing routes, links and guards keep working under that base. A `companyAddressGuard` on the layout route asks `GET companies/current`; when the slug differs it replaces the address with the right one (a full navigation, because the base address changes). Hosts map every non-reserved first segment to the member app.
 
 ## 4. Tasks (at most 8)
-- [ ] 1. `base-href.js` and the member `index.html` use it instead of the fixed base (U12).
-- [ ] 2. `companyAddressGuard` on the member layout route; Super Admin or no company goes to `/admin` (U12).
-- [ ] 3. Sign-in redirect for company accounts opens `/<slug>/`; remove `APP_URLS.MEMBER` and fix the role-to-app table and `homeUrlForRole` (U12).
-- [ ] 4. `scripts/serve-single.mjs`, `production-deploy.js` (member without a fixed base href) and `iis-web.config` map company addresses to the member app (U12).
+- [x] 1. `base-href.js` and the member `index.html` use it instead of the fixed base (U12).
+- [x] 2. `companyAddressGuard` on the member layout route; Super Admin or no company goes to `/admin` (U12).
+- [x] 3. Sign-in redirect for company accounts opens `/<slug>/`; remove `APP_URLS.MEMBER` and fix the role-to-app table and `homeUrlForRole` (U12).
+- [x] 4. `scripts/serve-single.mjs`, `production-deploy.js` (member without a fixed base href) and `iis-web.config` map company addresses to the member app (U12).
 - [x] 5. API host: `UseCompanyAddresses` in `SpaHosting` (U12).
-- [ ] 6. Builds and lint of both repositories: 0 new findings.
+- [x] 6. Builds and lint of both repositories: 0 new findings.
 - [ ] 7. Verify UAC8 in the running single-port server and record what was seen; the screens in a browser are the owner's check.
 
 ## 5. Spec coverage
@@ -37,7 +37,8 @@ The router's base address is dynamic: `base-href.js` (an external script, becaus
 | `U12`, `UAC8` | 2, 3 | Owner sign-in opens `/abc-book-center/`; wrong slug lands on the own slug; `/member/...` lands on the own slug (browser: owner's check) |
 
 ## 6. Not verified
-To be filled when the plan is closed.
+- Observed (2026-11-14, single-port server `node scripts/serve-single.mjs` on 4200, API on 7100): `/abc-book-center/schools`, `/abc-book-center/` -> 200 HTML of the member app (contains `base-href.js`); `/abc-book-center/main-*.js` -> 200 JavaScript; `/abc-book-center/assets/i18n/en.json` -> 200; `/member/base-href.js` and `/member/schools` -> 200; `/admin/`, `/login`, `/auth/forgot-password` -> the other apps. `GET /api/v1/companies/current` through the proxy as Super Admin entered in each company -> slugs `abc-book-center` and `children-book-center`.
+- NOT verified: the sign-in redirect, the address guard and a reload at `/<slug>/...` in a browser (task 7, the owner's check); the API host mapping `UseCompanyAddresses` (the API served no `wwwroot` here); the IIS rules in `scripts/iis-web.config` (no IIS here); `nx lint` shows no new finding in the changed files.
 
 ## 7. Risks and notes
 A company named `Member` would have `/member` as its address, which is also the old address; both lead to the same app, which then redirects, so it works. The IIS rules and the API host mapping are not exercised here (no IIS; the API serves the UI only when `wwwroot` exists).
