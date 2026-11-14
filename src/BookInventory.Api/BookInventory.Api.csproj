@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<!-- Local secrets (dev database password) live in user-secrets, never in the repository -->
+		<UserSecretsId>66be6e10-d905-488a-a808-c0c929367271</UserSecretsId>
+	</PropertyGroup>
+
+	<!-- Composition root: controllers, DI wiring, configuration. The only project that references every layer. -->
+	<ItemGroup>
+		<ProjectReference Include="..\BookInventory.Application\BookInventory.Application.csproj" />
+		<ProjectReference Include="..\BookInventory.Infrastructure\BookInventory.Infrastructure.csproj" />
+		<ProjectReference Include="..\..\library\BuildingBlocks\Configuration\BookInventory.BuildingBlocks.Configuration.csproj" />
+		<ProjectReference Include="..\..\library\BuildingBlocks\Logger\BookInventory.BuildingBlocks.Logger.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- dotnet ef runs against this startup project -->
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+</Project>

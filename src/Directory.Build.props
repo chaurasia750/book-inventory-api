@@ -1,0 +1,12 @@
+<Project>
+
+	<!-- Inherit the repo-wide settings (net10.0, nullable, analyzers) -->
+	<Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+	<PropertyGroup>
+		<!-- Application code is deployed, not published as a NuGet package -->
+		<IsPackable>false</IsPackable>
+		<RootNamespace>BookInventory.$(MSBuildProjectName.Replace('BookInventory.', ''))</RootNamespace>
+	</PropertyGroup>
+
+</Project>

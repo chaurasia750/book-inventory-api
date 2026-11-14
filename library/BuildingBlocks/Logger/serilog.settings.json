@@ -1,0 +1,28 @@
+{
+  "Serilog": {
+    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.File", "Serilog.Enrichers.Environment", "Serilog.Enrichers.Process", "Serilog.Enrichers.Thread" ],
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Warning",
+        "Microsoft.Hosting.Lifetime": "Information",
+        "Microsoft.EntityFrameworkCore.Database.Command": "Warning",
+        "System": "Warning"
+      }
+    },
+    "WriteTo": [
+      { "Name": "Console" },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "Logs/log-.txt",
+          "rollingInterval": "Day",
+          "retainedFileCountLimit": 30,
+          "rollOnFileSizeLimit": true,
+          "formatter": "Serilog.Formatting.Compact.CompactJsonFormatter, Serilog.Formatting.Compact"
+        }
+      }
+    ],
+    "Enrich": [ "WithMachineName", "WithProcessId", "WithThreadId" ]
+  }
+}

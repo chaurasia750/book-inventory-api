@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Entities, value objects, enums, domain events. No dependency on any other app layer. -->
+	<ItemGroup>
+		<ProjectReference Include="..\..\library\BuildingBlocks\Domain\BookInventory.BuildingBlocks.Domain.csproj" />
+	</ItemGroup>
+
+</Project>

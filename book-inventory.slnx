@@ -1,0 +1,20 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/BuildingBlocks/">
+    <Project Path="library/BuildingBlocks/Domain/BookInventory.BuildingBlocks.Domain.csproj" />
+    <Project Path="library/BuildingBlocks/Application/BookInventory.BuildingBlocks.Application.csproj" />
+    <Project Path="library/BuildingBlocks/Persistence/BookInventory.BuildingBlocks.Persistence.csproj" />
+    <Project Path="library/BuildingBlocks/Configuration/BookInventory.BuildingBlocks.Configuration.csproj" />
+    <Project Path="library/BuildingBlocks/Logger/BookInventory.BuildingBlocks.Logger.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/BookInventory.Domain/BookInventory.Domain.csproj" />
+    <Project Path="src/BookInventory.Application/BookInventory.Application.csproj" />
+    <Project Path="src/BookInventory.Infrastructure/BookInventory.Infrastructure.csproj" />
+    <Project Path="src/BookInventory.Api/BookInventory.Api.csproj" />
+  </Folder>
+</Solution>

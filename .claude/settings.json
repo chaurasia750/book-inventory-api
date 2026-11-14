@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git fetch origin main)",
+      "Bash(git merge origin/main)",
+      "Bash(git switch -c feature/*)",
+      "Bash(git switch -c docs/*)",
+      "Bash(git push -u origin feature/*)",
+      "Bash(git push -u origin docs/*)",
+      "Bash(gh pr create *)"
+    ]
+  }
+}

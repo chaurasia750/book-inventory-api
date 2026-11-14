@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Description>ASP.NET Core API host defaults: controller base, filters, JWT, CORS, versioning, OpenAPI, health checks.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<!-- Same implicit usings the Web SDK would add; this is a class library so it uses the plain SDK. -->
+	<ItemGroup>
+		<Using Include="Microsoft.AspNetCore.Builder" />
+		<Using Include="Microsoft.AspNetCore.Hosting" />
+		<Using Include="Microsoft.AspNetCore.Http" />
+		<Using Include="Microsoft.AspNetCore.Routing" />
+		<Using Include="Microsoft.Extensions.Configuration" />
+		<Using Include="Microsoft.Extensions.DependencyInjection" />
+		<Using Include="Microsoft.Extensions.Hosting" />
+		<Using Include="Microsoft.Extensions.Logging" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Asp.Versioning.Mvc" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Domain\BookInventory.BuildingBlocks.Domain.csproj" />
+		<ProjectReference Include="..\Persistence\BookInventory.BuildingBlocks.Persistence.csproj" />
+	</ItemGroup>
+
+</Project>

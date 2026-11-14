@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Use cases, services, DTOs, validators, domain event handlers. Talks to the DB only through IRepository / IUnitOfWork. -->
+	<ItemGroup>
+		<ProjectReference Include="..\BookInventory.Domain\BookInventory.Domain.csproj" />
+		<ProjectReference Include="..\..\library\BuildingBlocks\Application\BookInventory.BuildingBlocks.Application.csproj" />
+		<ProjectReference Include="..\..\library\BuildingBlocks\Persistence\BookInventory.BuildingBlocks.Persistence.csproj" />
+	</ItemGroup>
+
+</Project>

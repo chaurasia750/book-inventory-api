@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Description>DDD primitives: entities, audit bases, domain events, paging models. No external dependencies.</Description>
+	</PropertyGroup>
+
+</Project>

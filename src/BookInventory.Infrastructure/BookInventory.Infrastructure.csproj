@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- DbContext, EF configurations, migrations, external integrations (SMS, e-mail, payment gateway...). -->
+	<ItemGroup>
+		<ProjectReference Include="..\BookInventory.Application\BookInventory.Application.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Parses the user agent into browser/OS/device (R22). The only package the application needs. -->
+		<PackageReference Include="MailKit" />
+		<PackageReference Include="Scriban" />
+		<PackageReference Include="UAParser" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Microsoft.Extensions.Configuration" />
+		<Using Include="Microsoft.Extensions.DependencyInjection" />
+	</ItemGroup>
+
+</Project>
