@@ -1,10 +1,21 @@
 # Spec: iam - Identity & Access
 
 - **Module:** `iam` (PostgreSQL schema `iam`)
-- **Status:** Approved (2026-09-26, owner said "next" after reviewing the decisions in section 9)
-- **Last updated:** 2026-09-26
-- **Source docs:** [System Design §4 Roles, §12 Authentication](../BookInventory_System_Design.md), [ERD §1 `iam`](../BookInventory_ERD.md)
-- **Plans:** 0001-0002 (`platform`, first); notification outbox in `core`: [0011](../plans/0011-core-notification-outbox.md) (before 0005); iam: [0003 domain+persistence](../plans/0003-iam-domain-and-persistence.md) (done), [0004 authentication](../plans/0004-iam-authentication.md) (done), [0005 passwords](../plans/0005-iam-password-flows.md) (done), [0006 account management](../plans/0006-iam-account-management.md) (done), [0007 login history and self-service](../plans/0007-iam-login-log-and-self-service.md) (done), [0012 PBKDF2 cost setting](../plans/0012-iam-configurable-pbkdf2-cost.md) (done), [0008 registration hand-off](../plans/0008-iam-registration-handoff.md) (done), [0009 system account](../plans/0009-iam-system-account.md) (done), [0013 hardening](../plans/0013-iam-hardening.md) (done), [0014 owner decisions](../plans/0014-iam-owner-decisions.md) (done); 0010 (`platform`) hosting
+- **Status:** carried over from the base project (HautInHousing); describes the code as it is.
+- **Source:** the Book Inventory business documents, see [docs index](../README.md) (none of the rules below were derived from them yet).
+
+## Base-project rules under review (Book Inventory)
+
+- **Old references in this file:** numbers of removed plans (0001-0012 and others, the plan files are deleted), the ERD and System Design documents (never in this repository), and the modules `mlm`, `finance` and `realty` (no spec exists for them). These are history only: do not look for them and do not build from them.
+- **How to work with the rules below:** rules not listed in the table describe the code as it is and stay valid. A listed rule also describes current code, but it belongs to the base project's business: do not extend it or build on it. A Book Inventory feature that touches it changes or retires it through the spec flow, and its row is removed then.
+
+| Rules | What is from the base project | For Book Inventory |
+| --- | --- | --- |
+| Roles `SALES_CRM`, `ACCOUNTS`, `MEMBER` (section 1, R2, R6, AC24) | The base project's staff and agent roles | Book Inventory roles come from the BRD user and role module; the role list changes through the spec flow |
+| R7, R53, R58, D4, D13, AC2, AC10, AC25, AC27, O3, `release-identity` endpoint, `PENDING`/`REJECTED` states | Agent self-registration, generated agent user id and the registration hand-off to `mlm` | Not wanted: `mlm` is not part of Book Inventory |
+| R40 events for other modules, D12, O2 | Suspended-agent effects on commission, tree, leads and withdrawals | Not wanted: commission, wallet and `mlm` are not part of Book Inventory |
+| R49, AC21 | System account may verify payments and approve commissions and withdrawals | Keep the account mechanism; the list of money actions it covers is re-decided with the `finance` spec |
+| D16, D18 | UI history of the base project (neutral branding, SQL Server legacy) | History only |
 
 ## 1. Purpose and scope
 
@@ -128,7 +139,7 @@ stateDiagram-v2
 
 ## 4. Data
 
-Tables in schema `iam` (details and diagram: [ERD §1](../BookInventory_ERD.md)): `app_user` (adds `failed_login_count`, `locked_until`, `password_changed_at`, `status_reason`, `status_changed_at`, `status_changed_by`, `suspended_until`), `is_system_account` (default false; a partial unique index allows at most one true), `user_session` (adds `last_seen_at`, `revoke_reason`), `user_role_history` (append-only role changes), `password_reset_token`, `user_login_log`, `user_status_history`.
+Tables in schema `iam` (details and diagram: ERD §1): `app_user` (adds `failed_login_count`, `locked_until`, `password_changed_at`, `status_reason`, `status_changed_at`, `status_changed_by`, `suspended_until`), `is_system_account` (default false; a partial unique index allows at most one true), `user_session` (adds `last_seen_at`, `revoke_reason`), `user_role_history` (append-only role changes), `password_reset_token`, `user_login_log`, `user_status_history`.
 
 Hiding is implemented once, in the data layer, as a named EF query filter on `app_user` (`is_system_account = false`) that every normal query gets automatically; only the login/identity lookup and the seeder opt out of it. New queries are therefore safe by default.
 

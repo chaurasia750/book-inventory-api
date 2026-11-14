@@ -1,12 +1,20 @@
 # Spec: core - Notifications (outgoing email) and shared system services
 
-- **Module:** `core` (matches the PostgreSQL schema `core` in `docs/BookInventory_ERD.md`)
-- **Status:** Approved
-- **Last updated:** 2026-09-27
-- **Source docs:** [ERD §11 core](../BookInventory_ERD.md), [specs/iam.md R17, R56](iam.md), [specs/platform.md](platform.md), `CLAUDE.md`; behaviour modelled on the owner's sample project (`Rudrakshama` / `Binsera` notification module) with the changes listed in the rules below
-- **Plans:** [0011 notification outbox](../plans/0011-core-notification-outbox.md) (done)
+- **Module:** `core` (matches the PostgreSQL schema `core`)
+- **Status:** carried over from the base project (HautInHousing); describes the code as it is.
+- **Source:** the Book Inventory business documents, see [docs index](../README.md) (none of the rules below were derived from them yet).
 
 > This file starts with the **notification** capability. The ERD's audit log and system settings are added to this spec when their plans exist.
+
+## Base-project rules under review (Book Inventory)
+
+- **Old references in this file:** numbers of removed plans (0005, 0010, 0011), the ERD (never in this repository), and the sample projects the notification design was modelled on. These are history only: do not look for them and do not build from them.
+- **How to work with the rules below:** rules not listed in the table describe the code as it is and stay valid. A listed rule also describes current code, but it belongs to the base project's business: do not extend it or build on it. A Book Inventory feature that touches it changes or retires it through the spec flow, and its row is removed then.
+
+| Rules | What is from the base project | For Book Inventory |
+| --- | --- | --- |
+| Dependency sentence in section on dependencies (`mlm` and `finance` depend on `core`) | Names `mlm`, which is not part of Book Inventory | `finance` and later modules may still use `INotificationService`; the sentence is corrected when a feature touches it |
+| ERD references (header note, schema section) | ERD sections of the base project | No ERD in the repository; the tables are described by the code |
 
 ## 1. Purpose and scope
 
