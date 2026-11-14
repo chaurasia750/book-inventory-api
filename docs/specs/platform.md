@@ -3,7 +3,7 @@
 - **Module:** `platform` (cross-cutting; code in `library/BuildingBlocks`)
 - **Status:** carried over from the base project (HautInHousing); describes the code as it is. P18-P22 and PAC13-PAC17 (company-owned data) are Approved by abhishek on 2026-11-14, not built yet.
 - **Source:** the Book Inventory business documents, see [docs index](../README.md) (none of the rules below were derived from them yet).
-- **Plans:** [platform#07](../plans/platform/2026-11-14-07-company-code-series.md) (Done, P23, PAC18), [platform#05](../plans/platform/2026-11-14-05-ui-company-address.md) (In progress, U12, UAC8), [platform#06](../plans/platform/2026-11-14-06-ui-member-mobile.md) (In progress, U13, UAC9), [platform#04](../plans/platform/2026-11-14-04-ui-sign-in-frame.md) (In progress, U11, UAC7), [platform#03](../plans/platform/2026-11-14-03-ui-list-and-detail.md) (In progress, U10, UAC6), [platform#02](../plans/platform/2026-11-14-02-ui-app-shell-theme.md) (In progress, U9, UAC5), [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Done, company-owned data P18-P22)
+- **Plans:** [platform#08](../plans/platform/2026-11-14-08-handler-writes-saved.md) (Done, P24, PAC19), [platform#07](../plans/platform/2026-11-14-07-company-code-series.md) (Done, P23, PAC18), [platform#05](../plans/platform/2026-11-14-05-ui-company-address.md) (In progress, U12, UAC8), [platform#06](../plans/platform/2026-11-14-06-ui-member-mobile.md) (In progress, U13, UAC9), [platform#04](../plans/platform/2026-11-14-04-ui-sign-in-frame.md) (In progress, U11, UAC7), [platform#03](../plans/platform/2026-11-14-03-ui-list-and-detail.md) (In progress, U10, UAC6), [platform#02](../plans/platform/2026-11-14-02-ui-app-shell-theme.md) (In progress, U9, UAC5), [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Done, company-owned data P18-P22)
 
 > Every module builds on these rules. They exist so that `iam`, `mlm`, `finance`, `realty` and `core` look and behave the same, and so that a second project can reuse the library unchanged.
 
@@ -69,6 +69,9 @@ Defines the data, API and configuration conventions that BuildingBlocks enforces
 - **P16** The API applies pending EF Core migrations at startup when `Database:MigrateOnStartup` is `true` (the shipped configuration sets it to `true` for every environment; owner decision 2026-10-26, so Development and production both migrate on start). The option defaults to `false`, so a host without the section never migrates. The log names the pending migration ids (a warning naming the environment outside Development), a failed migration stops startup - the host never serves requests against a half-migrated schema - and only forward migrations are applied, never a drop, `update 0` or schema reset. An environment that must keep the step with a person sets the flag to `false`.
 - **P17** Startup order is schema first, data second: the migration runner starts before the seeding hosted services, so a fresh database is migrated and then seeded in one start.
 
+**Writes of domain event handlers**
+- **P24** What a domain event handler writes (a new row, a changed row, its own events) is saved in the **same transaction** as the change that raised the event: after the events of a save are dispatched, any change they left is saved again and its events dispatched in turn, at most five rounds (more means a loop of events and is refused as a bug, `500`). A handler that fails rolls the whole request back. Added on 2026-11-14 for the finance spec (opening balances, finance R6); Approved by abhishek on 2026-11-14 (chat: "Platform fix: handler ka kaam bhi usi transaction mein save").
+
 ## 4. Data
 
 Shared columns as in P2/P3/P4. No tables of its own.
@@ -79,7 +82,7 @@ No endpoints. Error shape: RFC 9457 problem details plus `code` (P14) and `trace
 
 ## 6. Events
 
-Unchanged: aggregate roots raise domain events, dispatched after save inside the transaction.
+Aggregate roots raise domain events, dispatched after save inside the transaction; what a handler writes is saved in that same transaction (P24).
 
 ## 7. Dependencies
 
@@ -105,6 +108,7 @@ None.
 - **PAC16** A saved row's company cannot be changed through any behaviour of the entity (P20).
 - **PAC17** Two companies can each hold a row with the same value of a per-company unique field, and one company cannot hold it twice (P22); the audit entry of a company-owned row names its company (P21).
 - **PAC18** Two companies each get `X-0001` from the same prefix; ten parallel requests for one company get ten different numbers; the school codes of existing schools do not change when school is moved onto the series (P23).
+- **PAC19** A handler that adds a row on an event is saved with the change that raised it (one commit); a handler that throws leaves neither the change nor its row; an event chain longer than five rounds is refused (P24).
 
 ## 9. Open questions
 
