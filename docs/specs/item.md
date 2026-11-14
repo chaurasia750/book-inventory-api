@@ -1,10 +1,10 @@
 # Spec: item - Item master
 
 - **Module:** `item` (PostgreSQL schema `item`)
-- **Status:** R1-R15 Approved by abhishek in chat on 2026-11-14 ("all approved hai kro implement"; Q1-Q12 answered with the recommended answers, D1-D5 with them)
+- **Status:** R16 and AC12 Draft (proposed by the assistant for the price spec); R1-R15 Approved by abhishek in chat on 2026-11-14 ("all approved hai kro implement"; Q1-Q12 answered with the recommended answers, D1-D5 with them)
 - **Last updated:** 2026-11-14
 - **Source docs:** [BRD §1.2, §3, §4.4 Item Master (FR-ITM-01 to FR-ITM-08), §5.4 BR-GST, §5.5 BR-STK, §7.1, §8 Data Model (ItemCategory, Item, ItemBarcode)](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P23; [specs/company.md](company.md); [specs/vendor.md](vendor.md); [specs/school.md](school.md) (the neighbouring masters it follows)
-- **Plans:** [item#01](../plans/item/2026-11-14-01-item-master.md) (Done), [item#02](../plans/item/2026-11-14-02-ui-item-screens.md) (Approved); the capability it needs from vendor: [vendor#03](../plans/vendor/2026-11-14-03-vendor-directory.md) (Approved)
+- **Plans:** [item#03](../plans/item/2026-11-14-03-item-directory.md) (Draft, R16, AC12), [item#01](../plans/item/2026-11-14-01-item-master.md) (Done), [item#02](../plans/item/2026-11-14-02-ui-item-screens.md) (Approved); the capability it needs from vendor: [vendor#03](../plans/vendor/2026-11-14-03-vendor-directory.md) (Approved)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -43,6 +43,9 @@ Out of scope for this feature: price versions, MRP, sale and purchase price (FR-
 - **R13** Every create and change is recorded who and when through the standard audit columns and the audit trail of `core` ([specs/core.md](core.md) A1-A9); this module adds no audit mechanism of its own.
 - **R14** Changing an item's name, class, HSN or GST rate does not touch documents already issued: later modules copy what they must keep (BRD §8 design decision 3, price and item snapshots).
 - **R15** Changing the **category** or **stock managed** of an item is allowed here; once stock or documents exist, the later modules refuse a change that would break their history (the same way the school's session type works, [specs/school.md](school.md) R3).
+
+**Reading items from other modules**
+- **R16** Other modules (the price module first) read items only through the item module's **directory capability**, never by joining its tables: it tells whether an item exists in the session's company and whether it is active, gives the code and name of a list of item ids, and finds item ids by a search text (name, code, barcode) and a selection of vendor, category, class (ignoring case) and active-only, page by page or all at once (at most 5000). It answers only for the company of the session (platform P19), returns plain values and never the aggregate, and changes nothing. Proposed by the assistant on 2026-11-14 for the price spec (decision D3); Draft.
 
 ## 4. Data
 
@@ -92,6 +95,7 @@ Raised by the `Item` aggregate (past tense, ids and values only): `ItemCreated`,
 - **AC9** A Super Admin with no company entered lists no items and `POST items` answers `403 core.company_required`; after entering A they list A's items and can create one (R11).
 - **AC10** The list is paged and capped at 200; search finds an item by name, code, barcode, class, subject and vendor name; the category, vendor, class, stock-managed and status filters and the sorts work; an unknown sort column is ignored (R12).
 - **AC11** Every create and change of an item appears in the audit trail with the actor and company A (R13).
+- **AC12** The directory capability, called for the Owner of A, finds A's item (id, code, name, active) and returns nothing for B's item id; codes and names of two ids come back; a search by name, barcode, vendor and class (any case) returns A's matching items only; an empty selection returns all of A's items (R16).
 
 ## 10. Decisions
 
