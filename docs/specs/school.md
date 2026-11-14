@@ -1,10 +1,10 @@
 # Spec: school - School master
 
 - **Module:** `school` (PostgreSQL schema `school`)
-- **Status:** R1-R15 Approved by the owner on 2026-11-14 (AC1-AC11, D1-D7 with them); R16 and AC12 Approved by abhishek on 2026-11-14 (for the customer spec, its decision D4)
-- **Last updated:** 2026-11-14 (R16, AC12 added for the customer master)
+- **Status:** R1-R15 Approved by the owner on 2026-11-14 (AC1-AC11, D1-D7 with them); R16 and AC12 Approved by abhishek on 2026-11-14 (for the customer spec, its decision D4); R17 and AC13 Approved by abhishek on 2026-11-14 (for the finance spec, its decision D4)
+- **Last updated:** 2026-11-14 (R16, AC12 added for the customer master; R17, AC13 for the ledger)
 - **Source docs:** [BRD §1.2, §3, §4.2 School Master (FR-SCH-01 to FR-SCH-08), §5.1 BR-SES, §5.4 BR-GST, §7.1, §8 Data Model (School, SchoolClass)](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P22; [specs/company.md](company.md)
-- **Plans:** [school#03](../plans/school/2026-11-14-03-school-directory.md) (Approved, R16, AC12), [school#01](../plans/school/2026-11-14-01-school-master.md) (Done), [school#02](../plans/school/2026-11-14-02-ui-school-screens.md) (In progress); the platform mechanism it needs: [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Done)
+- **Plans:** [school#04](../plans/school/2026-11-14-04-opening-balance-event.md) (Approved, R17, AC13), [school#03](../plans/school/2026-11-14-03-school-directory.md) (Approved, R16, AC12), [school#01](../plans/school/2026-11-14-01-school-master.md) (Done), [school#02](../plans/school/2026-11-14-02-ui-school-screens.md) (In progress); the platform mechanism it needs: [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Done)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -47,6 +47,9 @@ Out of scope for this feature: Excel import of schools (FR-SCH-07, NFR-12: its o
 
 **Reading schools from other modules**
 - **R16** Other modules (the customer master first) read schools only through the school module's **directory capability**, never by joining its tables: it tells whether a school exists in the session's company and is active, gives the names of a list of school ids, and tells whether a class name is in a school's class list (ignoring case and extra spaces, R6) and gives that class's name as the school writes it. It answers only for the company of the session (platform P19), returns plain values and never the aggregate, and changes nothing. Proposed by the assistant on 2026-11-14 for the customer spec (decision D4 there); Approved by abhishek on 2026-11-14.
+
+**Telling the ledger about the opening balance**
+- **R17** When a school is created with an opening balance above zero, or its opening balance is changed (R7), the school raises the event `SchoolOpeningBalanceChanged` with the school's id, the old amount and the new amount; nothing else changes the school. The ledger reacts to it ([specs/finance.md](finance.md) R6), so the school never writes the ledger. An edit that keeps the same amount raises nothing. Proposed by the assistant on 2026-11-14 for the finance spec (decision D4 there); Approved by abhishek on 2026-11-14.
 
 ## 4. Data
 
@@ -98,6 +101,7 @@ Raised by the `School` aggregate (past tense, ids and values only): `SchoolCreat
 - **AC10** Every create and change of a school appears in the audit trail with the actor and company A (R12).
 - **AC11** Mobile `+91 98765 00001`, `0 98765 00001` and `9876500001` are stored as `9876500001`; an invalid email is `400` (R13).
 - **AC12** The directory capability, called for the Owner of A, finds A's school (id, name, active) and returns nothing for B's school id; the names of two ids come back; the text ` 5TH ` matches the school's class and comes back as `5th`, as the school writes it, and an unknown class matches nothing (R16).
+- **AC13** Creating a school with opening balance 5000.00 raises one `SchoolOpeningBalanceChanged` (0 -> 5000.00); editing it to 4500.00 raises one (5000.00 -> 4500.00); an edit that keeps 4500.00 and a school created with 0 raise none (R17).
 
 ## 10. Decisions
 

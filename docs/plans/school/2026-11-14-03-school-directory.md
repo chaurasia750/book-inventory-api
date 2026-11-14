@@ -38,4 +38,4 @@ To be filled when the plan is closed.
 ## 7. Risks and notes
 A small read capability like vendor#03 and item#03; customer#01 is its first caller and repeats the check through its own requests.
 
-**Parked (owner, 2026-11-14):** "eske last me karenge" - approved, but built only after the important transaction modules (purchase, invoice, payment, ledger and the rest). Do not start it before then.
+**Parked (owner, 2026-11-14) with the customer master, then needed earlier:** the ledger statement and outstanding list (finance#03) read school names through it, so it is built before finance#03 (its rules are unchanged).
