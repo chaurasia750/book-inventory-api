@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using CompanyRoot = BookInventory.Domain.Company.Company;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
@@ -28,6 +29,37 @@ public static partial class SpaHosting
 
     public static bool HasWebRoot(this WebApplication app) =>
         app.Environment.WebRootPath is { Length: > 0 } root && File.Exists(Path.Combine(root, "index.html"));
+
+    /// <summary>
+    /// U12: the member app lives at <c>/&lt;company slug&gt;/...</c>. A path whose first segment is not one of the application's own
+    /// (reserved) segments and is not a file name is the member app of that company: it is served from <c>/member</c> of the web
+    /// root, the app reads the slug from the address itself. Must run before the static files and the fallback.
+    /// </summary>
+    public static WebApplication UseCompanyAddresses(this WebApplication app)
+    {
+        if (!app.HasWebRoot())
+            return app;
+
+        app.Use((context, next) =>
+        {
+            if (CompanyAddressRemainder(context.Request.Path) is { } remainder)
+                context.Request.Path = "/member" + remainder;
+            return next(context);
+        });
+        return app;
+    }
+
+    /// <summary>The part of a company address after its slug (empty for the slug alone), or <c>null</c> when the path is not a company address.</summary>
+    private static string? CompanyAddressRemainder(PathString path)
+    {
+        var value = path.Value ?? string.Empty;
+        var trimmed = value.TrimStart('/');
+        var slash = trimmed.IndexOf('/');
+        var first = slash < 0 ? trimmed : trimmed[..slash];
+        var isOwnSegment = first.Length == 0 || first.Contains('.') || CompanyRoot.ReservedSlugs.Contains(first)
+            || string.Equals(first, "member", StringComparison.OrdinalIgnoreCase);
+        return isOwnSegment ? null : (slash < 0 ? string.Empty : trimmed[slash..]);
+    }
 
     public static WebApplication UseSpaStaticFiles(this WebApplication app)
     {

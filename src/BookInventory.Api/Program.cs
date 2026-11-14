@@ -97,6 +97,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();                                  // P13: browsers stay on HTTPS once they have seen it (never on localhost)
 app.UseHttpsRedirection();
 app.UseSecurityHeaders();                           // P13: nosniff, no framing, referrer policy, CSP on HTML
+app.UseCompanyAddresses();                          // U12: /<company slug>/... is the member app
 app.UseSpaStaticFiles();                            // P13: the three Angular apps from wwwroot (only when it exists)
 app.UseApiBuildingBlocks(builder.Configuration);   // exception handler, CORS, authentication, authorization
 app.UseRateLimiter();                               // R10, after routing

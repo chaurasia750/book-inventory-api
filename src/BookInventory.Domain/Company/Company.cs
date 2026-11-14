@@ -73,6 +73,9 @@ public class Company : AggregateRoot, IAuditCompanyScope
 
     public static string NormalizeName(string? name) => CompanyRules.NormalizeName(name);
 
+    /// <summary>R15: the first URL segments that belong to the application itself, never to a company.</summary>
+    public static IReadOnlySet<string> ReservedSlugs => CompanyRules.ReservedSlugs;
+
     /// <summary>R15: the URL segment a name would get; used to compare two names.</summary>
     public static string SlugOf(string? name) => CompanyRules.Slug(name);
 

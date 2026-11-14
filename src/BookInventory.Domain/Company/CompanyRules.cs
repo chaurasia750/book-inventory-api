@@ -10,7 +10,9 @@ internal static partial class CompanyRules
         SpaceRun().Replace(name?.Trim() ?? string.Empty, " ").ToLowerInvariant();
 
     /// <summary>The first segments of the application's own URLs: a company whose name makes one of these cannot be created (R15).</summary>
-    private static readonly HashSet<string> ReservedSlugs = ["admin", "login", "auth", "error", "welcome", "api", "assets", "unauthorized"];
+    public static readonly IReadOnlySet<string> ReservedSlugs = new HashSet<string>
+    {"admin", "login", "auth", "error", "welcome", "api", "assets", "unauthorized"
+    };
 
     /// <summary>R15: the company's URL segment - lower case letters and digits, other characters become single hyphens, none at the ends.</summary>
     public static string Slug(string? name) =>
