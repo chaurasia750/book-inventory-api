@@ -1,12 +1,23 @@
 # Spec: platform - Shared conventions and BuildingBlocks
 
 - **Module:** `platform` (cross-cutting; code in `library/BuildingBlocks`)
-- **Status:** Approved
-- **Last updated:** 2026-10-26
-- **Source docs:** [ERD §0 Conventions](../BookInventory_ERD.md), [specs/iam.md §9 decisions D1, D2, D6, D17](iam.md), `CLAUDE.md`
-- **Plans:** [0001](../plans/0001-platform-align-buildingblocks.md) (BuildingBlocks), [0002](../plans/0002-platform-ui-foundation.md) (UI foundation), [0015](../plans/0015-platform-cors-off-without-origins.md) (no CORS headers without configured origins), [0016](../plans/0016-platform-startup-migrations.md) (Development applies its own pending migrations at startup), [0010](../plans/0010-platform-hosting.md) (hosting, done: the API serves the apps from `wwwroot` only in the IIS publish output; locally the API and each UI app run on their own ports, the UI dev servers proxy `/api`)
+- **Status:** carried over from the base project (HautInHousing); describes the code as it is.
+- **Source:** the Book Inventory business documents, see [docs index](../README.md) (none of the rules below were derived from them yet).
 
 > Every module builds on these rules. They exist so that `iam`, `mlm`, `finance`, `realty` and `core` look and behave the same, and so that a second project can reuse the library unchanged.
+
+## Base-project rules under review (Book Inventory)
+
+- **Old references in this file:** numbers of removed plans (0001, 0002, 0010, 0015), the ERD (never in this repository), the `legacy-snapshot` tag of the base repository, and the modules `mlm` and `realty`. These are history only: do not look for them and do not build from them.
+- **How to work with the rules below:** rules not listed in the table describe the code as it is and stay valid. A listed rule also describes current code, but it belongs to the base project's business: do not extend it or build on it. A Book Inventory feature that touches it changes or retires it through the spec flow, and its row is removed then.
+
+| Rules | What is from the base project | For Book Inventory |
+| --- | --- | --- |
+| Intro and module-schema line (`iam`, `mlm`, `finance`, `realty`, `core`) | Module list of the base project | Book Inventory modules are defined by the BRD; `mlm` and `realty` are not wanted |
+| PQ1 | Rank and rule reference tables for `mlm` | Not wanted |
+| U6 | UI roles of the base project (`SALES_CRM`, `ACCOUNTS`, `MEMBER`) | Follows the iam roles decision above |
+| U7, UAC1 | Legacy property, inventory, leads and commission UI code of the base project and its `legacy-snapshot` tag | History only; the carried-over UI pages of the old product are replaced feature by feature |
+| ERD references (P4, PQ1, header) | ERD sections of the base project | No ERD in the repository |
 
 ## 1. Purpose and scope
 

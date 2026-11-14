@@ -7,7 +7,6 @@
   2. a summary per module: done / pending / total and the first pending plan number,
   3. the plans that can start now (Approved, and every plan they depend on is Done).
   The plan header is the only source: nothing is counted or stored anywhere else.
-  Legacy plans at the root of docs/plans (0001-...) are not included.
 .EXAMPLE
   ./scripts/plan-status.ps1
   ./scripts/plan-status.ps1 -Module iam
