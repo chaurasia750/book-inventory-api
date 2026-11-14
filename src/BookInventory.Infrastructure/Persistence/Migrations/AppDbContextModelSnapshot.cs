@@ -1796,6 +1796,166 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                     b.ToTable("school_class", "school");
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Stock.ItemStock", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<int>("DamagedQuantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("damaged_quantity");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("item_id");
+
+                    b.Property<int>("MainQuantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("main_quantity");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<int>("SampleQuantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("sample_quantity");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id")
+                        .HasName("pk_item_stock");
+
+                    b.HasIndex("CompanyId", "ItemId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_item_stock_company_id_item_id");
+
+                    b.ToTable("item_stock", "stock");
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Stock.StockEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<Guid?>("DocumentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("document_id");
+
+                    b.Property<string>("DocumentNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("document_number");
+
+                    b.Property<string>("DocumentType")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("document_type");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("item_id");
+
+                    b.Property<Guid>("ItemStockId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("item_stock_id");
+
+                    b.Property<DateOnly>("MovementDate")
+                        .HasColumnType("date")
+                        .HasColumnName("movement_date");
+
+                    b.Property<string>("MovementKind")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("movement_kind");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("note");
+
+                    b.Property<int>("QuantityIn")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity_in");
+
+                    b.Property<int>("QuantityOut")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity_out");
+
+                    b.Property<string>("StockType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("stock_type");
+
+                    b.HasKey("Id")
+                        .HasName("pk_stock_entry");
+
+                    b.HasIndex("ItemStockId")
+                        .HasDatabaseName("ix_stock_entry_item_stock_id");
+
+                    b.HasIndex("CompanyId", "ItemId", "MovementDate")
+                        .HasDatabaseName("ix_stock_entry_company_id_item_id_movement_date");
+
+                    b.HasIndex("CompanyId", "ItemId", "StockType")
+                        .IsUnique()
+                        .HasDatabaseName("ix_stock_entry_opening")
+                        .HasFilter("movement_kind = 'OPENING'");
+
+                    b.HasIndex("CompanyId", "DocumentType", "DocumentId", "ItemId", "StockType", "MovementKind")
+                        .IsUnique()
+                        .HasDatabaseName("ix_stock_entry_document_posting")
+                        .HasFilter("document_id IS NOT NULL");
+
+                    b.ToTable("stock_entry", "stock", t =>
+                        {
+                            t.HasCheckConstraint("ck_stock_entry_movement_kind", "\"movement_kind\" IN ('OPENING', 'ADJUSTMENT', 'PURCHASE', 'SCHOOL_INVOICE', 'COUNTER_SALE', 'SCHOOL_RETURN_GOOD', 'SCHOOL_RETURN_DAMAGED', 'VENDOR_RETURN', 'SAMPLE_FROM_VENDOR', 'SAMPLE_TO_SCHOOL', 'SAMPLE_FROM_SCHOOL', 'SAMPLE_TO_VENDOR', 'REVERSAL')");
+
+                            t.HasCheckConstraint("ck_stock_entry_stock_type", "\"stock_type\" IN ('MAIN', 'DAMAGED', 'SAMPLE')");
+                        });
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Vendor.Vendor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2079,6 +2239,16 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_school_class_school_school_id");
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Stock.StockEntry", b =>
+                {
+                    b.HasOne("BookInventory.Domain.Stock.ItemStock", null)
+                        .WithMany("Entries")
+                        .HasForeignKey("ItemStockId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_stock_entry_item_stock_item_stock_id");
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Company.Company", b =>
                 {
                     b.Navigation("StatusHistory");
@@ -2097,6 +2267,11 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("BookInventory.Domain.School.School", b =>
                 {
                     b.Navigation("Classes");
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Stock.ItemStock", b =>
+                {
+                    b.Navigation("Entries");
                 });
 #pragma warning restore 612, 618
         }
