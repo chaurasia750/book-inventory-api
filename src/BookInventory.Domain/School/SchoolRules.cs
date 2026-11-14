@@ -61,6 +61,13 @@ internal static partial class SchoolRules
 
     public static string Normalize(string value) => value.ToLowerInvariant();
 
+    /// <summary>R6, R16: the form a class name is compared in (trimmed, single spaces, lower case), or null for an empty text.</summary>
+    public static string? ClassKeyOf(string? name)
+    {
+        var cleaned = SpaceRun().Replace(name?.Trim() ?? string.Empty, " ");
+        return cleaned.Length == 0 ? null : Normalize(cleaned);
+    }
+
     [GeneratedRegex(@"\s+")]
     private static partial Regex SpaceRun();
 }
