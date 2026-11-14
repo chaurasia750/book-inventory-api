@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using BookInventory.BuildingBlocks.Application.Attributes;
 using BookInventory.BuildingBlocks.Domain.Models;
 using BookInventory.BuildingBlocks.Persistence.Contracts;
@@ -35,11 +36,13 @@ public sealed class UserDirectory(IUnitOfWork unitOfWork, TimeProvider timeProvi
         var pageIndex = query.PageIndex < 1 ? 1 : query.PageIndex;
         var search = query.Search?.Trim();
         var role = query.Role;
+        var companyId = query.CompanyId;
         var status = query.Status;
         var isLocked = query.IsLocked;
 
         var source = _users.TableNoTracking
             .Where(u => !role.HasValue || u.Role == role.Value)
+            .Where(u => !companyId.HasValue || u.CompanyId == companyId.Value)
             .Where(u => !status.HasValue || u.Status == status.Value)
             .Where(u => !isLocked.HasValue
                         || (isLocked.Value
@@ -53,12 +56,23 @@ public sealed class UserDirectory(IUnitOfWork unitOfWork, TimeProvider timeProvi
 
         return await source
             .OrderBy(WhitelistedOrder(query.OrderBy))
-            .Select(u => new UserSummary(
-                u.Id, u.UserName, u.FullName, u.Email, u.Mobile, u.Role, u.Status,
-                u.LockedUntil != null && u.LockedUntil > now, u.LockedUntil, u.MustChangePassword,
-                u.LastLoginAt, u.CreatedAt))
+            .Select(SummaryOf(now))
             .ToPagedListAsync(pageIndex, query.PageSize, cancellationToken);
     }
+
+    public async Task<IReadOnlyList<UserSummary>> ListCompanyAccountsAsync(Guid companyId, CancellationToken cancellationToken = default) =>
+        await _users.TableNoTracking
+            .Where(u => u.CompanyId == companyId)
+            .OrderBy(u => u.CreatedAt)
+            .Select(SummaryOf(timeProvider.GetUtcNow().UtcDateTime))
+            .ToListAsync(cancellationToken);
+
+    /// <summary>The one projection of a user summary, so the list and the company page show the same fields.</summary>
+    private static Expression<Func<AppUser, UserSummary>> SummaryOf(DateTime now) =>
+        u => new UserSummary(
+            u.Id, u.UserName, u.FullName, u.Email, u.Mobile, u.Role, u.Status,
+            u.LockedUntil != null && u.LockedUntil > now, u.LockedUntil, u.MustChangePassword,
+            u.LastLoginAt, u.CreatedAt);
 
     /// <summary>
     /// The columns a caller may sort the user list by. The platform <c>OrderBy(string)</c> accepts any property of the

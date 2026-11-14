@@ -29,6 +29,9 @@ public interface IAccountStore
     /// </summary>
     Task AddAsync(UserStatusHistory history, CancellationToken cancellationToken = default);
 
+    /// <summary>R67: appends the record of one password reset by a person (who and when, never a password); insert-only.</summary>
+    Task AddAsync(UserPasswordReset reset, CancellationToken cancellationToken = default);
+
     /// <summary>R6/AC24: appends one row of the role timeline; insert-only, like the status timeline.</summary>
     Task AddAsync(UserRoleHistory history, CancellationToken cancellationToken = default);
 

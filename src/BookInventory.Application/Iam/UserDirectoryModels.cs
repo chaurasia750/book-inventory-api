@@ -50,6 +50,9 @@ public sealed record UserSearchQuery
 
     public Role? Role { get; init; }
 
+    /// <summary>Only the accounts of one company. Set by the Super Admin's list and forced by the Owner's Staff list (R66).</summary>
+    public Guid? CompanyId { get; init; }
+
     public AccountStatus? Status { get; init; }
 
     /// <summary>Filter on the automatic lockout of R9, not on the account status.</summary>

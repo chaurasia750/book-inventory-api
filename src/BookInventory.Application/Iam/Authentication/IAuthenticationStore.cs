@@ -43,6 +43,9 @@ public interface IAuthenticationStore
     /// <summary>R14: every session of one user, for logout-all.</summary>
     Task<UserSession[]> FindActiveSessionsAsync(Guid userId, CancellationToken cancellationToken = default);
 
+    /// <summary>R63: every usable session of every account of one company, change-tracked, for the revocation when the company is deactivated.</summary>
+    Task<UserSession[]> FindActiveSessionsOfCompanyAsync(Guid companyId, CancellationToken cancellationToken = default);
+
     /// <summary>R24: sessions that ran out without being revoked, oldest first, at most <paramref name="take"/> - for the periodic sweep.</summary>
     Task<UserSession[]> FindExpiredSessionsAsync(DateTime now, int take, CancellationToken cancellationToken = default);
 

@@ -12,7 +12,7 @@ For the agent and new developers. Every path below exists; copy the neighbouring
 | `src/BookInventory.Infrastructure/` | EF configurations, stores (port adapters), options, migrations |
 | `src/BookInventory.Api/` | `src/BookInventory.Api/Program.cs`, controllers, hosted services, auth wiring |
 
-Modules present today: `Iam`, `Core` (folders match the schemas `iam`, `core`).
+Modules present today: `Iam`, `Core`, `Company` (folders match the schemas `iam`, `core`, `company`). The aggregate class `Company` shares its name with its namespace, so files that use it add `using CompanyRoot = BookInventory.Domain.Company.Company;`.
 
 ## Base types of the shared library
 
@@ -31,13 +31,15 @@ Modules present today: `Iam`, `Core` (folders match the schemas `iam`, `core`).
 | Kind | Copy this |
 |---|---|
 | Aggregate root | `src/BookInventory.Domain/Iam/AppUser.cs` (also `src/BookInventory.Domain/Core/Notification.cs`) |
+| Aggregate with an append-only child timeline | `src/BookInventory.Domain/Company/Company.cs` with `src/BookInventory.Domain/Company/CompanyStatusHistory.cs` |
 | Domain events | `src/BookInventory.Domain/Iam/UserEvents.cs` |
 | Message codes | `src/BookInventory.Domain/Iam/IamMessages.cs`, catalogue `src/BookInventory.Application/Iam/IamMessageCatalog.cs` |
 | Application service (use case) | `src/BookInventory.Application/Iam/Accounts/UserAccountService.cs` |
 | Port implemented in Infrastructure | `src/BookInventory.Application/Iam/Accounts/IAccountStore.cs` with `src/BookInventory.Infrastructure/Iam/AccountStore.cs` |
 | EF configuration | `src/BookInventory.Infrastructure/Persistence/Configurations/Core/NotificationConfiguration.cs` |
 | Options (`AddValidatedOptions`) | `src/BookInventory.Infrastructure/Iam/Configuration/AuthOptions.cs` |
-| Controller | `src/BookInventory.Api/Controllers/Iam/AuthController.cs` |
+| Controller | `src/BookInventory.Api/Controllers/Iam/AuthController.cs`; role per action: `src/BookInventory.Api/Controllers/Company/CompaniesController.cs` |
+| Store port with paging and a whitelisted sort | `src/BookInventory.Application/Company/ICompanyStore.cs` with `src/BookInventory.Infrastructure/Company/CompanyStore.cs` |
 | Background job | `src/BookInventory.Api/Hosting/PeriodicSweeper.cs`, used by `src/BookInventory.Api/Hosting/ExpiredSessionSweeper.cs` |
 | Seed | `src/BookInventory.Api/Hosting/IamSeedHostedService.cs` |
 

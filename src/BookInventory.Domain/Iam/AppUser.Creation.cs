@@ -14,7 +14,8 @@ public partial class AppUser
         AccountStatus Status,
         bool MustChangePassword,
         bool IsSystemAccount,
-        Guid ActorId);
+        Guid ActorId,
+        Guid? CompanyId = null);
 
     /// <summary>
     /// R2: staff accounts exist only because a Super Admin made them, they are immediately <see cref="AccountStatus.Active"/>
@@ -89,6 +90,7 @@ public partial class AppUser
             StatusChangedAt = utcNow,
             StatusChangedBy = account.ActorId == Guid.Empty ? null : account.ActorId,
             MustChangePassword = account.MustChangePassword,
-            IsSystemAccount = account.IsSystemAccount
+            IsSystemAccount = account.IsSystemAccount,
+            CompanyId = account.CompanyId
         };
 }

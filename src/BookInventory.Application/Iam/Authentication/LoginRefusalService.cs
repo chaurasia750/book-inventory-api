@@ -1,6 +1,7 @@
 using BookInventory.BuildingBlocks.Application.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 using BookInventory.Application.Iam.Accounts;
+using BookInventory.Application.Iam.Companies;
 using BookInventory.Domain.Iam;
 
 namespace BookInventory.Application.Iam.Authentication;
@@ -21,7 +22,8 @@ public sealed class LoginRefusalService(
     LoginLogService loginLog,
     UserStatusHistoryWriter history,
     IPasswordHasher passwordHasher,
-    AuthSettings settings)
+    AuthSettings settings,
+    ICompanyStatusReader? companies = null)
 {
     /// <summary>R7/R8: the identifier was typed wrong, or belongs to no visible account.</summary>
     private sealed record Refusal(LoginResult Result, string Code, bool Locked);
@@ -79,11 +81,25 @@ public sealed class LoginRefusalService(
     {
         await LiftDueSuspensionAsync(user, now, cancellationToken);
 
-        if (user.StatusRefusal is not { } result)
+        var result = user.StatusRefusal ?? await CompanyRefusalAsync(user, cancellationToken);
+        if (result is null)
             return null;
 
-        await loginLog.RecordFailureAsync(user, result, context, cancellationToken);
-        return AuthFailure.Unauthenticated(MessageFor(result));
+        await loginLog.RecordFailureAsync(user, result.Value, context, cancellationToken);
+        return AuthFailure.Unauthenticated(MessageFor(result.Value));
+    }
+
+    /// <summary>
+    /// R63: the account of a company that is not active cannot log in. Fail closed: a company account is refused too when
+    /// no module provides the company status, so a missing registration can never let one through.
+    /// </summary>
+    private async Task<LoginResult?> CompanyRefusalAsync(AppUser user, CancellationToken cancellationToken)
+    {
+        if (user.CompanyId is not { } companyId)
+            return null;
+
+        var active = companies is not null && await companies.IsActiveAsync(companyId, cancellationToken);
+        return active ? null : LoginResult.FailedCompanyInactive;
     }
 
     /// <summary>R20: the one row of this attempt, plus the 401/423 the caller answers.</summary>
@@ -120,6 +136,7 @@ public sealed class LoginRefusalService(
         LoginResult.FailedPending => IamMessages.UserPendingApproval,
         LoginResult.FailedInactive => IamMessages.UserAccountInactive,
         LoginResult.FailedSuspended => IamMessages.UserAccountSuspended,
+        LoginResult.FailedCompanyInactive => IamMessages.AuthCompanyInactive,
         _ => IamMessages.UserApplicationRejected
     };
 }

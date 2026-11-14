@@ -18,7 +18,7 @@ namespace BookInventory.Api.Auth;
 /// from the platform's <c>JwtSetting</c>, which is validated at startup, so a weak or missing key never reaches here.
 /// <list type="bullet">
 /// <item>The access token carries exactly the claims of R11: <c>sub</c>, <c>role</c>, <c>sid</c>, <c>name</c>,
-/// <c>pwd_change</c> and <c>amr = pwd</c>, plus <c>sys = 1</c> on the hidden system account's token (R44). The role is the UPPER_SNAKE name, so
+/// <c>pwd_change</c> and <c>amr = pwd</c>, plus <c>sys = 1</c> on the hidden system account's token (R44) and <c>cid</c> on the token of a caller with a company context (R62). The role is the UPPER_SNAKE name, so
 /// <c>[Authorize(Roles = "SUPER_ADMIN")]</c> matches.</item>
 /// <item>The refresh token is 256 bits of randomness in base64url. Only its SHA-256 is stored (D2), so the database
 /// alone cannot be replayed as a login, and the comparison happens in the aggregate in constant time.</item>
@@ -80,6 +80,9 @@ public sealed class JwtTokenService : ITokenService
 
         if (request.IsSystemAccount)
             yield return new Claim(AuthClaims.SystemAccount, AuthClaims.SystemAccountValue);
+
+        if (request.CompanyId is { } companyId)
+            yield return new Claim(AuthClaims.CompanyId, companyId.ToString());
     }
 
     /// <summary>Base64url without padding: a token that survives a cookie, a header and a query string unchanged.</summary>

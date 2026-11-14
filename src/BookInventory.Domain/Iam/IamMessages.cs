@@ -37,6 +37,10 @@ public static class IamMessages
     public const string UserRoleRequired = "iam.user.role_required";
     public const string UserRoleNotStaff = "iam.user.role_not_staff";
     public const string UserMemberRoleImmutable = "iam.user.member_role_immutable";
+    public const string UserCompanyRoleImmutable = "iam.user.company_role_immutable";
+    public const string UserCompanyInvalid = "iam.user.company_invalid";
+    public const string StaffShortNameInvalid = "iam.staff.invalid_short_name";
+    public const string UserPasswordResetNotAllowed = "iam.user.password_reset_not_allowed";
     public const string UserRoleUnchanged = "iam.user.role_unchanged";
     public const string UserRoleChangeReasonRequired = "iam.user.role_change_reason_required";
 
@@ -51,6 +55,7 @@ public static class IamMessages
     public const string UserNotActive = "iam.auth.not_active";
     public const string UserPendingApproval = "iam.auth.pending_approval";
     public const string UserAccountInactive = "iam.auth.account_inactive";
+    public const string AuthCompanyInactive = "iam.auth.company_inactive";
     public const string UserAccountSuspended = "iam.auth.account_suspended";
     public const string UserApplicationRejected = "iam.auth.application_rejected";
     public const string UserInvalidCredentials = "iam.auth.invalid_credentials";

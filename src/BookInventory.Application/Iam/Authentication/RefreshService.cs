@@ -109,7 +109,7 @@ public sealed class RefreshService(
         IssuedOpaqueToken refresh,
         DateTime cookieExpiresAt)
     {
-        var access = tokenService.IssueAccessTokenFor(user, session.Id, settings.Tokens.AccessToken);
+        var access = tokenService.IssueAccessTokenFor(user, session, settings.Tokens.AccessToken);
 
         var body = new RefreshResponse(access.Token, access.ExpiresAt, session.ExpiresAt, LoggedInUser.From(user));
         return AuthOutcome<IssuedSession<RefreshResponse>>.GrantedWith(

@@ -29,8 +29,9 @@ public sealed class AuthenticationStore : IAuthenticationStore
     }
 
     /// <summary>
-    /// R7: the user name matches everybody, the e-mail only staff - an agent must log in with the generated user id
-    /// and cannot walk in through their e-mail (AC2). Mobile is not a login identifier at all.
+    /// R7/R64: the user name matches everybody, the e-mail only staff - an agent and a company account (Owner, Staff)
+    /// must log in with their generated user id and cannot walk in through their e-mail (AC2, AC35). Mobile is not a
+    /// login identifier at all.
     /// </summary>
     public Task<AppUser?> FindUserForLoginAsync(string identifier, CancellationToken cancellationToken = default)
     {
@@ -40,7 +41,8 @@ public sealed class AuthenticationStore : IAuthenticationStore
         return _users.Table
             .IgnoreHiddenAccountFilter()
             .FirstOrDefaultAsync(
-                u => u.UserName == userName || (u.Email == email && u.Role != Role.Member),
+                u => u.UserName == userName
+                     || (u.Email == email && u.Role != Role.Member && u.Role != Role.Owner && u.Role != Role.Staff),
                 cancellationToken);
     }
 
@@ -84,6 +86,11 @@ public sealed class AuthenticationStore : IAuthenticationStore
     public Task<UserSession[]> FindActiveSessionsAsync(Guid userId, CancellationToken cancellationToken = default) =>
         _sessions.Table
             .Where(s => s.UserId == userId && s.RevokedAt == null)
+            .ToArrayAsync(cancellationToken);
+
+    public Task<UserSession[]> FindActiveSessionsOfCompanyAsync(Guid companyId, CancellationToken cancellationToken = default) =>
+        _sessions.Table
+            .Where(s => s.RevokedAt == null && _users.Table.Any(u => u.Id == s.UserId && u.CompanyId == companyId))
             .ToArrayAsync(cancellationToken);
 
     public Task<UserSession[]> FindExpiredSessionsAsync(DateTime now, int take, CancellationToken cancellationToken = default) =>

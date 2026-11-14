@@ -26,7 +26,8 @@ public sealed class UsersController(
     UserAccountService accounts,
     UserLifecycleService lifecycle,
     UserAccessService access,
-    UserResetLinkService resetLinks) : ApiControllerBase
+    UserResetLinkService resetLinks,
+    TemporaryPasswordResetService passwordResets) : ApiControllerBase
 {
     /// <summary>R38/R43: the paged user list, with search, role / status / lockout filters and a whitelisted sort.</summary>
     [HttpGet]
@@ -143,6 +144,15 @@ public sealed class UsersController(
     {
         await resetLinks.SendAsync(id, cancellationToken);
         return NoContent();
+    }
+
+    /// <summary>R67: a new temporary password for an Owner or a Staff account, shown once; the account must change it at the next login.</summary>
+    [HttpPost("{id:guid}/temporary-password")]
+    public async Task<IActionResult> ResetToTemporaryPassword(Guid id, CancellationToken cancellationToken)
+    {
+        var reset = await passwordResets.ResetAsync(id, cancellationToken);
+        Response.Headers.CacheControl = "no-store";
+        return Ok(reset);
     }
 
     /// <summary>R39: ends one session of this user, from the sessions tab.</summary>

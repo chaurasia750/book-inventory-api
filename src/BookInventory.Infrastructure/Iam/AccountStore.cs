@@ -18,12 +18,14 @@ public sealed class AccountStore : IAccountStore
     private readonly IRepository<AppUser> _users;
     private readonly IRepository<UserStatusHistory> _statusHistory;
     private readonly IRepository<UserRoleHistory> _roleHistory;
+    private readonly IRepository<UserPasswordReset> _passwordResets;
 
     public AccountStore(IUnitOfWork unitOfWork)
     {
         _users = unitOfWork.Repository<AppUser>();
         _statusHistory = unitOfWork.Repository<UserStatusHistory>();
         _roleHistory = unitOfWork.Repository<UserRoleHistory>();
+        _passwordResets = unitOfWork.Repository<UserPasswordReset>();
     }
 
     public Task<AppUser?> FindForManagementAsync(Guid id, CancellationToken cancellationToken = default) =>
@@ -34,6 +36,9 @@ public sealed class AccountStore : IAccountStore
 
     public Task AddAsync(UserStatusHistory history, CancellationToken cancellationToken = default) =>
         _statusHistory.AddAsync(history, cancellationToken);
+
+    public Task AddAsync(UserPasswordReset reset, CancellationToken cancellationToken = default) =>
+        _passwordResets.AddAsync(reset, cancellationToken);
 
     public Task AddAsync(UserRoleHistory history, CancellationToken cancellationToken = default) =>
         _roleHistory.AddAsync(history, cancellationToken);

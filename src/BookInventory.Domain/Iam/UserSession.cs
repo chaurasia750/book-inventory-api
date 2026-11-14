@@ -48,6 +48,9 @@ public class UserSession : AggregateRoot
 
     public string? UserAgent { get; private set; }
 
+    /// <summary>R69: the company a Super Admin entered in this session, or null. Set and cleared only through the capability of the <c>company</c> module.</summary>
+    public Guid? ActiveCompanyId { get; private set; }
+
     public bool IsRevoked => RevokedAt is not null;
 
     public bool IsActiveAt(DateTime utcNow) => !IsRevoked && ExpiresAt > utcNow;
@@ -99,6 +102,13 @@ public class UserSession : AggregateRoot
         RevokedAt = utcNow;
         RevokeReason = reason;
     }
+
+    /// <summary>R69: a Super Admin session starts working for a company. The caller (the capability) has checked the role.</summary>
+    public void EnterCompany(Guid companyId) =>
+        ActiveCompanyId = companyId != Guid.Empty ? companyId : throw new ValidationFailureException(IamMessages.UserCompanyInvalid);
+
+    /// <summary>R69: back to no company.</summary>
+    public void LeaveCompany() => ActiveCompanyId = null;
 
     private void EnsureActiveAt(DateTime utcNow)
     {
