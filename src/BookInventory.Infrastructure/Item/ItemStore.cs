@@ -38,7 +38,27 @@ public sealed class ItemStore(IUnitOfWork unitOfWork) : IItemStore
                 cancellationToken);
 
     public async Task<IPagedList<ItemRow>> SearchAsync(
-        ItemSearchQuery query, IReadOnlyCollection<Guid> vendorIds, bool activeOnly, CancellationToken cancellationToken = default)
+        ItemSearchQuery query, IReadOnlyCollection<Guid> vendorIds, bool activeOnly, CancellationToken cancellationToken = default) =>
+        await Filtered(query, vendorIds, activeOnly)
+            .OrderBy(WhitelistedOrder(query.OrderBy))
+            .Select(RowOf)
+            .ToPagedListAsync(query.PageIndex < 1 ? 1 : query.PageIndex, query.PageSize, cancellationToken);
+
+    public async Task<IReadOnlyList<Guid>> IdsAsync(
+        ItemSearchQuery query, IReadOnlyCollection<Guid> vendorIds, int limit, CancellationToken cancellationToken = default) =>
+        await Filtered(query, vendorIds, activeOnly: false)
+            .OrderBy(WhitelistedOrder(query.OrderBy))
+            .Select(i => i.Id)
+            .Take(limit)
+            .ToListAsync(cancellationToken);
+
+    public async Task<IReadOnlyList<ItemRow>> RowsAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken = default) =>
+        ids.Count == 0
+            ? []
+            : await _items.TableNoTracking.Where(i => ids.Contains(i.Id)).Select(RowOf).ToListAsync(cancellationToken);
+
+    /// <summary>R12: the one place the list filters and the search are written; the list, the id lookups and the directory all use it.</summary>
+    private IQueryable<ItemRoot> Filtered(ItemSearchQuery query, IReadOnlyCollection<Guid> vendorIds, bool activeOnly)
     {
         var search = query.Search?.Trim().ToLowerInvariant();
         var barcodeSearch = query.Search?.Trim().ToUpperInvariant();
@@ -48,7 +68,7 @@ public sealed class ItemStore(IUnitOfWork unitOfWork) : IItemStore
         var className = query.ClassName?.Trim().ToLowerInvariant();
         var stockManaged = query.IsStockManaged;
 
-        return await _items.TableNoTracking
+        return _items.TableNoTracking
             .Where(i => status == null || i.Status == status)
             .Where(i => category == null || i.Category == category)
             .Where(i => vendorId == null || i.VendorId == vendorId)
@@ -60,11 +80,11 @@ public sealed class ItemStore(IUnitOfWork unitOfWork) : IItemStore
                         || (i.ClassName != null && i.ClassName.ToLower().Contains(search))
                         || (i.Subject != null && i.Subject.ToLower().Contains(search))
                         || i.Barcodes.Any(b => b.Barcode.Contains(barcodeSearch!))
-                        || (i.VendorId != null && vendorIds.Contains(i.VendorId.Value)))
-            .OrderBy(WhitelistedOrder(query.OrderBy))
-            .Select(i => new ItemRow(i.Id, i.Code, i.Name, i.Category, i.ClassName, i.VendorId, i.GstRatePercent, i.IsStockManaged, i.Status, i.CreatedAt))
-            .ToPagedListAsync(query.PageIndex < 1 ? 1 : query.PageIndex, query.PageSize, cancellationToken);
+                        || (i.VendorId != null && vendorIds.Contains(i.VendorId.Value)));
     }
+
+    private static readonly System.Linq.Expressions.Expression<Func<ItemRoot, ItemRow>> RowOf =
+        i => new ItemRow(i.Id, i.Code, i.Name, i.Category, i.ClassName, i.VendorId, i.GstRatePercent, i.IsStockManaged, i.Status, i.CreatedAt);
 
     /// <summary>The platform <c>OrderBy(string)</c> accepts any property, so the column is checked here first; anything else falls back to the default order.</summary>
     private static string? WhitelistedOrder(string? orderBy)

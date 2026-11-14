@@ -33,6 +33,13 @@ public interface IItemStore
     /// <summary>R6: whether one of these (normalised) barcodes is on another live item of the company; <paramref name="excludingItemId"/> is the item being changed.</summary>
     Task<bool> AnyBarcodeUsedAsync(IReadOnlyCollection<string> barcodes, Guid? excludingItemId, CancellationToken cancellationToken = default);
 
+    /// <summary>R16: the ids of the items the filters and the search match, in the given order, at most <paramref name="limit"/>.</summary>
+    Task<IReadOnlyList<Guid>> IdsAsync(
+        ItemSearchQuery query, IReadOnlyCollection<Guid> vendorIds, int limit, CancellationToken cancellationToken = default);
+
+    /// <summary>R16: the list rows of the given items; an id that is not found is left out.</summary>
+    Task<IReadOnlyList<ItemRow>> RowsAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken = default);
+
     /// <summary>R12: the paged, searchable, filterable list; <paramref name="vendorIds"/> are the vendors whose name matched the search text.</summary>
     Task<IPagedList<ItemRow>> SearchAsync(
         ItemSearchQuery query, IReadOnlyCollection<Guid> vendorIds, bool activeOnly, CancellationToken cancellationToken = default);
