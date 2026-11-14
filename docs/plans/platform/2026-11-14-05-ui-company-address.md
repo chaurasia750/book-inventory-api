@@ -24,7 +24,7 @@ The router's base address is dynamic: `base-href.js` (an external script, becaus
 ## 4. Tasks (at most 8)
 - [x] 1. `base-href.js` and the member `index.html` use it instead of the fixed base (U12).
 - [x] 2. `companyAddressGuard` on the member layout route; Super Admin or no company goes to `/admin` (U12).
-- [x] 3. Sign-in redirect for company accounts opens `/<slug>/`; remove `APP_URLS.MEMBER` and fix the role-to-app table and `homeUrlForRole` (U12).
+- [x] 3. Sign-in redirect for company accounts opens `/<slug>/`; `APP_URLS.MEMBER` stays only as the fallback address when the slug cannot be read (U12).
 - [x] 4. `scripts/serve-single.mjs`, `production-deploy.js` (member without a fixed base href) and `iis-web.config` map company addresses to the member app (U12).
 - [x] 5. API host: `UseCompanyAddresses` in `SpaHosting` (U12).
 - [x] 6. Builds and lint of both repositories: 0 new findings.
