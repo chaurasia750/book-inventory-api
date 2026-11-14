@@ -24,6 +24,38 @@ public partial class AppUser
                 RequireCompany(companyId)),
             utcNow);
 
+    /// <summary>
+    /// R65: a Staff login created by an Owner for the Owner's own company: active at once, the first login must change
+    /// the generated password (R57). The user id was built by <see cref="StaffUserId"/>.
+    /// </summary>
+    public static AppUser CreateCompanyStaff(UserDraft draft, Guid companyId, Guid actorId, DateTime utcNow) =>
+        Create(
+            new NewAccount(
+                draft, Role.Staff, AccountStatus.Active, MustChangePassword: true, IsSystemAccount: false, actorId,
+                RequireCompany(companyId)),
+            utcNow);
+
+    /// <summary>
+    /// R67: a person (Super Admin or Owner) sets a new generated password on a company account that has no e-mail to
+    /// reset by. The forced change, the cleared lockout and the event are the same as a forced password change; ending
+    /// the sessions is the use case's job. Never for the system account, never for yourself, never for a non-company account.
+    /// </summary>
+    public void ResetToTemporaryPassword(string passwordHash, Guid actorId, DateTime utcNow)
+    {
+        EnsureNotSystemAccount();
+        EnsureNoSelfAction(actorId);
+        if (!Role.IsCompanyRole())
+            throw new ValidationFailureException(IamMessages.UserPasswordResetNotAllowed);
+
+        PasswordHash = RequirePasswordHash(passwordHash);
+        PasswordChangedAt = utcNow;
+        MustChangePassword = true;
+        FailedLoginCount = 0;
+        LockedUntil = null;
+
+        AddDomainEvent(new UserPasswordChanged(Id, ForcedChange: true));
+    }
+
     private static Guid RequireCompany(Guid companyId) =>
         companyId != Guid.Empty ? companyId : throw new ValidationFailureException(IamMessages.UserCompanyInvalid);
 }

@@ -595,8 +595,8 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
                         .HasColumnName("user_name");
 
                     b.HasKey("Id")
@@ -854,6 +854,62 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
 
                             t.HasCheckConstraint("ck_user_login_log_result", "\"result\" IN ('SUCCESS', 'FAILED_BAD_PASSWORD', 'FAILED_UNKNOWN_USER', 'FAILED_LOCKED', 'FAILED_PENDING', 'FAILED_INACTIVE', 'FAILED_SUSPENDED', 'FAILED_REJECTED', 'FAILED_COMPANY_INACTIVE')");
                         });
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Iam.UserPasswordReset", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<DateTime>("ResetAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("reset_at");
+
+                    b.Property<Guid>("ResetBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("reset_by");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_user_password_reset");
+
+                    b.HasIndex("ResetBy")
+                        .HasDatabaseName("ix_user_password_reset_reset_by");
+
+                    b.HasIndex("UserId", "ResetAt")
+                        .HasDatabaseName("ix_user_password_reset_user_id_reset_at");
+
+                    b.ToTable("user_password_reset", "iam");
                 });
 
             modelBuilder.Entity("BookInventory.Domain.Iam.UserRoleHistory", b =>
@@ -1175,6 +1231,23 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_user_login_log_app_user_user_id");
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Iam.UserPasswordReset", b =>
+                {
+                    b.HasOne("BookInventory.Domain.Iam.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("ResetBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_password_reset_app_user_reset_by");
+
+                    b.HasOne("BookInventory.Domain.Iam.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_password_reset_app_user_user_id");
                 });
 
             modelBuilder.Entity("BookInventory.Domain.Iam.UserRoleHistory", b =>

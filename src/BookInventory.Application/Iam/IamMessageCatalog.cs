@@ -43,6 +43,8 @@ public static class IamMessageCatalog
             [IamMessages.UserMemberRoleImmutable] = "The role of an agent cannot be changed.",
             [IamMessages.UserCompanyRoleImmutable] = "The role of a company account cannot be changed.",
             [IamMessages.UserCompanyInvalid] = "A company account needs a valid company.",
+            [IamMessages.StaffShortNameInvalid] = "The short name must be 2 to 20 lower-case letters or digits.",
+            [IamMessages.UserPasswordResetNotAllowed] = "A temporary password can only be set for a company account.",
             [IamMessages.UserRoleUnchanged] = "The user already has that role.",
             [IamMessages.UserRoleChangeReasonRequired] = "A reason of 5 to 500 characters is required.",
 

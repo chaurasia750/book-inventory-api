@@ -39,6 +39,8 @@ public static class IamMessages
     public const string UserMemberRoleImmutable = "iam.user.member_role_immutable";
     public const string UserCompanyRoleImmutable = "iam.user.company_role_immutable";
     public const string UserCompanyInvalid = "iam.user.company_invalid";
+    public const string StaffShortNameInvalid = "iam.staff.invalid_short_name";
+    public const string UserPasswordResetNotAllowed = "iam.user.password_reset_not_allowed";
     public const string UserRoleUnchanged = "iam.user.role_unchanged";
     public const string UserRoleChangeReasonRequired = "iam.user.role_change_reason_required";
 

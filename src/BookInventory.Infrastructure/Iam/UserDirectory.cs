@@ -36,11 +36,13 @@ public sealed class UserDirectory(IUnitOfWork unitOfWork, TimeProvider timeProvi
         var pageIndex = query.PageIndex < 1 ? 1 : query.PageIndex;
         var search = query.Search?.Trim();
         var role = query.Role;
+        var companyId = query.CompanyId;
         var status = query.Status;
         var isLocked = query.IsLocked;
 
         var source = _users.TableNoTracking
             .Where(u => !role.HasValue || u.Role == role.Value)
+            .Where(u => !companyId.HasValue || u.CompanyId == companyId.Value)
             .Where(u => !status.HasValue || u.Status == status.Value)
             .Where(u => !isLocked.HasValue
                         || (isLocked.Value

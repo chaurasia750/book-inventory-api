@@ -12,7 +12,7 @@ namespace BookInventory.Domain.Iam;
 public static partial class IdentityNormalizer
 {
     public const int UsernameMinLength = 3;
-    public const int UsernameMaxLength = 32;
+    public const int UsernameMaxLength = 64;
     public const int EmailMaxLength = 254;
     public const int MobileMinLength = 10;
     public const int MobileMaxLength = 15;
