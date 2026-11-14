@@ -4,7 +4,7 @@
 - **Status:** R1-R14 Approved by abhishek in chat on 2026-11-14 ("approved hai kro implement"; Q1-Q10 answered with the recommended answers, D1-D4 with them)
 - **Last updated:** 2026-11-14
 - **Source docs:** [BRD §1.2, §3, §4.3 Vendor / Publication Master (FR-VEN-01 to FR-VEN-03), §5.4 BR-GST, §5.6 BR-LED, §7.1, §8 Data Model (Vendor)](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P22; [specs/company.md](company.md); [specs/school.md](school.md) (the neighbouring master it follows)
-- **Plans:** [vendor#01](../plans/vendor/2026-11-14-01-vendor-master.md) (Approved), [vendor#02](../plans/vendor/2026-11-14-02-ui-vendor-screens.md) (Approved); the platform mechanism it needs: [platform#07](../plans/platform/2026-11-14-07-company-code-series.md) (Approved)
+- **Plans:** [vendor#01](../plans/vendor/2026-11-14-01-vendor-master.md) (Done), [vendor#02](../plans/vendor/2026-11-14-02-ui-vendor-screens.md) (Approved); the platform mechanism it needs: [platform#07](../plans/platform/2026-11-14-07-company-code-series.md) (Done)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
