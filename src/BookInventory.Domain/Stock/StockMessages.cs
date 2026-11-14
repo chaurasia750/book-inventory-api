@@ -18,4 +18,13 @@ public static class StockMessages
     public const string DocumentNotPosted = "stock.document_not_posted";
     public const string DocumentAlreadyReversed = "stock.document_already_reversed";
     public const string InvalidDocument = "stock.invalid_document";
+    public const string ImportInvalidFile = "stock.import.invalid_file";
+    public const string ImportTooLarge = "stock.import.too_large";
+    public const string ImportTooManyRows = "stock.import.too_many_rows";
+    public const string ImportEmpty = "stock.import.empty";
+    public const string ImportRowsInvalid = "stock.import.rows_invalid";
+    public const string ImportItemRequired = "stock.import.item_required";
+    public const string ImportItemUnknown = "stock.import.item_unknown";
+    public const string ImportInvalidStockType = "stock.import.invalid_stock_type";
+    public const string ImportDuplicateRow = "stock.import.duplicate_row";
 }

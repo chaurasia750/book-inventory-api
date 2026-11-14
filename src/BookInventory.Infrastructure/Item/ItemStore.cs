@@ -57,6 +57,23 @@ public sealed class ItemStore(IUnitOfWork unitOfWork) : IItemStore
             ? []
             : await _items.TableNoTracking.Where(i => ids.Contains(i.Id)).Select(RowOf).ToListAsync(cancellationToken);
 
+    public async Task<IReadOnlyList<ItemKeyMatch>> MatchKeysAsync(IReadOnlyCollection<string> keys, CancellationToken cancellationToken = default)
+    {
+        if (keys.Count == 0)
+            return [];
+
+        var byCode = await _items.TableNoTracking
+            .Where(i => keys.Contains(i.Code.ToUpper()))
+            .Select(i => new ItemKeyMatch(i.Code.ToUpper(), i.Id, true))
+            .ToListAsync(cancellationToken);
+        var byBarcode = await _items.TableNoTracking
+            .SelectMany(i => i.Barcodes)
+            .Where(b => keys.Contains(b.Barcode))
+            .Select(b => new ItemKeyMatch(b.Barcode, b.ItemId, false))
+            .ToListAsync(cancellationToken);
+        return [.. byCode, .. byBarcode];
+    }
+
     /// <summary>R12: the one place the list filters and the search are written; the list, the id lookups and the directory all use it.</summary>
     private IQueryable<ItemRoot> Filtered(ItemSearchQuery query, IReadOnlyCollection<Guid> vendorIds, bool activeOnly)
     {

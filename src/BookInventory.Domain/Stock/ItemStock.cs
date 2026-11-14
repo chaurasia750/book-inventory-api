@@ -147,9 +147,12 @@ public class ItemStock : CompanyOwnedRoot
         && !string.IsNullOrWhiteSpace(document.DocumentType) && document.DocumentType.Length <= StockDocument.TypeMaxLength
         && !string.IsNullOrWhiteSpace(document.DocumentNumber) && document.DocumentNumber.Length <= StockDocument.NumberMaxLength;
 
+    /// <summary>R4, R15: a movement quantity is a whole number from 1 to <see cref="MaxQuantity"/>.</summary>
+    public static bool IsValidQuantity(int quantity) => quantity is > 0 and <= MaxQuantity;
+
     private static void RequireQuantity(int quantity)
     {
-        if (quantity is <= 0 or > MaxQuantity)
+        if (!IsValidQuantity(quantity))
             throw new ValidationFailureException(StockMessages.InvalidQuantity);
     }
 

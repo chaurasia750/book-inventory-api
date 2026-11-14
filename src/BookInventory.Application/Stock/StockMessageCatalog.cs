@@ -19,6 +19,15 @@ public static class StockMessageCatalog
             [StockMessages.DocumentAlreadyPosted] = "The stock of this document was already posted.",
             [StockMessages.DocumentNotPosted] = "This document has no stock posted.",
             [StockMessages.DocumentAlreadyReversed] = "The stock of this document was already reversed.",
-            [StockMessages.InvalidDocument] = "The document type, id and number are required."
+            [StockMessages.InvalidDocument] = "The document type, id and number are required.",
+            [StockMessages.ImportInvalidFile] = "Upload an Excel file (.xlsx) made from the template.",
+            [StockMessages.ImportTooLarge] = "The file is larger than 5 MB.",
+            [StockMessages.ImportTooManyRows] = "The file has more than 5000 rows.",
+            [StockMessages.ImportEmpty] = "The file has no rows to import.",
+            [StockMessages.ImportRowsInvalid] = "Some rows are wrong; nothing was imported. Correct them and upload the file again.",
+            [StockMessages.ImportItemRequired] = "The item code or barcode is empty.",
+            [StockMessages.ImportItemUnknown] = "No item has this code or barcode.",
+            [StockMessages.ImportInvalidStockType] = "The stock type must be MAIN, DAMAGED or SAMPLE (empty means MAIN).",
+            [StockMessages.ImportDuplicateRow] = "This item and stock type is already in an earlier row of the file."
         };
 }

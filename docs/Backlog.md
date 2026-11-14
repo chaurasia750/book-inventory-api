@@ -60,3 +60,5 @@ Kinds: **NV** not verified · **GAP** known gap · **DEC** decision the owner ha
 | B50 | stock | GAP | The item history is returned whole (not paged) and the "zero or below" filter scans at most 5000 matching items in pages of 200; page the history and move the filter into one query when volumes grow | stock#01 | open |
 | B51 | stock | NV | The posting capability (`IStockPosting`) was driven only by a temporary scratch controller; its real callers arrive with Purchase, School Invoice, Counter Sale, Return and Sample | stock#01 | open |
 | B52 | stock | GAP | An entered Super Admin's entries show the id only (names come from the company's own accounts) | stock#01 | open |
+| B53 | stock | GAP | A file above the server body limit (6 MB) is refused by the framework's validation problem ("Request body too large") without the module code `stock.import.too_large`; files from 5 MB to 6 MB get the module code | stock#03 | open |
+| B54 | item | DEBT | The item directory's `FindByCodeOrBarcodeAsync` (added for the stock import) is covered by stock#03's checks only; item R16 does not name it yet: add a line to item R16 in the next item spec change | stock#03 | open |

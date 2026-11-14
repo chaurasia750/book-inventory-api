@@ -43,6 +43,12 @@ public interface IItemDirectory
     /// <summary>One page of item ids that match the search text (name, code, barcode, class, subject, vendor name) and the selection.</summary>
     Task<ItemIdPage> PageAsync(ItemPageRequest request, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// R16 (for stock R18): the items whose code or barcode equals one of these texts (ignoring case and surrounding spaces), keyed
+    /// by the upper-case text; a code wins over a barcode of another item. A text that matches nothing is left out.
+    /// </summary>
+    Task<IReadOnlyDictionary<string, ItemReference>> FindByCodeOrBarcodeAsync(IReadOnlyCollection<string> keys, CancellationToken cancellationToken = default);
+
     /// <summary>Every item id of the selection, at most <see cref="MaxBulkItems"/>.</summary>
     Task<IReadOnlyList<Guid>> AllIdsAsync(ItemSelection selection, CancellationToken cancellationToken = default);
 }

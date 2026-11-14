@@ -16,6 +16,9 @@ public sealed record ItemRow(
     Domain.Item.ItemStatus Status,
     DateTime CreatedAt);
 
+/// <summary>R18 of stock: an item whose code (<see cref="IsCode"/>) or one of whose barcodes equals <see cref="Key"/> (upper case).</summary>
+public sealed record ItemKeyMatch(string Key, Guid ItemId, bool IsCode);
+
 /// <summary>
 /// The persistence port of the <c>item</c> module. Every read is already limited to the session's company by the platform
 /// filter (P19), so nothing here takes a company. Like the other stores it has no save method: the request transaction commits.
@@ -36,6 +39,9 @@ public interface IItemStore
     /// <summary>R16: the ids of the items the filters and the search match, in the given order, at most <paramref name="limit"/>.</summary>
     Task<IReadOnlyList<Guid>> IdsAsync(
         ItemSearchQuery query, IReadOnlyCollection<Guid> vendorIds, int limit, CancellationToken cancellationToken = default);
+
+    /// <summary>R16: the live items whose code or barcode equals one of these upper-case keys.</summary>
+    Task<IReadOnlyList<ItemKeyMatch>> MatchKeysAsync(IReadOnlyCollection<string> keys, CancellationToken cancellationToken = default);
 
     /// <summary>R16: the list rows of the given items; an id that is not found is left out.</summary>
     Task<IReadOnlyList<ItemRow>> RowsAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken = default);
