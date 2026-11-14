@@ -1333,6 +1333,230 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.School.School", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("address");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("code");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<string>("ContactPerson")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("contact_person");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(254)
+                        .HasColumnType("character varying(254)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("Gstin")
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)")
+                        .HasColumnName("gstin");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<bool>("IsGstDefault")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_gst_default");
+
+                    b.Property<string>("Mobile")
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)")
+                        .HasColumnName("mobile");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("name");
+
+                    b.Property<decimal>("OpeningBalanceAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("opening_balance_amount");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<string>("SaleType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("sale_type");
+
+                    b.Property<string>("SessionType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("session_type");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("state");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id")
+                        .HasName("pk_school");
+
+                    b.HasIndex("CompanyId", "Code")
+                        .IsUnique()
+                        .HasDatabaseName("ix_school_company_id_code");
+
+                    b.HasIndex("CompanyId", "Name")
+                        .HasDatabaseName("ix_school_company_id_name");
+
+                    b.HasIndex("CompanyId", "Status")
+                        .HasDatabaseName("ix_school_company_id_status");
+
+                    b.ToTable("school", "school", t =>
+                        {
+                            t.HasCheckConstraint("ck_school_sale_type", "\"sale_type\" IN ('SCHOOL_ORDER', 'COUNTER_SALE', 'BOTH')");
+
+                            t.HasCheckConstraint("ck_school_session_type", "\"session_type\" IN ('APR_MAR', 'JAN_DEC')");
+
+                            t.HasCheckConstraint("ck_school_status", "\"status\" IN ('ACTIVE', 'INACTIVE')");
+                        });
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.School.SchoolClass", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("NameNormalized")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("name_normalized");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("school_id");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.HasKey("Id")
+                        .HasName("pk_school_class");
+
+                    b.HasIndex("SchoolId", "NameNormalized")
+                        .IsUnique()
+                        .HasDatabaseName("ix_school_class_school_id_name_normalized")
+                        .HasFilter("is_deleted = false");
+
+                    b.HasIndex("SchoolId", "SortOrder")
+                        .HasDatabaseName("ix_school_class_school_id_sort_order");
+
+                    b.ToTable("school_class", "school");
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.School.SchoolCodeCounter", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<int>("LastNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("last_number");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id")
+                        .HasName("pk_school_code_counter");
+
+                    b.HasIndex("CompanyId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_school_code_counter_company_id");
+
+                    b.ToTable("school_code_counter", "school");
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Company.CompanyEntry", b =>
                 {
                     b.HasOne("BookInventory.Domain.Company.Company", null)
@@ -1456,6 +1680,16 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_user_status_history_app_user_user_id");
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.School.SchoolClass", b =>
+                {
+                    b.HasOne("BookInventory.Domain.School.School", null)
+                        .WithMany("Classes")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_school_class_school_school_id");
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Company.Company", b =>
                 {
                     b.Navigation("StatusHistory");
@@ -1464,6 +1698,11 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("BookInventory.Domain.Core.Notification", b =>
                 {
                     b.Navigation("Logs");
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.School.School", b =>
+                {
+                    b.Navigation("Classes");
                 });
 #pragma warning restore 612, 618
         }

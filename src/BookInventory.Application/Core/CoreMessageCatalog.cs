@@ -14,6 +14,8 @@ public static class CoreMessageCatalog
             [CoreMessages.InvalidTransition] = "The notification is not in a state that allows this change.",
             [CoreMessages.CannotRequeueRedacted] = "This notification held a secret that has been removed, so it cannot be sent again.",
             [CoreMessages.NotFound] = "The notification could not be found.",
-            [CoreMessages.AuditCompanyRequired] = "The audit log needs a company."
+            [CoreMessages.AuditCompanyRequired] = "The audit log needs a company.",
+            [CoreMessages.CompanyRequired] = "This action needs a company. Enter a company first.",
+            [CoreMessages.CompanyImmutable] = "The company of a record cannot be changed."
         };
 }
