@@ -13,3 +13,6 @@ public sealed record SchoolDeactivated(Guid SchoolId) : SchoolEvent(SchoolId);
 
 /// <summary>A deactivated school is usable again (R8).</summary>
 public sealed record SchoolReactivated(Guid SchoolId) : SchoolEvent(SchoolId);
+
+/// <summary>R17: the opening balance was set or changed (a new school counts from zero); the ledger posts the difference.</summary>
+public sealed record SchoolOpeningBalanceChanged(Guid SchoolId, string Code, decimal OldAmount, decimal NewAmount) : SchoolEvent(SchoolId);
