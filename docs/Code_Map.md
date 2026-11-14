@@ -12,7 +12,7 @@ For the agent and new developers. Every path below exists; copy the neighbouring
 | `src/BookInventory.Infrastructure/` | EF configurations, stores (port adapters), options, migrations |
 | `src/BookInventory.Api/` | `src/BookInventory.Api/Program.cs`, controllers, hosted services, auth wiring |
 
-Modules present today: `Iam`, `Core`, `Company`, `School`, `Vendor`, `Item` (folders match the schemas `iam`, `core`, `company`, `school`, `vendor`, `item`). The aggregate class `Company` shares its name with its namespace, so files that use it add `using CompanyRoot = BookInventory.Domain.Company.Company;`.
+Modules present today: `Iam`, `Core`, `Company`, `School`, `Vendor`, `Item`, `Price` (folders match the schemas `iam`, `core`, `company`, `school`, `vendor`, `item`, `price`). The aggregate class `Company` shares its name with its namespace, so files that use it add `using CompanyRoot = BookInventory.Domain.Company.Company;`.
 
 ## Base types of the shared library
 

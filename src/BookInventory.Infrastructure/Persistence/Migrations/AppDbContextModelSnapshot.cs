@@ -1537,6 +1537,91 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                     b.ToTable("item_barcode", "item");
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Price.PriceVersion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateOnly>("EffectiveFrom")
+                        .HasColumnType("date")
+                        .HasColumnName("effective_from");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("item_id");
+
+                    b.Property<decimal>("MrpAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("mrp_amount");
+
+                    b.Property<decimal>("PurchaseAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("purchase_amount");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<decimal>("SaleAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("sale_amount");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<string>("VersionName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("version_name");
+
+                    b.Property<string>("VersionNameNormalized")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("version_name_normalized");
+
+                    b.HasKey("Id")
+                        .HasName("pk_price_version");
+
+                    b.HasIndex("CompanyId", "ItemId", "EffectiveFrom")
+                        .HasDatabaseName("ix_price_version_company_id_item_id_effective_from");
+
+                    b.HasIndex("CompanyId", "ItemId", "VersionNameNormalized")
+                        .IsUnique()
+                        .HasDatabaseName("ix_price_version_company_id_item_id_version_name_normalized")
+                        .HasFilter("is_deleted = false");
+
+                    b.ToTable("price_version", "price");
+                });
+
             modelBuilder.Entity("BookInventory.Domain.School.School", b =>
                 {
                     b.Property<Guid>("Id")
