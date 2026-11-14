@@ -1,5 +1,6 @@
 using BookInventory.BuildingBlocks.Domain;
 using BookInventory.BuildingBlocks.Domain.Exceptions;
+using BookInventory.Domain.Core;
 
 namespace BookInventory.Domain.Iam;
 
@@ -8,6 +9,7 @@ namespace BookInventory.Domain.Iam;
 /// Only the hash is stored, the token lives for 30 minutes, and a new request invalidates earlier unused tokens of the
 /// same user (the caller retires them). Resetting the password marks this one used (R18).
 /// </summary>
+[AuditIgnore]
 public class PasswordResetToken : AggregateRoot
 {
     private PasswordResetToken() => TokenHash = string.Empty;

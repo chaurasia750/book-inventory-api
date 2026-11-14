@@ -1,5 +1,6 @@
 using BookInventory.BuildingBlocks.Domain;
 using BookInventory.BuildingBlocks.Domain.Exceptions;
+using BookInventory.Domain.Core;
 
 namespace BookInventory.Domain.Iam;
 
@@ -12,6 +13,7 @@ namespace BookInventory.Domain.Iam;
 /// one that changes the status, and a nullable <c>changed_by</c> (SYSTEM) has no parent to hang from.
 /// </para>
 /// </summary>
+[AuditIgnore]
 public class UserStatusHistory : AggregateRoot
 {
     private UserStatusHistory() => Reason = string.Empty;

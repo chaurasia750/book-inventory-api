@@ -33,6 +33,8 @@ Modules present today: `Iam`, `Core`, `Company` (folders match the schemas `iam`
 | Aggregate root | `src/BookInventory.Domain/Iam/AppUser.cs` (also `src/BookInventory.Domain/Core/Notification.cs`) |
 | Aggregate with an append-only child timeline | `src/BookInventory.Domain/Company/Company.cs` with `src/BookInventory.Domain/Company/CompanyStatusHistory.cs` |
 | Domain events | `src/BookInventory.Domain/Iam/UserEvents.cs` |
+| Audit marks on an entity | `[AuditIgnore]` and `[AuditSecret]` (`src/BookInventory.Domain/Core/AuditIgnoreAttribute.cs`, `src/BookInventory.Domain/Core/AuditSecretAttribute.cs`) used on `src/BookInventory.Domain/Iam/AppUser.cs`; company scope: `src/BookInventory.Domain/Core/IAuditCompanyScope.cs` |
+| Audit capture (the save override) | `src/BookInventory.Infrastructure/Persistence/AppDbContext.cs` with `src/BookInventory.Infrastructure/Core/AuditCapture.cs` |
 | Message codes | `src/BookInventory.Domain/Iam/IamMessages.cs`, catalogue `src/BookInventory.Application/Iam/IamMessageCatalog.cs` |
 | Application service (use case) | `src/BookInventory.Application/Iam/Accounts/UserAccountService.cs` |
 | Port implemented in Infrastructure | `src/BookInventory.Application/Iam/Accounts/IAccountStore.cs` with `src/BookInventory.Infrastructure/Iam/AccountStore.cs` |

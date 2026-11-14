@@ -1,4 +1,5 @@
 using BookInventory.BuildingBlocks.Domain;
+using BookInventory.Domain.Core;
 
 namespace BookInventory.Domain.Core;
 
@@ -6,6 +7,7 @@ namespace BookInventory.Domain.Core;
 /// One send attempt of one notification (spec core N6). A child of <see cref="Notification"/>, added only by it, and
 /// never edited or deleted afterwards.
 /// </summary>
+[AuditIgnore]
 public class NotificationLog : TransactionDomainBase
 {
     private NotificationLog() => Response = string.Empty;

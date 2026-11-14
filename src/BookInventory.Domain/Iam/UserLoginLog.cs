@@ -1,6 +1,7 @@
 using System.Net;
 using BookInventory.BuildingBlocks.Domain;
 using BookInventory.BuildingBlocks.Domain.Exceptions;
+using BookInventory.Domain.Core;
 
 namespace BookInventory.Domain.Iam;
 
@@ -17,6 +18,7 @@ namespace BookInventory.Domain.Iam;
 /// re-parsing history.</item>
 /// </list>
 /// </summary>
+[AuditIgnore]
 public class UserLoginLog : AggregateRoot
 {
     private UserLoginLog() => IdentifierAttempted = string.Empty;

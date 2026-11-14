@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using BookInventory.BuildingBlocks.Domain;
 using BookInventory.BuildingBlocks.Domain.Exceptions;
+using BookInventory.Domain.Core;
 
 namespace BookInventory.Domain.Iam;
 
@@ -46,6 +47,7 @@ public partial class AppUser : AggregateRoot
     public string FullName { get; private set; }
 
     /// <summary>Hashed with PBKDF2-HMAC-SHA512 in a self-describing format (R16, D19). Never logged, never returned by a DTO.</summary>
+    [AuditSecret]
     public string PasswordHash { get; private set; }
 
     public Role Role { get; private set; }

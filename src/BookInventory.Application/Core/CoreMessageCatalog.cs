@@ -13,6 +13,7 @@ public static class CoreMessageCatalog
             [CoreMessages.InvalidTemplate] = "The message template is incomplete.",
             [CoreMessages.InvalidTransition] = "The notification is not in a state that allows this change.",
             [CoreMessages.CannotRequeueRedacted] = "This notification held a secret that has been removed, so it cannot be sent again.",
-            [CoreMessages.NotFound] = "The notification could not be found."
+            [CoreMessages.NotFound] = "The notification could not be found.",
+            [CoreMessages.AuditCompanyRequired] = "The audit log needs a company."
         };
 }

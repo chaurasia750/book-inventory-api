@@ -1,5 +1,6 @@
 using BookInventory.BuildingBlocks.Domain;
 using BookInventory.BuildingBlocks.Domain.Exceptions;
+using BookInventory.Domain.Core;
 
 namespace BookInventory.Domain.Iam;
 
@@ -8,6 +9,7 @@ namespace BookInventory.Domain.Iam;
 /// never for a <c>MEMBER</c>, and never edited or deleted. Its own root, for the same reason as
 /// <see cref="UserStatusHistory"/>.
 /// </summary>
+[AuditIgnore]
 public class UserRoleHistory : AggregateRoot
 {
     private UserRoleHistory() => Reason = string.Empty;

@@ -12,4 +12,5 @@ public static class CoreMessages
     public const string InvalidTransition = "core.notification.invalid_transition";
     public const string CannotRequeueRedacted = "core.notification.cannot_requeue_redacted";
     public const string NotFound = "core.notification.not_found";
+    public const string AuditCompanyRequired = "core.audit.company_required";
 }
