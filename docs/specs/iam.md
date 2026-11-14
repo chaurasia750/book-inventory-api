@@ -3,7 +3,7 @@
 - **Module:** `iam` (PostgreSQL schema `iam`)
 - **Status:** carried over from the base project (HautInHousing); describes the code as it is. R59-R69, AC30-AC40 and D20-D21 (company accounts) were approved by the owner on 2026-11-14 and are being built (plans iam#01 to iam#04).
 - **Last updated:** 2026-11-14
-- **Plans:** [iam#01](../plans/iam/2026-11-14-01-company-linked-accounts.md) Done (R59-R64, R68, R69 storage and capability; AC30-AC35, AC39, AC40); [iam#02](../plans/iam/2026-11-14-02-ui-company-account-login.md), [iam#03](../plans/iam/2026-11-14-03-owner-manages-staff-accounts.md) Done (R65-R67; AC36-AC38), [iam#04](../plans/iam/2026-11-14-04-ui-owner-staff-screens.md) Approved
+- **Plans:** [iam#01](../plans/iam/2026-11-14-01-company-linked-accounts.md) (Done, R59-R64, R68, R69 storage and capability; AC30-AC35, AC39, AC40); [iam#02](../plans/iam/2026-11-14-02-ui-company-account-login.md) (In progress), [iam#03](../plans/iam/2026-11-14-03-owner-manages-staff-accounts.md) (Done, R65-R67; AC36-AC38), [iam#04](../plans/iam/2026-11-14-04-ui-owner-staff-screens.md) (In progress)
 - **Source:** the Book Inventory business documents, see [docs index](../README.md) (none of the rules below were derived from them yet).
 
 ## Base-project rules under review (Book Inventory)

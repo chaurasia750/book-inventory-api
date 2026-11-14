@@ -4,7 +4,7 @@
 - **Status:** R1-R15 Approved by the owner on 2026-11-14 (AC1-AC11, D1-D7 with them)
 - **Last updated:** 2026-11-14
 - **Source docs:** [BRD §1.2, §3, §4.2 School Master (FR-SCH-01 to FR-SCH-08), §5.1 BR-SES, §5.4 BR-GST, §7.1, §8 Data Model (School, SchoolClass)](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P22; [specs/company.md](company.md)
-- **Plans:** [school#01](../plans/school/2026-11-14-01-school-master.md) (Done), [school#02](../plans/school/2026-11-14-02-ui-school-screens.md) (both Draft); the platform mechanism it needs: [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Approved)
+- **Plans:** [school#01](../plans/school/2026-11-14-01-school-master.md) (Done), [school#02](../plans/school/2026-11-14-02-ui-school-screens.md) (In progress); the platform mechanism it needs: [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Done)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 

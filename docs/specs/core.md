@@ -3,7 +3,7 @@
 - **Module:** `core` (matches the PostgreSQL schema `core`)
 - **Status:** the notification part (N1-N14) was carried over from the base project (HautInHousing) and describes the code as it is; the audit trail (A1-A10, AAC1-AAC10, AD1-AD4, AQ1-AQ5 recommended answers) was approved by the owner on 2026-11-14 and is being built (plans core#01, core#02).
 - **Last updated:** 2026-11-14
-- **Plans:** [core#01](../plans/core/2026-11-14-01-audit-trail.md) (Done), [core#02](../plans/core/2026-11-14-02-ui-audit-screen.md) (both Approved 2026-11-14)
+- **Plans:** [core#01](../plans/core/2026-11-14-01-audit-trail.md) (Done), [core#02](../plans/core/2026-11-14-02-ui-audit-screen.md) (In progress; the screen was never opened in a browser, B23)
 - **Source:** the Book Inventory business documents, see [docs index](../README.md) (none of the rules below were derived from them yet).
 
 > This file holds the **notification** capability and the **audit trail** (Draft). System settings are added to this spec when their plans exist.

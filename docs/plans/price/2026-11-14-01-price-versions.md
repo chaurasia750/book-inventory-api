@@ -5,7 +5,7 @@
 - **Spec:** [../../specs/price.md](../../specs/price.md) - rules covered: R1-R9, R15-R17; AC1-AC8, AC12
 - **Owner:** abhishek
 - **Status:** Done
-- **Depends on:** `platform#01` (Done), `item#03` (Approved)
+- **Depends on:** `platform#01` (Done), `item#03` (Done)
 - **UI plan:** price#02
 - **Approved by / on:** abhishek / 2026-11-14 (chat: the open questions answered one by one)
 - **Created:** 2026-11-14   **Completed:** 2026-11-14
