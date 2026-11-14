@@ -44,3 +44,5 @@ To be filled when the plan is closed (no browser tool for the assistant: the own
 
 ## 7. Risks and notes
 Written without a browser; expect small visual fixes after the owner's first look. The picker has no user until the Counter Sale bill screen; it is shown on its own in the list's "Add" flow only if the owner wants it there.
+
+**Parked (owner, 2026-11-14):** "eske last me karenge" - approved, but built only after the important transaction modules (purchase, invoice, payment, ledger and the rest). Do not start it before then.

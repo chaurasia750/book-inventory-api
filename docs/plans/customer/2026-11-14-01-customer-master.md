@@ -50,3 +50,5 @@ To be filled when the plan is closed.
 
 ## 7. Risks and notes
 The migration is additive; rollback: drop schema `customer`. If the owner answers Q3 with "allow the same mobile", the unique index on the mobile becomes a plain index before the plan starts.
+
+**Parked (owner, 2026-11-14):** "eske last me karenge" - approved, but built only after the important transaction modules (purchase, invoice, payment, ledger and the rest). Do not start it before then.
