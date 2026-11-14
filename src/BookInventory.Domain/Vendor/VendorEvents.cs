@@ -13,3 +13,6 @@ public sealed record VendorDeactivated(Guid VendorId) : VendorEvent(VendorId);
 
 /// <summary>A deactivated vendor is usable again (R7).</summary>
 public sealed record VendorReactivated(Guid VendorId) : VendorEvent(VendorId);
+
+/// <summary>R16: the opening balance was set or changed (a new vendor counts from zero); the ledger posts the difference.</summary>
+public sealed record VendorOpeningBalanceChanged(Guid VendorId, string Code, decimal OldAmount, decimal NewAmount) : VendorEvent(VendorId);
