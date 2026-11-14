@@ -4,7 +4,7 @@
 - **Status:** R1-R17 Approved by abhishek in chat on 2026-11-14 (Q1-Q12 answered one by one, all with the recommended answers; D1-D5 with them)
 - **Last updated:** 2026-11-14
 - **Source docs:** [BRD §1.2, §3 (who may change prices), §4.5 Price Management (FR-PRC-01 to FR-PRC-08), §5.2 BR-PRC, §5.3 BR-DIS, §7.1, §8 Data Model (ItemPriceVersion)](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P23; [specs/company.md](company.md); [specs/item.md](item.md); [specs/core.md](core.md) (the audit trail it reuses for history)
-- **Plans:** [price#01](../plans/price/2026-11-14-01-price-versions.md) (Done), [price#02](../plans/price/2026-11-14-02-ui-price-versions.md) (Approved), [price#03](../plans/price/2026-11-14-03-bulk-price-change.md) (Done), [price#04](../plans/price/2026-11-14-04-ui-bulk-price-change.md) (Approved); the capability it needs from item: [item#03](../plans/item/2026-11-14-03-item-directory.md) (Approved)
+- **Plans:** [price#01](../plans/price/2026-11-14-01-price-versions.md) (Done), [price#02](../plans/price/2026-11-14-02-ui-price-versions.md) (In progress), [price#03](../plans/price/2026-11-14-03-bulk-price-change.md) (Done), [price#04](../plans/price/2026-11-14-04-ui-bulk-price-change.md) (In progress); the capability it needs from item: [item#03](../plans/item/2026-11-14-03-item-directory.md) (Approved)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
