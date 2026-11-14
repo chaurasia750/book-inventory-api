@@ -48,7 +48,7 @@ Out of scope for this feature: Excel import of schools (FR-SCH-07, NFR-12: its o
 
 Schema `school`:
 - `school` (aggregate root, company-owned, platform P18): `company_id` (not null), `code` (generated, R15), `name`, `address`, `contact_person`, `mobile`, `email`, `gstin`, `state`, `session_type`, `sale_type`, `is_gst_default`, `opening_balance_amount` (`numeric(18,2)`, not negative), `status`, plus the standard audit and concurrency columns. Unique index on `(company_id, code)`.
-- `school_code_counter` (company-owned, one row per company): `company_id` (unique), `last_number`; read and increased under a lock inside the creating transaction (R15).
+- The code counter is the platform's company code series (`core.company_code_series`, prefix `SCH`, [specs/platform.md](platform.md) P23), read and increased under a lock inside the creating transaction (R15); the school has no counter table of its own since platform#07.
 - `school_class` (company-owned child of `school`, platform P18): `company_id`, `school_id`, `name`, `name_normalized`, `sort_order`. Unique on `(school_id, name_normalized)` among live rows; a removed class is soft-deleted.
 
 `company_id` is a plain id with no foreign key across schemas (the `company` module guarantees it exists).

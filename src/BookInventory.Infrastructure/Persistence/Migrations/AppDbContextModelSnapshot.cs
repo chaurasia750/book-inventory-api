@@ -345,6 +345,62 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Core.CompanyCodeSeries", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<int>("LastNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("last_number");
+
+                    b.Property<string>("Prefix")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("prefix");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id")
+                        .HasName("pk_company_code_series");
+
+                    b.HasIndex("CompanyId", "Prefix")
+                        .IsUnique()
+                        .HasDatabaseName("ix_company_code_series_company_id_prefix");
+
+                    b.ToTable("company_code_series", "core");
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Core.Notification", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1505,56 +1561,6 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_school_class_school_id_sort_order");
 
                     b.ToTable("school_class", "school");
-                });
-
-            modelBuilder.Entity("BookInventory.Domain.School.SchoolCodeCounter", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("company_id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uuid")
-                        .HasColumnName("created_by");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
-
-                    b.Property<int>("LastNumber")
-                        .HasColumnType("integer")
-                        .HasColumnName("last_number");
-
-                    b.Property<uint>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uuid")
-                        .HasColumnName("updated_by");
-
-                    b.HasKey("Id")
-                        .HasName("pk_school_code_counter");
-
-                    b.HasIndex("CompanyId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_school_code_counter_company_id");
-
-                    b.ToTable("school_code_counter", "school");
                 });
 
             modelBuilder.Entity("BookInventory.Domain.Company.CompanyEntry", b =>

@@ -7,13 +7,16 @@ namespace BookInventory.Domain.School;
 /// One customer school of one company (spec school R1-R15). A company-owned aggregate root (platform P18): its company is
 /// stamped and filtered by the platform. It owns the master data (R2-R5, R7), the ordered class list (R6) and the
 /// <c>ACTIVE</c>/<c>INACTIVE</c> status (R8); every rule of those is enforced here, and nothing outside changes its properties.
-/// The code is generated once at creation from the company's <see cref="SchoolCodeCounter"/> and never changes (R15).
+/// The code is generated once at creation from the company code series (platform P23, prefix <see cref="CodePrefix"/>) and never changes (R15).
 /// </summary>
 public class School : CompanyOwnedRoot
 {
     public const int NameMinLength = 2;
     public const int NameMaxLength = 150;
     public const int CodeMaxLength = 20;
+
+    /// <summary>R15: the prefix of the school codes in the company code series (<c>SCH-0001</c>).</summary>
+    public const string CodePrefix = "SCH";
 
     /// <summary>R6/Q2: the class list every new school starts with.</summary>
     public static readonly IReadOnlyList<string> DefaultClasses =
