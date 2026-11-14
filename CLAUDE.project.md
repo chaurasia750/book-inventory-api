@@ -6,7 +6,7 @@ Imported by `CLAUDE.md`. Everything that names this project, its stack, modules 
 
 ## Modules, plans and commits
 
-- Modules are the database schemas: `iam`, `company`, `school`, `finance`, `core`, plus `platform` for cross-cutting/BuildingBlocks work. Specs: `docs/specs/<module>.md`; plans: `docs/plans/<module>/`.
+- Modules are the database schemas: `iam`, `company`, `school`, `vendor`, `finance`, `core`, plus `platform` for cross-cutting/BuildingBlocks work. Specs: `docs/specs/<module>.md`; plans: `docs/plans/<module>/`.
 - Dependency direction between modules is written in the module specs (no ERD document is in the repository yet: ask before relying on one).
 - Build command: `dotnet build book-inventory.slnx` -> 0 warnings, 0 errors.
 
@@ -93,7 +93,7 @@ book-inventory.slnx           every project must be listed here
 - Aggregates reference each other by id (`Guid SchoolId`), never by object/navigation. Cross-aggregate reads go through the Application layer (query services), not by navigating.
 - Only the root raises domain events (`AddDomainEvent` is `protected`); handlers in Application react (`IDomainEventHandler<T>`). Events are named in the past tense (`MoneyCredited`, `InvoiceIssued`) and carry ids/values, not entities.
 - Pick the base deliberately: `AggregateRoot` for anything mutable (Invoice, School, Vendor, Ledger, Payment); `TransactionDomainBase` children for insert-only history (ledger entries, audit trail rows) that is never updated or deleted.
-- Table names: every entity configuration derives from `ModuleEntityConfiguration<T>(schema)`, which puts the entity in its module schema (`iam`, `company`, `school`, `finance`, `core`) with a **singular** snake_case table name taken from the class (`AppUser` -> `iam.app_user`, `LedgerEntry` -> `finance.ledger_entry`). Never call `ToTable` yourself and never rely on a `DbSet` name for the table name.
+- Table names: every entity configuration derives from `ModuleEntityConfiguration<T>(schema)`, which puts the entity in its module schema (`iam`, `company`, `school`, `vendor`, `finance`, `core`) with a **singular** snake_case table name taken from the class (`AppUser` -> `iam.app_user`, `LedgerEntry` -> `finance.ledger_entry`). Never call `ToTable` yourself and never rely on a `DbSet` name for the table name.
 
 ## Database (PostgreSQL only)
 
