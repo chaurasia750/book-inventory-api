@@ -2,6 +2,8 @@
 
 - **Module:** `iam` (PostgreSQL schema `iam`)
 - **Status:** carried over from the base project (HautInHousing); describes the code as it is. R59-R69, AC30-AC40 and D20-D21 (company accounts) were approved by the owner on 2026-11-14 and are being built (plans iam#01 to iam#04).
+- **Last updated:** 2026-11-14
+- **Plans:** [iam#01](../plans/iam/2026-11-14-01-company-linked-accounts.md) Done (R59-R64, R68, R69 storage and capability; AC30-AC35, AC39, AC40); [iam#02](../plans/iam/2026-11-14-02-ui-company-account-login.md), [iam#03](../plans/iam/2026-11-14-03-owner-manages-staff-accounts.md), [iam#04](../plans/iam/2026-11-14-04-ui-owner-staff-screens.md) Approved
 - **Source:** the Book Inventory business documents, see [docs index](../README.md) (none of the rules below were derived from them yet).
 
 ## Base-project rules under review (Book Inventory)
@@ -239,7 +241,7 @@ None on other modules' code. For R63 `iam` defines a port that answers whether a
 - **AC29** Invalid appsettings (for example a token lifetime of 0) stop the application at startup (R54).
 - **AC30** An Owner created through R61 is `ACTIVE`, must change the temporary password at first login and can call nothing else until then; a taken user id answers `409` and leaves no account behind (R12, R60, R61).
 - **AC31** The Owner's access token carries `cid` equal to the company id; a Super Admin's token has no `cid` until they enter a company (R59, R62, R69).
-- **AC32** Creating a staff account (R2) with role `OWNER` or `STAFF`, changing an Owner's or Staff's role, or changing anyone's role to `OWNER` or `STAFF` is rejected (R6, R60).
+- **AC32** Creating a staff account (R2) with role `OWNER` or `STAFF`, changing an Owner's or Staff's role, or changing anyone's role to `OWNER` or `STAFF` is rejected with `400` (`iam.user.role_not_staff` on creation, `iam.user.company_role_immutable` on a role change) (R6, R60).
 - **AC33** With the company `INACTIVE`: a company account's login with the correct password is refused with `iam.auth.company_inactive`, with a wrong password it is the generic error, and an existing access token answers `401` on the next request (R63, R8).
 - **AC34** After the company is reactivated, its accounts can log in again (R63).
 - **AC35** A company account logs in with its user id; the same account's email or mobile (if it has one) as identifier gets the generic error (R64, R8).
