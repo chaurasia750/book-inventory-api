@@ -3,7 +3,6 @@ using BookInventory.BuildingBlocks.Domain.Models;
 using BookInventory.BuildingBlocks.Persistence.Contracts;
 using BookInventory.BuildingBlocks.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
-using BookInventory.Application.Iam.Companies;
 using BookInventory.Application.School;
 using BookInventory.Domain.School;
 using SchoolRoot = BookInventory.Domain.School.School;
@@ -12,19 +11,14 @@ namespace BookInventory.Infrastructure.School;
 
 /// <summary>
 /// The data side of the school use cases (spec school R9, R11, R15). Every query is already limited to the session's
-/// company by the platform filter. The code counter is taken under a PostgreSQL advisory lock keyed on the company, held
-/// until the request transaction ends, so parallel creations in one company are serialised (R15).
+/// company by the platform filter.
 /// </summary>
 [AutoRegister(ServiceLifetime.Scoped, typeof(ISchoolStore))]
-public sealed class SchoolStore(IUnitOfWork unitOfWork, ICurrentCompany currentCompany) : ISchoolStore
+public sealed class SchoolStore(IUnitOfWork unitOfWork) : ISchoolStore
 {
-    /// <summary>Arbitrary constant namespace of the advisory lock, combined with the company's hash so companies do not block each other.</summary>
-    private const int CounterLockNamespace = 5_200_001;
-
     private static readonly string[] SortableColumns = ["Name", "Code", "CreatedAt"];
 
     private readonly IRepository<SchoolRoot> _schools = unitOfWork.Repository<SchoolRoot>();
-    private readonly IRepository<SchoolCodeCounter> _counters = unitOfWork.Repository<SchoolCodeCounter>();
 
     public Task AddAsync(SchoolRoot school, CancellationToken cancellationToken = default) =>
         _schools.AddAsync(school, cancellationToken);
@@ -34,20 +28,6 @@ public sealed class SchoolStore(IUnitOfWork unitOfWork, ICurrentCompany currentC
 
     public Task<SchoolRoot?> FindForReadAsync(Guid id, CancellationToken cancellationToken = default) =>
         _schools.TableNoTracking.Include(s => s.Classes).FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
-
-    public async Task<SchoolCodeCounter> LockCounterAsync(CancellationToken cancellationToken = default)
-    {
-        var companyId = currentCompany.CompanyId ?? Guid.Empty;
-        await _counters.ExecuteSqlAsync($"select pg_advisory_xact_lock({CounterLockNamespace}, {companyId.GetHashCode()})", cancellationToken);
-
-        var counter = await _counters.Table.FirstOrDefaultAsync(cancellationToken);
-        if (counter is not null)
-            return counter;
-
-        counter = SchoolCodeCounter.Start();
-        await _counters.AddAsync(counter, cancellationToken);
-        return counter;
-    }
 
     public async Task<IPagedList<SchoolSummary>> SearchAsync(SchoolSearchQuery query, bool activeOnly, CancellationToken cancellationToken = default)
     {

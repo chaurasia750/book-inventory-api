@@ -19,12 +19,6 @@ public interface ISchoolStore
     /// <summary>The school for reading: not tracked, with its classes ordered.</summary>
     Task<SchoolRoot?> FindForReadAsync(Guid id, CancellationToken cancellationToken = default);
 
-    /// <summary>
-    /// R15: the company's code counter, created on first use, taken under a transaction-scoped lock so two parallel
-    /// creations in one company queue behind each other and get different numbers.
-    /// </summary>
-    Task<SchoolCodeCounter> LockCounterAsync(CancellationToken cancellationToken = default);
-
     /// <summary>R11: the paged, searchable, filterable list; <paramref name="activeOnly"/> is the Staff view (R9).</summary>
     Task<IPagedList<SchoolSummary>> SearchAsync(SchoolSearchQuery query, bool activeOnly, CancellationToken cancellationToken = default);
 }

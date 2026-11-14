@@ -1,10 +1,10 @@
 # Spec: vendor - Vendor / publication master
 
 - **Module:** `vendor` (PostgreSQL schema `vendor`)
-- **Status:** R1-R14 Approved by abhishek in chat on 2026-11-14 ("approved hai kro implement"; Q1-Q10 answered with the recommended answers, D1-D4 with them)
-- **Last updated:** 2026-11-14
+- **Status:** R1-R14 Approved by abhishek in chat on 2026-11-14 ("approved hai kro implement"; Q1-Q10 answered with the recommended answers, D1-D4 with them); R15 and AC13 Approved by abhishek in chat on 2026-11-14 ("all approved hai kro implement", for the item master, D4 of the item spec)
+- **Last updated:** 2026-11-14 (R15, AC13 added for item#01)
 - **Source docs:** [BRD §1.2, §3, §4.3 Vendor / Publication Master (FR-VEN-01 to FR-VEN-03), §5.4 BR-GST, §5.6 BR-LED, §7.1, §8 Data Model (Vendor)](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P22; [specs/company.md](company.md); [specs/school.md](school.md) (the neighbouring master it follows)
-- **Plans:** [vendor#01](../plans/vendor/2026-11-14-01-vendor-master.md) (Approved), [vendor#02](../plans/vendor/2026-11-14-02-ui-vendor-screens.md) (Approved); the platform mechanism it needs: [platform#07](../plans/platform/2026-11-14-07-company-code-series.md) (Approved)
+- **Plans:** [vendor#03](../plans/vendor/2026-11-14-03-vendor-directory.md) (Approved, R15, AC13), [vendor#01](../plans/vendor/2026-11-14-01-vendor-master.md) (Done), [vendor#02](../plans/vendor/2026-11-14-02-ui-vendor-screens.md) (Approved); the platform mechanism it needs: [platform#07](../plans/platform/2026-11-14-07-company-code-series.md) (Done)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -40,6 +40,9 @@ Out of scope for this feature: Excel import of vendors (FR-VEN-03, NFR-12: its o
 - **R12** Every create and change is recorded who and when through the standard audit columns and the audit trail of `core` ([specs/core.md](core.md) A1-A9); the bank account number is never written to the old and new values of the trail (R5, the platform's audit secret marker). This module adds no audit mechanism of its own.
 - **R13** Changing a vendor's name, state or GSTIN does not touch documents already issued: later modules copy what they must keep (BRD §8 design decision 3).
 - **R14** The vendor's money rules: amounts use `numeric(18,2)`, never float; no rounding happens in this module (it only stores the opening balance).
+
+**Reading vendors from other modules**
+- **R15** Other modules (the item master first) read vendors only through the vendor module's **directory capability**, never by joining its tables: it tells whether a vendor exists in the session's company and is active, gives the names of a list of vendor ids, and gives the ids of the vendors whose name or code contains a text (at most 200). It answers only for the company of the session (platform P19), returns plain values and never the aggregate, and changes nothing. Proposed by the assistant on 2026-11-14 for the item spec (decision D4); Approved by abhishek on 2026-11-14.
 
 ## 4. Data
 
@@ -88,6 +91,7 @@ Raised by the `Vendor` aggregate (past tense, ids and values only): `VendorCreat
 - **AC10** The list is paged and capped at 200, and the search, status and state filters and the sorts work; an unknown sort column is ignored (R10).
 - **AC11** Every create and change of a vendor appears in the audit trail with the actor and company A (R12).
 - **AC12** Mobile `+91 98765 00001`, `0 98765 00001` and `9876500001` are stored as `9876500001` (R3).
+- **AC13** The directory capability, called for the Owner of A, finds A's vendor (id, name, active) and returns nothing for B's vendor id; the names of two ids come back; a text search returns A's matching vendors only and at most 200 (R15).
 
 ## 10. Decisions
 

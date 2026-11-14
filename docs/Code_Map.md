@@ -12,7 +12,7 @@ For the agent and new developers. Every path below exists; copy the neighbouring
 | `src/BookInventory.Infrastructure/` | EF configurations, stores (port adapters), options, migrations |
 | `src/BookInventory.Api/` | `src/BookInventory.Api/Program.cs`, controllers, hosted services, auth wiring |
 
-Modules present today: `Iam`, `Core`, `Company`, `School` (folders match the schemas `iam`, `core`, `company`, `school`). The aggregate class `Company` shares its name with its namespace, so files that use it add `using CompanyRoot = BookInventory.Domain.Company.Company;`.
+Modules present today: `Iam`, `Core`, `Company`, `School`, `Vendor` (folders match the schemas `iam`, `core`, `company`, `school`, `vendor`). The aggregate class `Company` shares its name with its namespace, so files that use it add `using CompanyRoot = BookInventory.Domain.Company.Company;`.
 
 ## Base types of the shared library
 
@@ -34,6 +34,8 @@ Modules present today: `Iam`, `Core`, `Company`, `School` (folders match the sch
 | Aggregate with an append-only child timeline | `src/BookInventory.Domain/Company/Company.cs` with `src/BookInventory.Domain/Company/CompanyStatusHistory.cs` |
 | Domain events | `src/BookInventory.Domain/Iam/UserEvents.cs` |
 | Audit marks on an entity | `[AuditIgnore]` and `[AuditSecret]` (`src/BookInventory.Domain/Core/AuditIgnoreAttribute.cs`, `src/BookInventory.Domain/Core/AuditSecretAttribute.cs`) used on `src/BookInventory.Domain/Iam/AppUser.cs`; company scope: `src/BookInventory.Domain/Core/IAuditCompanyScope.cs` |
+| Read another module's vendors | inject `src/BookInventory.Application/Vendor/IVendorDirectory.cs` (exists/active, names by id, ids matching a text); never join the vendor tables (vendor R15); adapter `src/BookInventory.Infrastructure/Vendor/VendorDirectory.cs` |
+| Generated code `PREFIX-0001` (P23) | inject `src/BookInventory.Application/Core/ICompanyCodes.cs` and call `NextAsync("VEN")`; never keep a counter of your own; copy the use of it in `src/BookInventory.Application/School/SchoolRegistrationService.cs` (adapter: `src/BookInventory.Infrastructure/Core/CompanyCodes.cs`) |
 | Company-owned aggregate (P18-P22) | derive from `src/BookInventory.Domain/Core/CompanyOwnedRoot.cs` (a child entity: `src/BookInventory.Domain/Core/CompanyOwnedChild.cs`); copy `src/BookInventory.Domain/School/School.cs` with `src/BookInventory.Domain/School/SchoolClass.cs`; the filter and the stamping are `src/BookInventory.Infrastructure/Persistence/CompanyScope.cs`; a per-company unique index starts with `company_id` (`builder.HasIndex(x => new { x.CompanyId, x.Code }).IsUnique()`) |
 | Audit capture (the save override) | `src/BookInventory.Infrastructure/Persistence/AppDbContext.cs` with `src/BookInventory.Infrastructure/Core/AuditCapture.cs` |
 | Message codes | `src/BookInventory.Domain/Iam/IamMessages.cs`, catalogue `src/BookInventory.Application/Iam/IamMessageCatalog.cs` |
