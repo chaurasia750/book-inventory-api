@@ -48,6 +48,7 @@ Three things never change:
 Where things live (Claude keeps them up to date):
 - `docs/specs/<module>.md` - the **one** spec of a module; every feature is a rule group inside it.
 - `docs/plans/<module>/` - all plans of that module (`iam#06` = the 6th plan of `iam`).
+- Plan ids such as `iam#06` in this guide are naming examples only; no plans exist in this project yet.
 - `docs/Backlog.md` - the **one** backlog of the whole project.
 
 ## 2. Your part, step by step

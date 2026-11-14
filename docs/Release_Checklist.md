@@ -1,7 +1,7 @@
 # Release checklist (IIS, same-origin hosting)
 
 Owner: whoever deploys. Every line is a yes/no; a "no" stops the release until the owner accepts it in writing.
-Background: [platform spec](specs/platform.md), [Plan 0010](plans/0010-platform-hosting.md), [iam spec](specs/iam.md).
+Background: [platform spec](specs/platform.md), Plan 0010, [iam spec](specs/iam.md).
 
 ## How it is hosted
 

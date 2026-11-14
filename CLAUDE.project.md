@@ -6,7 +6,7 @@ Imported by `CLAUDE.md`. Everything that names this project, its stack, modules 
 
 ## Modules, plans and commits
 
-- Modules are the database schemas: `iam`, `finance`, `core`, plus `platform` for cross-cutting/BuildingBlocks work. Specs: `docs/specs/<module>.md`; plans: `docs/plans/<module>/`. Legacy plans `0001`-`0016` stay at the root of `docs/plans/`.
+- Modules are the database schemas: `iam`, `finance`, `core`, plus `platform` for cross-cutting/BuildingBlocks work. Specs: `docs/specs/<module>.md`; plans: `docs/plans/<module>/`.
 - Dependency direction between modules is written in the module specs (no ERD document is in the repository yet: ask before relying on one).
 - Build command: `dotnet build book-inventory.slnx` -> 0 warnings, 0 errors.
 
