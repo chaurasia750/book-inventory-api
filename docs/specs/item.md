@@ -4,7 +4,7 @@
 - **Status:** R1-R15 Approved by abhishek in chat on 2026-11-14 ("all approved hai kro implement"; Q1-Q12 answered with the recommended answers, D1-D5 with them)
 - **Last updated:** 2026-11-14
 - **Source docs:** [BRD §1.2, §3, §4.4 Item Master (FR-ITM-01 to FR-ITM-08), §5.4 BR-GST, §5.5 BR-STK, §7.1, §8 Data Model (ItemCategory, Item, ItemBarcode)](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P23; [specs/company.md](company.md); [specs/vendor.md](vendor.md); [specs/school.md](school.md) (the neighbouring masters it follows)
-- **Plans:** [item#01](../plans/item/2026-11-14-01-item-master.md) (Approved), [item#02](../plans/item/2026-11-14-02-ui-item-screens.md) (Approved); the capability it needs from vendor: [vendor#03](../plans/vendor/2026-11-14-03-vendor-directory.md) (Approved)
+- **Plans:** [item#01](../plans/item/2026-11-14-01-item-master.md) (Done), [item#02](../plans/item/2026-11-14-02-ui-item-screens.md) (Approved); the capability it needs from vendor: [vendor#03](../plans/vendor/2026-11-14-03-vendor-directory.md) (Approved)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 

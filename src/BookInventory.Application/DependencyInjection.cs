@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using BookInventory.Application.Company;
 using BookInventory.Application.Core;
 using BookInventory.Application.Iam;
+using BookInventory.Application.Item;
 using BookInventory.Application.School;
 using BookInventory.Application.Vendor;
 
@@ -22,6 +23,7 @@ namespace BookInventory.Application
             services.AddMessages(CompanyMessageCatalog.Messages); // company message codes
             services.AddMessages(SchoolMessageCatalog.Messages); // school message codes
             services.AddMessages(VendorMessageCatalog.Messages); // vendor message codes
+            services.AddMessages(ItemMessageCatalog.Messages); // item message codes
 
             return services;
         }
