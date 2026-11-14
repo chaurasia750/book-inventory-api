@@ -1,5 +1,4 @@
 using BookInventory.BuildingBlocks.Domain;
-using BookInventory.BuildingBlocks.Domain.Exceptions;
 
 namespace BookInventory.Domain.Core;
 
@@ -14,13 +13,5 @@ public abstract class CompanyOwnedRoot : AggregateRoot, ICompanyOwned
 
     Guid? IAuditCompanyScope.AuditCompanyId => CompanyId == Guid.Empty ? null : CompanyId;
 
-    public void AssignCompany(Guid companyId)
-    {
-        if (companyId == Guid.Empty)
-            throw new ForbiddenException(CoreMessages.CompanyRequired);
-        if (CompanyId != Guid.Empty && CompanyId != companyId)
-            throw new ValidationFailureException(CoreMessages.CompanyImmutable);
-
-        CompanyId = companyId;
-    }
+    public void AssignCompany(Guid companyId) => CompanyId = CompanyAssignment.Apply(CompanyId, companyId);
 }

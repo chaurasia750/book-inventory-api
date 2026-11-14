@@ -4,7 +4,7 @@
 - **Status:** R1-R15 Approved by the owner on 2026-11-14 (AC1-AC11, D1-D7 with them)
 - **Last updated:** 2026-11-14
 - **Source docs:** [BRD §1.2, §3, §4.2 School Master (FR-SCH-01 to FR-SCH-08), §5.1 BR-SES, §5.4 BR-GST, §7.1, §8 Data Model (School, SchoolClass)](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P22; [specs/company.md](company.md)
-- **Plans:** [school#01](../plans/school/2026-11-14-01-school-master.md), [school#02](../plans/school/2026-11-14-02-ui-school-screens.md) (both Draft); the platform mechanism it needs: [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Approved)
+- **Plans:** [school#01](../plans/school/2026-11-14-01-school-master.md) (Done), [school#02](../plans/school/2026-11-14-02-ui-school-screens.md) (both Draft); the platform mechanism it needs: [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Approved)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -33,7 +33,7 @@ Out of scope for this feature: Excel import of schools (FR-SCH-07, NFR-12: its o
 - **R3** The **session type** is required, `APR_MAR` or `JAN_DEC` (FR-SCH-02). It can be changed while the school has no documents; once documents exist the later modules refuse the change (BR-SES-03), so this module only stores it.
 - **R4** The **sale type** is required: `SCHOOL_ORDER`, `COUNTER_SALE` or `BOTH` (FR-SCH-03). A new school starts as `BOTH` (Q6).
 - **R5** The **GST default** is a yes or no and starts as no (FR-SCH-04, BR-GST-02: GST only on the school's demand). It only sets the starting value of a later order; the order can still toggle it (BR-GST-03).
-- **R6** A school has an ordered **class list**. A new school starts with Nursery, LKG, UKG and 1st to 12th (Q2); the Owner can add, rename, reorder and remove classes (FR-SCH-05). Class names are unique inside the school ignoring case; each class has an order number. Later modules that use a class guard its removal.
+- **R6** A school has an ordered **class list**. A new school starts with Nursery, LKG, UKG and 1st to 12th (Q2); the Owner can add, rename, reorder and remove classes (FR-SCH-05). Class names are unique inside the school ignoring case; each class has an order number. A class that keeps its name keeps its row and id when the list is saved again, and a removed name can be added again later. Later modules that use a class guard its removal.
 - **R7** The **opening balance** is an amount of at least zero with two decimals: what the school owed when the system was started (FR-SCH-06). Positive means the school owes the company (Q5). It is stored here; posting it into the school ledger belongs to the Ledger module.
 - **R8** A school is `ACTIVE` or `INACTIVE` (FR-SCH-08). A new school is active. An inactive school keeps all its data and history but cannot be chosen for a new document (later modules); it can be activated again. A school is never deleted (Q7).
 - **R9** The Owner creates, edits, activates, deactivates a school and edits its class list. Staff may only read the list and a school (to pick one when selling, [specs/company.md](company.md) D5, Q8) and see active schools only. Anyone else is refused (`403`).
@@ -49,7 +49,7 @@ Out of scope for this feature: Excel import of schools (FR-SCH-07, NFR-12: its o
 Schema `school`:
 - `school` (aggregate root, company-owned, platform P18): `company_id` (not null), `code` (generated, R15), `name`, `address`, `contact_person`, `mobile`, `email`, `gstin`, `state`, `session_type`, `sale_type`, `is_gst_default`, `opening_balance_amount` (`numeric(18,2)`, not negative), `status`, plus the standard audit and concurrency columns. Unique index on `(company_id, code)`.
 - `school_code_counter` (company-owned, one row per company): `company_id` (unique), `last_number`; read and increased under a lock inside the creating transaction (R15).
-- `school_class` (child of `school`): `school_id`, `class_name`, `class_name_normalized`, `sort_order`. Unique on `(school_id, class_name_normalized)`.
+- `school_class` (company-owned child of `school`, platform P18): `company_id`, `school_id`, `name`, `name_normalized`, `sort_order`. Unique on `(school_id, name_normalized)` among live rows; a removed class is soft-deleted.
 
 `company_id` is a plain id with no foreign key across schemas (the `company` module guarantees it exists).
 
