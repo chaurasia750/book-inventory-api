@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using BookInventory.Application.Company;
 using BookInventory.Application.Core;
 using BookInventory.Application.Iam;
+using BookInventory.Application.Finance;
 using BookInventory.Application.Item;
 using BookInventory.Application.Price;
 using BookInventory.Application.Stock;
@@ -28,6 +29,7 @@ namespace BookInventory.Application
             services.AddMessages(ItemMessageCatalog.Messages); // item message codes
             services.AddMessages(PriceMessageCatalog.Messages); // price message codes
             services.AddMessages(StockMessageCatalog.Messages); // stock message codes
+            services.AddMessages(FinanceMessageCatalog.Messages); // finance message codes
 
             return services;
         }

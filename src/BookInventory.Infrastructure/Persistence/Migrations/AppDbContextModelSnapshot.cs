@@ -688,6 +688,182 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Finance.LedgerLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Account")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("account");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<decimal>("CreditAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("credit_amount");
+
+                    b.Property<decimal>("DebitAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("debit_amount");
+
+                    b.Property<string>("FinancialYear")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("financial_year");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<Guid>("LedgerTransactionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("ledger_transaction_id");
+
+                    b.Property<Guid?>("PartyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("party_id");
+
+                    b.Property<string>("PartyType")
+                        .HasColumnType("text")
+                        .HasColumnName("party_type");
+
+                    b.Property<string>("Session")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("session");
+
+                    b.Property<DateOnly>("TransactionDate")
+                        .HasColumnType("date")
+                        .HasColumnName("transaction_date");
+
+                    b.HasKey("Id")
+                        .HasName("pk_ledger_line");
+
+                    b.HasIndex("LedgerTransactionId")
+                        .HasDatabaseName("ix_ledger_line_ledger_transaction_id");
+
+                    b.HasIndex("CompanyId", "Account")
+                        .HasDatabaseName("ix_ledger_line_company_id_account");
+
+                    b.HasIndex("CompanyId", "PartyType", "PartyId", "TransactionDate")
+                        .HasDatabaseName("ix_ledger_line_company_id_party_type_party_id_transaction_date");
+
+                    b.ToTable("ledger_line", "finance", t =>
+                        {
+                            t.HasCheckConstraint("ck_ledger_line_account", "\"account\" IN ('SCHOOL_RECEIVABLE', 'CUSTOMER_RECEIVABLE', 'VENDOR_PAYABLE', 'SALES', 'SALES_RETURN', 'PURCHASE', 'PURCHASE_RETURN', 'GST_OUTPUT', 'GST_INPUT', 'CASH', 'BANK', 'CHEQUE_IN_HAND', 'DISCOUNT_ALLOWED', 'ROUND_OFF', 'OPENING_BALANCE')");
+
+                            t.HasCheckConstraint("ck_ledger_line_one_side", "(debit_amount > 0 AND credit_amount = 0) OR (credit_amount > 0 AND debit_amount = 0)");
+
+                            t.HasCheckConstraint("ck_ledger_line_party_type", "\"party_type\" IN ('SCHOOL', 'VENDOR', 'CUSTOMER')");
+                        });
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Finance.LedgerTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<Guid>("DocumentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("document_id");
+
+                    b.Property<string>("DocumentNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("document_number");
+
+                    b.Property<string>("DocumentType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("document_type");
+
+                    b.Property<string>("FinancialYear")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("financial_year");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Narration")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("narration");
+
+                    b.Property<string>("PostingKind")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("posting_kind");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<string>("Session")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("session");
+
+                    b.Property<DateOnly>("TransactionDate")
+                        .HasColumnType("date")
+                        .HasColumnName("transaction_date");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id")
+                        .HasName("pk_ledger_transaction");
+
+                    b.HasIndex("CompanyId", "DocumentType", "DocumentId", "PostingKind")
+                        .IsUnique()
+                        .HasDatabaseName("ix_ledger_transaction_document_posting");
+
+                    b.ToTable("ledger_transaction", "finance", t =>
+                        {
+                            t.HasCheckConstraint("ck_ledger_transaction_posting_kind", "\"posting_kind\" IN ('POST', 'REVERSAL')");
+                        });
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Iam.AppUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2126,6 +2302,16 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_notification_log_notification_notification_id");
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Finance.LedgerLine", b =>
+                {
+                    b.HasOne("BookInventory.Domain.Finance.LedgerTransaction", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("LedgerTransactionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_ledger_line_ledger_transaction_ledger_transaction_id");
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Iam.AppUser", b =>
                 {
                     b.HasOne("BookInventory.Domain.Iam.AppUser", null)
@@ -2257,6 +2443,11 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("BookInventory.Domain.Core.Notification", b =>
                 {
                     b.Navigation("Logs");
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Finance.LedgerTransaction", b =>
+                {
+                    b.Navigation("Lines");
                 });
 
             modelBuilder.Entity("BookInventory.Domain.Item.Item", b =>
