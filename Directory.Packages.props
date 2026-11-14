@@ -4,6 +4,8 @@
     <EfCoreVersion>10.0.12</EfCoreVersion>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Excel import (stock D5, approved by the owner on 2026-11-14) -->
+    <PackageVersion Include="ClosedXML" Version="0.105.1" />
     <!-- Persistence -->
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="$(EfCoreVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.14" />

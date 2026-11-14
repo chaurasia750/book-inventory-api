@@ -6,6 +6,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<!-- Reads and writes Excel files for imports (stock D5, approved by the owner). -->
+		<PackageReference Include="ClosedXML" />
 		<!-- Parses the user agent into browser/OS/device (R22). The only package the application needs. -->
 		<PackageReference Include="MailKit" />
 		<PackageReference Include="Scriban" />

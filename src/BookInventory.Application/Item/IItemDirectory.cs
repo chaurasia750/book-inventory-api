@@ -2,11 +2,22 @@ using BookInventory.Domain.Item;
 
 namespace BookInventory.Application.Item;
 
-/// <summary>R16: what another module may know about an item: its id, code, name and whether it can be chosen for a new document.</summary>
-public sealed record ItemReference(Guid Id, string Code, string Name, bool IsActive);
+/// <summary>
+/// R16/R17: what another module may know about an item: its id, code, name, whether it can be chosen for a new document and
+/// whether its quantity is tracked in stock.
+/// </summary>
+public sealed record ItemReference(Guid Id, string Code, string Name, bool IsActive, bool IsStockManaged);
 
-/// <summary>R16: which items a caller means: any mix of vendor, category and class (ignoring case), optionally only active ones; empty means all.</summary>
-public sealed record ItemSelection(Guid? VendorId = null, ItemCategory? Category = null, string? ClassName = null, bool OnlyActive = false);
+/// <summary>
+/// R16/R17: which items a caller means: any mix of vendor, category and class (ignoring case), optionally only active ones and
+/// optionally only stock-managed (<c>true</c>) or not stock-managed (<c>false</c>) ones; empty means all.
+/// </summary>
+public sealed record ItemSelection(
+    Guid? VendorId = null,
+    ItemCategory? Category = null,
+    string? ClassName = null,
+    bool OnlyActive = false,
+    bool? StockManaged = null);
 
 /// <summary>R16: one page of item ids for a search text and a selection, in the given order (<c>Name</c> or <c>Code</c>, then <c>ASC</c> or <c>DESC</c>).</summary>
 public sealed record ItemPageRequest(string? Search, ItemSelection Selection, string? OrderBy, int PageIndex, int PageSize);
@@ -31,6 +42,12 @@ public interface IItemDirectory
 
     /// <summary>One page of item ids that match the search text (name, code, barcode, class, subject, vendor name) and the selection.</summary>
     Task<ItemIdPage> PageAsync(ItemPageRequest request, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// R16 (for stock R18): the items whose code or barcode equals one of these texts (ignoring case and surrounding spaces), keyed
+    /// by the upper-case text; a code wins over a barcode of another item. A text that matches nothing is left out.
+    /// </summary>
+    Task<IReadOnlyDictionary<string, ItemReference>> FindByCodeOrBarcodeAsync(IReadOnlyCollection<string> keys, CancellationToken cancellationToken = default);
 
     /// <summary>Every item id of the selection, at most <see cref="MaxBulkItems"/>.</summary>
     Task<IReadOnlyList<Guid>> AllIdsAsync(ItemSelection selection, CancellationToken cancellationToken = default);
