@@ -10,7 +10,7 @@ For the agent and new developers. Every path below exists; copy the neighbouring
 | `src/BookInventory.Domain/<Module>/` | Aggregates, child entities, enums, domain events |
 | `src/BookInventory.Application/<Module>/` | Use cases, ports (interfaces), DTOs, message catalogues |
 | `src/BookInventory.Infrastructure/` | EF configurations, stores (port adapters), options, migrations |
-| `src/BookInventory.Api/` | `Program.cs`, controllers, hosted services, auth wiring |
+| `src/BookInventory.Api/` | `src/BookInventory.Api/Program.cs`, controllers, hosted services, auth wiring |
 
 Modules present today: `Iam`, `Core` (folders match the schemas `iam`, `core`).
 
