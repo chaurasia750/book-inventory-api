@@ -1,4 +1,5 @@
 using BookInventory.BuildingBlocks.Domain;
+using BookInventory.Domain.Core;
 
 namespace BookInventory.Domain.Company;
 
@@ -6,6 +7,7 @@ namespace BookInventory.Domain.Company;
 /// One row of a company's status timeline (R8): from, to, reason, who and when. A child of <see cref="Company"/>, added
 /// only by it, and never edited or deleted afterwards. <see cref="FromStatus"/> is null on the creation row.
 /// </summary>
+[AuditIgnore]
 public class CompanyStatusHistory : TransactionDomainBase
 {
     private CompanyStatusHistory() => Reason = string.Empty;

@@ -1,5 +1,6 @@
 using BookInventory.BuildingBlocks.Domain;
 using BookInventory.BuildingBlocks.Domain.Exceptions;
+using BookInventory.Domain.Core;
 
 namespace BookInventory.Domain.Company;
 
@@ -16,7 +17,7 @@ namespace BookInventory.Domain.Company;
 /// company is never deleted.</item>
 /// </list>
 /// </summary>
-public class Company : AggregateRoot
+public class Company : AggregateRoot, IAuditCompanyScope
 {
     public const int NameMinLength = 2;
     public const int NameMaxLength = 150;
@@ -60,6 +61,9 @@ public class Company : AggregateRoot
     public IReadOnlyList<CompanyStatusHistory> StatusHistory => _statusHistory;
 
     public bool IsActive => Status == CompanyStatus.Active;
+
+    /// <summary>A5: the audit entries of a company belong to that company.</summary>
+    Guid? IAuditCompanyScope.AuditCompanyId => Id;
 
     /// <summary>R4/D4: the Owner's user id, generated from the company's name (see <see cref="CompanyOwnerUserId"/>).</summary>
     public string OwnerUserId => CompanyOwnerUserId.From(Name);

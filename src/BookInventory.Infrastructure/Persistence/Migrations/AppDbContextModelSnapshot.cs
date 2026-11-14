@@ -252,6 +252,99 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Core.AuditEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("action");
+
+                    b.Property<Guid?>("ActorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("actor_id");
+
+                    b.Property<string>("ActorName")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("actor_name");
+
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("entity_id");
+
+                    b.Property<string>("EntityType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("entity_type");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<bool>("IsSystem")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_system");
+
+                    b.Property<string>("NewValue")
+                        .HasColumnType("text")
+                        .HasColumnName("new_value");
+
+                    b.Property<string>("OldValue")
+                        .HasColumnType("text")
+                        .HasColumnName("old_value");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id")
+                        .HasName("pk_audit_entry");
+
+                    b.HasIndex("ActorId", "CreatedAt")
+                        .IsDescending(false, true)
+                        .HasDatabaseName("ix_audit_entry_actor_id_created_at");
+
+                    b.HasIndex("CompanyId", "CreatedAt")
+                        .IsDescending(false, true)
+                        .HasDatabaseName("ix_audit_entry_company_id_created_at");
+
+                    b.HasIndex("EntityType", "EntityId", "CreatedAt")
+                        .IsDescending(false, false, true)
+                        .HasDatabaseName("ix_audit_entry_entity_type_entity_id_created_at");
+
+                    b.ToTable("audit_entry", "core", t =>
+                        {
+                            t.HasCheckConstraint("ck_audit_entry_action", "\"action\" IN ('CREATED', 'UPDATED', 'DELETED')");
+                        });
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Core.Notification", b =>
                 {
                     b.Property<Guid>("Id")

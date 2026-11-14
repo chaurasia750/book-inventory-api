@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using BookInventory.BuildingBlocks.Domain;
 using BookInventory.BuildingBlocks.Domain.Exceptions;
+using BookInventory.Domain.Core;
 
 namespace BookInventory.Domain.Iam;
 
@@ -16,6 +17,7 @@ namespace BookInventory.Domain.Iam;
 /// separately (R24).</item>
 /// </list>
 /// </summary>
+[AuditIgnore]
 public class UserSession : AggregateRoot
 {
     private UserSession() => RefreshTokenHash = string.Empty;

@@ -1,8 +1,9 @@
 using BookInventory.BuildingBlocks.Domain.Exceptions;
+using BookInventory.Domain.Core;
 
 namespace BookInventory.Domain.Iam;
 
-public partial class AppUser
+public partial class AppUser : IAuditCompanyScope
 {
     /// <summary>
     /// R59: the company this account belongs to, a plain id with no navigation. Every <c>OWNER</c> and <c>STAFF</c> account
@@ -11,6 +12,9 @@ public partial class AppUser
     public Guid? CompanyId { get; private set; }
 
     public bool BelongsToCompany => CompanyId is not null;
+
+    /// <summary>A5: an account's audit entries belong to its company; a Super Admin has none.</summary>
+    Guid? IAuditCompanyScope.AuditCompanyId => CompanyId;
 
     /// <summary>
     /// R59-R61: the main account of a company, created by the <c>company</c> module together with the company. It is

@@ -3,7 +3,7 @@
 - **Module:** `core` (matches the PostgreSQL schema `core`)
 - **Status:** the notification part (N1-N14) was carried over from the base project (HautInHousing) and describes the code as it is; the audit trail (A1-A10, AAC1-AAC10, AD1-AD4, AQ1-AQ5 recommended answers) was approved by the owner on 2026-11-14 and is being built (plans core#01, core#02).
 - **Last updated:** 2026-11-14
-- **Plans:** [core#01](../plans/core/2026-11-14-01-audit-trail.md), [core#02](../plans/core/2026-11-14-02-ui-audit-screen.md) (both Approved 2026-11-14)
+- **Plans:** [core#01](../plans/core/2026-11-14-01-audit-trail.md) (Done), [core#02](../plans/core/2026-11-14-02-ui-audit-screen.md) (both Approved 2026-11-14)
 - **Source:** the Book Inventory business documents, see [docs index](../README.md) (none of the rules below were derived from them yet).
 
 > This file holds the **notification** capability and the **audit trail** (Draft). System settings are added to this spec when their plans exist.
@@ -63,11 +63,11 @@ PENDING | RETRY --cancel--> CANCELLED         FAILED --manual retry--> PENDING
 - **A1** Every create, change and delete of an audited row (AQ1) writes one **audit entry** in the same transaction as the change: entity type, entity id, action (`CREATED`, `UPDATED`, `DELETED`), old value, new value, who, when (UTC) and the company of the row (BRD FR-USR-04, NFR-08, section 8 `AuditLog`). A change that is rolled back leaves no entry.
 - **A2** A created row has only a new value and a deleted row only an old value; an update has both, limited to the fields that changed. Values are JSON text keyed by column name.
 - **A3** Secrets are never recorded: password hashes, refresh and reset token hashes, temporary passwords and any column its module marks as secret. The entry of a password change shows that the account changed, with no password field.
-- **A4** The actor is the user who made the change (id and user name as they were then). A change made by a background job or by the hidden system account has no actor id and is shown as "System" (iam R48).
+- **A4** The actor is the user who made the change (id and user name as they were then). A change made by a background job, by the hidden system account or by an anonymous request (such as a failed login counting up) has no actor id and is shown as "System" (iam R48).
 - **A5** The entry's company is the company of the changed row: the company itself for a company, the account's company for an Owner or Staff account, the row's company for any company-owned row; none for Super Admin accounts and other platform rows.
 - **A6** An entry is never edited or deleted: there is no endpoint, screen or job that changes one.
 - **A7** A Super Admin reads every entry and may filter by company. An Owner reads only the entries of their own company; the company comes from the session ([specs/company.md](company.md) R6), never from the request, so asking for another company's id still answers the Owner's own. Staff and every other role are refused (`403`).
-- **A8** The list is paged (page size capped at 200), newest first, and filters by entity type, entity id, actor, company (Super Admin only) and a date range read in the business time zone ([specs/company.md](company.md) D7). A second call lists the entity types that exist in the log, for the filter.
+- **A8** The list is paged (page size capped at 200), newest first, and filters by entity type, entity id, actor, company (Super Admin only) and a date range: `from` and `to` are instants (UTC), both inclusive; the screen builds them from the dates the user picks. A second call lists the entity types that exist in the log, for the filter.
 - **A9** One audit screen serves the Super Admin and the Owner: the list with its filters, and a detail of the old and new value of an entry. It shows loading, empty, error (with retry) and success.
 - **A10** Entries are kept and never removed in v1 (AD2); the table is built so it can be split by time later.
 
@@ -119,7 +119,7 @@ None raised now. The audit entry is written by the persistence layer when the ch
 - **NAC8** A configured but invalid `Email:*` (port 0, missing from address) stops startup; an empty host does not (N11, N12).
 - **NAC9** Two workers started together never send the same notification twice (N5).
 - **AAC1** Creating a company writes one `CREATED` entry: entity `Company`, a new value with its name, no old value, the Super Admin as actor, the company's own id as company (A1, A2, A5).
-- **AAC2** Editing only a company's name writes one `UPDATED` entry whose old and new value hold only `name` (A2).
+- **AAC2** Editing only a company's name writes one `UPDATED` entry whose old and new value hold only the changed fields: `name` and its normalised form `name_normalized` (A2).
 - **AAC3** A request that is rolled back (a company creation refused because the Owner's user id is taken) leaves no entry (A1).
 - **AAC4** Creating an Owner or a Staff account writes an entry whose company is that company and whose values contain no password hash (A3, A5); a password change writes an `UPDATED` entry with no password field (A3).
 - **AAC5** A change made by the suspension-lift job, and one made by the hidden system account, show actor "System" with no id (A4).
@@ -152,3 +152,4 @@ Proposed by the assistant on the owner's request of 2026-11-14 and approved with
 | AD2 | Entries are kept forever in v1, the same as the iam login log (A10). (proposed by the assistant) |
 | AD3 | An entry stores the actor's user name as a snapshot and the company as a plain id, so `core` stays independent of `iam` and `company` (A4, A5). (proposed by the assistant) |
 | AD4 | The UI already has an audit screen for the Super Admin that calls `GET audit` and `GET audit/entity-types`; the contract of A8 matches it, and the Owner's screen reuses it (A9). (proposed by the assistant) |
+| AD5 | The capture is marked on the domain classes: `[AuditIgnore]` on the excluded entities and `[AuditSecret]` on the secret columns (`AppUser.PasswordHash`, `Notification.Variables`); an entity belongs to a company through `IAuditCompanyScope`. An anonymous request counts as "System". (proposed by the assistant, built in core#01, to be confirmed by the owner) |

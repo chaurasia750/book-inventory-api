@@ -1,4 +1,5 @@
 using BookInventory.BuildingBlocks.Domain;
+using BookInventory.Domain.Core;
 
 namespace BookInventory.Domain.Company;
 
@@ -14,6 +15,7 @@ public enum CompanyEntryAction
 /// R12/R13: the insert-only record of one enter or leave of a company by a Super Admin: which company, who and when. It is
 /// the trail of these actions until the <c>core</c> audit trail exists, and it is never edited or deleted.
 /// </summary>
+[AuditIgnore]
 public class CompanyEntry : AggregateRoot
 {
     private CompanyEntry()

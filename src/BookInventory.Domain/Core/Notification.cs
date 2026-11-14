@@ -43,6 +43,7 @@ public class Notification : AggregateRoot
     public string Recipient { get; private set; }
 
     /// <summary>The template values as JSON, or <see cref="RedactedVariables"/> once a sensitive notification is finished.</summary>
+    [AuditSecret]
     public string Variables { get; private set; }
 
     /// <summary>Copied from the template when the notification is recorded, so a later template edit cannot expose an old secret.</summary>
