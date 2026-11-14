@@ -3,7 +3,7 @@
 - **Module:** `platform` (cross-cutting; code in `library/BuildingBlocks`)
 - **Status:** carried over from the base project (HautInHousing); describes the code as it is. P18-P22 and PAC13-PAC17 (company-owned data) are Approved by abhishek on 2026-11-14, not built yet.
 - **Source:** the Book Inventory business documents, see [docs index](../README.md) (none of the rules below were derived from them yet).
-- **Plans:** [platform#05](../plans/platform/2026-11-14-05-ui-company-address.md) (U12, UAC8), [platform#06](../plans/platform/2026-11-14-06-ui-member-mobile.md) (U13, UAC9), [platform#04](../plans/platform/2026-11-14-04-ui-sign-in-frame.md) (U11, UAC7), [platform#03](../plans/platform/2026-11-14-03-ui-list-and-detail.md) (U10, UAC6), [platform#02](../plans/platform/2026-11-14-02-ui-app-shell-theme.md) (U9, UAC5), [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Approved, company-owned data P18-P22)
+- **Plans:** [platform#07](../plans/platform/2026-11-14-07-company-code-series.md) (P23, PAC18, Draft), [platform#05](../plans/platform/2026-11-14-05-ui-company-address.md) (U12, UAC8), [platform#06](../plans/platform/2026-11-14-06-ui-member-mobile.md) (U13, UAC9), [platform#04](../plans/platform/2026-11-14-04-ui-sign-in-frame.md) (U11, UAC7), [platform#03](../plans/platform/2026-11-14-03-ui-list-and-detail.md) (U10, UAC6), [platform#02](../plans/platform/2026-11-14-02-ui-app-shell-theme.md) (U9, UAC5), [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Approved, company-owned data P18-P22)
 
 > Every module builds on these rules. They exist so that `iam`, `mlm`, `finance`, `realty` and `core` look and behave the same, and so that a second project can reuse the library unchanged.
 
@@ -62,6 +62,9 @@ Defines the data, API and configuration conventions that BuildingBlocks enforces
 - **P21** The audit entry of a company-owned row carries the row's company ([specs/core.md](core.md) A5).
 - **P22** A uniqueness rule that is "per company" (a school code, an item barcode) is a unique index that includes `company_id`, so two companies can use the same value.
 
+**Company code series (Draft)**
+- **P23** A company's generated document and master codes (`SCH-0001`, `VEN-0001`, later invoice and receipt numbers) come from one shared mechanism, the **code series**: one counter per company and per prefix, increased under a lock inside the creating transaction, so a number is never given twice (also after the row is deactivated or its transaction is retried after a conflict) and two rows created at the same moment get different numbers. The number has at least four digits; the prefix is fixed by the module that asks. A module never keeps a counter of its own. Proposed by the assistant on 2026-11-14 (vendor spec Q6, decision D2); Draft until the owner answers.
+
 **Database lifecycle**
 - **P16** The API applies pending EF Core migrations at startup when `Database:MigrateOnStartup` is `true` (the shipped configuration sets it to `true` for every environment; owner decision 2026-10-26, so Development and production both migrate on start). The option defaults to `false`, so a host without the section never migrates. The log names the pending migration ids (a warning naming the environment outside Development), a failed migration stops startup - the host never serves requests against a half-migrated schema - and only forward migrations are applied, never a drop, `update 0` or schema reset. An environment that must keep the step with a person sets the flag to `false`.
 - **P17** Startup order is schema first, data second: the migration runner starts before the seeding hosted services, so a fresh database is migrated and then seeded in one start.
@@ -101,6 +104,7 @@ None.
 - **PAC15** A Super Admin with no company entered reads no company-owned rows and a write is refused with `403 core.company_required`; after entering A they read and write A's rows (P19, P20).
 - **PAC16** A saved row's company cannot be changed through any behaviour of the entity (P20).
 - **PAC17** Two companies can each hold a row with the same value of a per-company unique field, and one company cannot hold it twice (P22); the audit entry of a company-owned row names its company (P21).
+- **PAC18** Two companies each get `X-0001` from the same prefix; ten parallel requests for one company get ten different numbers; the school codes of existing schools do not change when school is moved onto the series (P23).
 
 ## 9. Open questions
 
