@@ -24,7 +24,10 @@ public enum LoginResult
     FailedSuspended,
 
     /// <summary>The password was right but the application was rejected (R8).</summary>
-    FailedRejected
+    FailedRejected,
+
+    /// <summary>The password was right but the account's company is inactive (R63).</summary>
+    FailedCompanyInactive
 }
 
 /// <summary>Device class parsed from the user agent (R22). No GeoIP in v1.</summary>

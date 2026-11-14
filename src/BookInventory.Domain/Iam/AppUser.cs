@@ -5,8 +5,8 @@ using BookInventory.BuildingBlocks.Domain.Exceptions;
 namespace BookInventory.Domain.Iam;
 
 /// <summary>
-/// A person who can log in: staff (<c>SUPER_ADMIN</c>, <c>SALES_CRM</c>, <c>ACCOUNTS</c>) or an agent
-/// (<c>MEMBER</c>). This is the aggregate root that owns the account lifecycle, the credentials and the lockout state;
+/// A person who can log in: staff (<c>SUPER_ADMIN</c>, <c>SALES_CRM</c>, <c>ACCOUNTS</c>), an agent
+/// (<c>MEMBER</c>) or a company account (<c>OWNER</c>, <c>STAFF</c>, R59-R60). This is the aggregate root that owns the account lifecycle, the credentials and the lockout state;
 /// nothing outside changes its properties, and every transition, uniqueness rule and reason requirement of R1-R6,
 /// R28-R30, R34-R36 and R42 is enforced here.
 /// <list type="bullet">
@@ -202,6 +202,8 @@ public partial class AppUser : AggregateRoot
             throw new ValidationFailureException(IamMessages.UserSelfRoleChange);
         if (Role == Role.Member || newRole == Role.Member)
             throw new ValidationFailureException(IamMessages.UserMemberRoleImmutable);
+        if (Role.IsCompanyRole() || newRole.IsCompanyRole())
+            throw new ValidationFailureException(IamMessages.UserCompanyRoleImmutable);
         if (!newRole.IsStaff())
             throw new ValidationFailureException(IamMessages.UserRoleNotStaff);
         if (newRole == Role)

@@ -38,6 +38,9 @@ public sealed class AppUserConfiguration() : ModuleEntityConfiguration<AppUser>(
         builder.HasIndex(u => u.Email).IsUnique().HasFilter("email IS NOT NULL");
         builder.HasIndex(u => u.Mobile).IsUnique().HasFilter("mobile IS NOT NULL");
 
+        // R59: a plain id (no foreign key across schemas); the company module guarantees it exists before it is stored.
+        builder.HasIndex(u => u.CompanyId);
+
         builder.HasIndex(u => u.Role);
         builder.HasIndex(u => u.Status);
         builder.HasIndex(u => u.LastLoginAt);

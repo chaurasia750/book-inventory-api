@@ -36,7 +36,7 @@ public sealed class ChangePasswordService(
 
         await passwordChange.SetAsync(new PasswordChange(user, request.NewPassword, LogoutReason.PasswordChanged, session.Id), cancellationToken);
 
-        var access = tokenService.IssueAccessTokenFor(user, session.Id, settings.Tokens.AccessToken);
+        var access = tokenService.IssueAccessTokenFor(user, session, settings.Tokens.AccessToken);
         return new RefreshResponse(access.Token, access.ExpiresAt, session.ExpiresAt, LoggedInUser.From(user));
     }
 }

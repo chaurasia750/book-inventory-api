@@ -39,7 +39,7 @@ public sealed class LoginGrantService(
         if (user.IsSystemAccount)
             await systemAlert.RaiseAsync(session.Id, context.Client, cancellationToken);
 
-        var access = tokenService.IssueAccessTokenFor(user, session.Id, settings.Tokens.AccessToken);
+        var access = tokenService.IssueAccessTokenFor(user, session, settings.Tokens.AccessToken);
 
         var body = new LoginResponse(access.Token, access.ExpiresAt, refresh.ExpiresAt, LoggedInUser.From(user));
 

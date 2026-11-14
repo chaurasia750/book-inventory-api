@@ -41,6 +41,8 @@ public static class IamMessageCatalog
             [IamMessages.UserRoleRequired] = "A role is required.",
             [IamMessages.UserRoleNotStaff] = "That role is not a staff role.",
             [IamMessages.UserMemberRoleImmutable] = "The role of an agent cannot be changed.",
+            [IamMessages.UserCompanyRoleImmutable] = "The role of a company account cannot be changed.",
+            [IamMessages.UserCompanyInvalid] = "A company account needs a valid company.",
             [IamMessages.UserRoleUnchanged] = "The user already has that role.",
             [IamMessages.UserRoleChangeReasonRequired] = "A reason of 5 to 500 characters is required.",
 
@@ -55,6 +57,7 @@ public static class IamMessageCatalog
             [IamMessages.UserNotActive] = "Your account is not active. Please contact support.",
             [IamMessages.UserPendingApproval] = "Your registration is awaiting approval. Please contact the admin team.",
             [IamMessages.UserAccountInactive] = "Your account is not active. Please contact support.",
+            [IamMessages.AuthCompanyInactive] = "Your company is not active. Please contact support.",
             [IamMessages.UserAccountSuspended] = "Your account is suspended. Please contact support.",
             [IamMessages.UserApplicationRejected] = "Your registration was not accepted. Please contact support.",
             [IamMessages.UserInvalidCredentials] = "Invalid credentials.",

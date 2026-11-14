@@ -21,6 +21,8 @@ public sealed class UserSessionConfiguration() : ModuleEntityConfiguration<UserS
         builder.HasIndex(s => s.RefreshTokenHash).IsUnique();
         builder.HasIndex(s => s.PreviousRefreshTokenHash);
         builder.HasIndex(s => s.UserId);
+        // R69: the company a Super Admin entered in this session; a plain id, no foreign key across schemas.
+        builder.HasIndex(s => s.ActiveCompanyId);
         builder.HasIndex(s => s.ExpiresAt);
         builder.HasIndex(s => s.RevokedAt);
 

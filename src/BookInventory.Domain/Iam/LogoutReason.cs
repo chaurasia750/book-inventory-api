@@ -38,5 +38,8 @@ public enum LogoutReason
     RefreshReuse,
 
     /// <summary>The user ended one of their own other sessions from the sessions screen (R15).</summary>
-    RevokedByUser
+    RevokedByUser,
+
+    /// <summary>The account's company was deactivated; every session of the company's accounts ended (R63).</summary>
+    CompanyDeactivated
 }

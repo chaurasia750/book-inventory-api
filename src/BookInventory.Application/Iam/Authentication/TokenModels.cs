@@ -13,7 +13,8 @@ public sealed record AccessTokenRequest(
     Guid SessionId,
     bool MustChangePassword,
     TimeSpan Lifetime,
-    bool IsSystemAccount = false);
+    bool IsSystemAccount = false,
+    Guid? CompanyId = null);
 
 /// <summary>A signed access token and when it stops being valid.</summary>
 public sealed record IssuedAccessToken(string Token, DateTime ExpiresAt);
@@ -40,6 +41,9 @@ public static class AuthClaims
     public const string SystemAccount = "sys";
 
     public const string SystemAccountValue = "1";
+
+    /// <summary>R62: the company of the caller (a company account's own, or the one a Super Admin entered). Absent when there is none.</summary>
+    public const string CompanyId = "cid";
 
     /// <summary>The value of <see cref="AuthenticationMethod"/> for a password login.</summary>
     public const string Password = "pwd";
