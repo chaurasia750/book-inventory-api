@@ -1389,6 +1389,154 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Item.Item", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("category");
+
+                    b.Property<string>("ClassName")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("class_name");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("code");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<decimal>("GstRatePercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("numeric(5,2)")
+                        .HasColumnName("gst_rate_percent");
+
+                    b.Property<string>("HsnCode")
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)")
+                        .HasColumnName("hsn_code");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<bool>("IsStockManaged")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_stock_managed");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Subject")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("subject");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<Guid?>("VendorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("vendor_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_item");
+
+                    b.HasIndex("CompanyId", "Category")
+                        .HasDatabaseName("ix_item_company_id_category");
+
+                    b.HasIndex("CompanyId", "Code")
+                        .IsUnique()
+                        .HasDatabaseName("ix_item_company_id_code");
+
+                    b.HasIndex("CompanyId", "Status")
+                        .HasDatabaseName("ix_item_company_id_status");
+
+                    b.HasIndex("CompanyId", "VendorId")
+                        .HasDatabaseName("ix_item_company_id_vendor_id");
+
+                    b.ToTable("item", "item", t =>
+                        {
+                            t.HasCheckConstraint("ck_item_category", "\"category\" IN ('BOOK', 'COPY', 'PEN', 'PENCIL', 'BAG', 'TIE', 'OTHER')");
+
+                            t.HasCheckConstraint("ck_item_status", "\"status\" IN ('ACTIVE', 'INACTIVE')");
+                        });
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Item.ItemBarcode", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Barcode")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("barcode");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("item_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_item_barcode");
+
+                    b.HasIndex("ItemId")
+                        .HasDatabaseName("ix_item_barcode_item_id");
+
+                    b.HasIndex("CompanyId", "Barcode")
+                        .IsUnique()
+                        .HasDatabaseName("ix_item_barcode_company_id_barcode")
+                        .HasFilter("is_deleted = false");
+
+                    b.ToTable("item_barcode", "item");
+                });
+
             modelBuilder.Entity("BookInventory.Domain.School.School", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1826,6 +1974,16 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_user_status_history_app_user_user_id");
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Item.ItemBarcode", b =>
+                {
+                    b.HasOne("BookInventory.Domain.Item.Item", null)
+                        .WithMany("Barcodes")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_item_barcode_item_item_id");
+                });
+
             modelBuilder.Entity("BookInventory.Domain.School.SchoolClass", b =>
                 {
                     b.HasOne("BookInventory.Domain.School.School", null)
@@ -1844,6 +2002,11 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("BookInventory.Domain.Core.Notification", b =>
                 {
                     b.Navigation("Logs");
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Item.Item", b =>
+                {
+                    b.Navigation("Barcodes");
                 });
 
             modelBuilder.Entity("BookInventory.Domain.School.School", b =>
