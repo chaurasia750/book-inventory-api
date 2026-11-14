@@ -12,7 +12,7 @@ public enum Role
     /// <summary>Internal sales/CRM staff. Created by a Super Admin, never self-registered.</summary>
     SalesCrm,
 
-    /// <summary>Internal accounts staff (payouts, commission verification).</summary>
+    /// <summary>Internal accounts staff.</summary>
     Accounts,
 
     /// <summary>An agent. Log in with the generated user id, never with email or mobile (R7).</summary>

@@ -5,7 +5,7 @@ namespace BookInventory.Infrastructure.Iam.Configuration;
 /// <summary>
 /// Every tunable security value of the <c>iam</c> module (R54), bound from <c>Auth:*</c> and validated at startup, so a
 /// token lifetime of 0 or a lockout of 0 attempts stops the application instead of misbehaving later (AC29). The values
-/// are only consumed from Plan 0004 (authentication) on; they live here so the domain never reads configuration.
+/// are only consumed by authentication; they live here so the domain never reads configuration.
 /// </summary>
 public sealed class AuthOptions : IValidatableObject
 {
@@ -107,7 +107,7 @@ public sealed class TokenOptions
 
     /// <summary>
     /// R13: the absolute life of a session, counted from the login, however active the user is. Refreshing slides the
-    /// expiry but never past this (owner decision, Plan 0014). Must not be shorter than <see cref="RememberMeDays"/>.
+    /// expiry but never past this (owner decision). Must not be shorter than <see cref="RememberMeDays"/>.
     /// </summary>
     [Range(1, 365)]
     public int AbsoluteSessionDays { get; set; } = 30;
@@ -137,7 +137,7 @@ public sealed class TokenOptions
 }
 
 /// <summary>
-/// R10: login (and, from Plan 0005, forgot-password) is limited per client IP. Ten attempts a minute from one address
+/// R10: login (and forgot-password) is limited per client IP. Ten attempts a minute from one address
 /// are enough for a person and slow enough down a scripted attack; a blocked caller gets 429 with <c>Retry-After</c>.
 /// </summary>
 public sealed class RateLimitOptions

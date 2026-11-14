@@ -6,7 +6,7 @@ using BookInventory.Domain.Iam;
 namespace BookInventory.Infrastructure.Persistence.Configurations.Iam;
 
 /// <summary>
-/// <c>iam.user_status_history</c> (ERD §1): the append-only record of R33. Indexed the way R39 reads it (all changes
+/// <c>iam.user_status_history</c>: the append-only record of R33. Indexed the way R39 reads it (all changes
 /// of one user, newest first). A null <c>changed_by</c> is <c>SYSTEM</c> (R32), so the actor is a nullable foreign key.
 /// </summary>
 public sealed class UserStatusHistoryConfiguration() : ModuleEntityConfiguration<UserStatusHistory>("iam")

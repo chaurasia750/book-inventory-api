@@ -9,7 +9,7 @@ namespace BookInventory.Domain.Iam;
 /// is never edited or deleted.
 /// <para>
 /// Its own root rather than a child of <see cref="AppUser"/>: the change is written by a different use case than the
-/// one that changes the status (Plan 0006), and a nullable <c>changed_by</c> (SYSTEM) has no parent to hang from.
+/// one that changes the status, and a nullable <c>changed_by</c> (SYSTEM) has no parent to hang from.
 /// </para>
 /// </summary>
 public class UserStatusHistory : AggregateRoot

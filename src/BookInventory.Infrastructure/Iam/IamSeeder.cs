@@ -15,7 +15,7 @@ namespace BookInventory.Infrastructure.Iam;
 /// R2: a deployment needs one usable Super Admin before anybody can create one through the API, so a fresh database
 /// is seeded with the Super Admin configured under <c>Seed:SuperAdmin:*</c>. It is an ordinary, <em>visible</em>
 /// account with <c>must_change_password = true</c>; the hidden system account is a different thing and is seeded from
-/// <c>SystemAccount:*</c> (Plan 0009).
+/// <c>SystemAccount:*</c>.
 /// <para>
 /// Safety rules, because this runs on every startup of every environment:
 /// <list type="bullet">

@@ -6,7 +6,7 @@ using BookInventory.Domain.Iam;
 namespace BookInventory.Infrastructure.Persistence.Configurations.Iam;
 
 /// <summary>
-/// <c>iam.password_reset_token</c> (ERD §1). Only the SHA-256 of the emailed token is stored and it is unique, so a
+/// <c>iam.password_reset_token</c>. Only the SHA-256 of the emailed token is stored and it is unique, so a
 /// token can only ever resolve to one row.
 /// </summary>
 public sealed class PasswordResetTokenConfiguration() : ModuleEntityConfiguration<PasswordResetToken>("iam")

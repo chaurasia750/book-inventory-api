@@ -6,7 +6,7 @@ using BookInventory.Application.Iam.Authentication;
 namespace BookInventory.Application.Iam.Passwords;
 
 /// <summary>
-/// R57: the random temporary password a Super Admin sees once when creating a staff account (Plan 0006 uses it). It comes
+/// R57: the random temporary password a Super Admin sees once when creating a staff account. It comes
 /// from the cryptographic random generator, always meets the configured policy (R16) - at least the required number of
 /// upper case letters, lower case letters and digits, and the minimum length - and leaves out characters that are easy to
 /// misread when it is read aloud or copied by hand (<c>0 O 1 l I</c>).

@@ -10,7 +10,7 @@ using BookInventory.Infrastructure.Persistence;
 namespace BookInventory.Infrastructure.Iam;
 
 /// <summary>
-/// The read side of the login history and the login-log search (Plan 0007): projections only, no tracking, and the paging
+/// The read side of the login history and the login-log search: projections only, no tracking, and the paging
 /// and sorting are written here on purpose - the sort accepts <c>LoginAt</c> and <c>Result</c> and nothing else, so a query
 /// string cannot order by (and so probe) any other column. The hidden system account is joined in for one reason: to be
 /// recognised and relabelled by the caller (R48), never to be shown as it is.

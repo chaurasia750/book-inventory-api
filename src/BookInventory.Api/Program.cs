@@ -61,7 +61,7 @@ builder.Services.AddSingleton(serviceProvider =>
 builder.Services.AddSingleton(serviceProvider =>
     new RegistrationSettings(serviceProvider.GetRequiredService<IOptions<RegistrationOptions>>().Value.Mode));
 
-// R49: finance and mlm put this policy on their money-moving endpoints; it refuses the system account when configured to.
+// R49: finance puts this policy on their money-moving endpoints; it refuses the system account when configured to.
 builder.Services.AddSingleton<IAuthorizationHandler, FinancialActionHandler>();
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy(AuthPolicies.FinancialAction, policy => policy.AddRequirements(new FinancialActionRequirement()));

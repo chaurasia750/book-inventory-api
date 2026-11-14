@@ -6,7 +6,7 @@ using BookInventory.Domain.Iam;
 namespace BookInventory.Infrastructure.Persistence.Configurations.Iam;
 
 /// <summary>
-/// <c>iam.app_user</c> (ERD §1). Identity is stored normalised, so the three unique indexes of R1 are plain indexes
+/// <c>iam.app_user</c>. Identity is stored normalised, so the three unique indexes of R1 are plain indexes
 /// instead of case-insensitive comparisons. The <c>HiddenAccount</c> query filter is the single place R43 is
 /// implemented: every normal query therefore hides the system account by default.
 /// </summary>

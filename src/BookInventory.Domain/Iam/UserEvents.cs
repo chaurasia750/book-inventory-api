@@ -5,7 +5,7 @@ namespace BookInventory.Domain.Iam;
 /// <summary>
 /// Domain events raised by <see cref="AppUser"/> (spec R40, section 6). They carry ids and values, never entities, and
 /// are handled in the Application layer: <c>UserDeactivated</c> / <c>UserSuspended</c> revoke the user's sessions and
-/// close their login-log rows, <c>UserActivated</c> / <c>UserRejected</c> let <c>mlm</c> react, and
+/// close their login-log rows, <c>UserActivated</c> / <c>UserRejected</c> let other modules react, and
 /// <c>UserRoleChanged</c> / <c>PasswordChanged</c> revoke sessions so the change applies on the next login.
 /// </summary>
 public abstract record UserEvent(Guid UserId) : DomainEventBase;
