@@ -13,4 +13,6 @@ public static class CoreMessages
     public const string CannotRequeueRedacted = "core.notification.cannot_requeue_redacted";
     public const string NotFound = "core.notification.not_found";
     public const string AuditCompanyRequired = "core.audit.company_required";
+    public const string CompanyRequired = "core.company_required";
+    public const string CompanyImmutable = "core.company_immutable";
 }

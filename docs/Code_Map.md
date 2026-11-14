@@ -34,6 +34,7 @@ Modules present today: `Iam`, `Core`, `Company` (folders match the schemas `iam`
 | Aggregate with an append-only child timeline | `src/BookInventory.Domain/Company/Company.cs` with `src/BookInventory.Domain/Company/CompanyStatusHistory.cs` |
 | Domain events | `src/BookInventory.Domain/Iam/UserEvents.cs` |
 | Audit marks on an entity | `[AuditIgnore]` and `[AuditSecret]` (`src/BookInventory.Domain/Core/AuditIgnoreAttribute.cs`, `src/BookInventory.Domain/Core/AuditSecretAttribute.cs`) used on `src/BookInventory.Domain/Iam/AppUser.cs`; company scope: `src/BookInventory.Domain/Core/IAuditCompanyScope.cs` |
+| Company-owned aggregate (P18-P22) | derive from `src/BookInventory.Domain/Core/CompanyOwnedRoot.cs`; the filter and the stamping are `src/BookInventory.Infrastructure/Persistence/CompanyScope.cs`; a per-company unique index starts with `company_id` (`builder.HasIndex(x => new { x.CompanyId, x.Code }).IsUnique()`) |
 | Audit capture (the save override) | `src/BookInventory.Infrastructure/Persistence/AppDbContext.cs` with `src/BookInventory.Infrastructure/Core/AuditCapture.cs` |
 | Message codes | `src/BookInventory.Domain/Iam/IamMessages.cs`, catalogue `src/BookInventory.Application/Iam/IamMessageCatalog.cs` |
 | Application service (use case) | `src/BookInventory.Application/Iam/Accounts/UserAccountService.cs` |
