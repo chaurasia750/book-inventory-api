@@ -4,7 +4,7 @@
 - **Status:** R1-R19 Approved by abhishek in chat on 2026-11-14 (Q1-Q10 answered one by one; Q9 answered "now", with the Excel package ClosedXML and the import rules R17-R19 answered the same way; D1-D5 with them)
 - **Last updated:** 2026-11-14
 - **Source docs:** [BRD §1.3, §2, §3, §4.6 Stock (FR-STK-01 to FR-STK-10), §4.12 Return (FR-RET-04, FR-RET-11), §4.13 Sample (FR-SMP-01), §5.5 BR-STK and its stock movement table, §8 Data Model (StockLedger) and design decision 2, §10, §11 item 10](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P23; [specs/company.md](company.md); [specs/item.md](item.md)
-- **Plans:** [stock#01](../plans/stock/2026-11-14-01-stock-ledger.md) (Done), [stock#02](../plans/stock/2026-11-14-02-ui-stock-screens.md) (Approved), [stock#03](../plans/stock/2026-11-14-03-excel-opening-stock.md) (Done), [stock#04](../plans/stock/2026-11-14-04-ui-excel-opening-stock.md) (Approved); the capability it needs from item: [item#04](../plans/item/2026-11-14-04-item-directory-stock-flag.md) (Done)
+- **Plans:** [stock#01](../plans/stock/2026-11-14-01-stock-ledger.md) (Done), [stock#02](../plans/stock/2026-11-14-02-ui-stock-screens.md) (In progress), [stock#03](../plans/stock/2026-11-14-03-excel-opening-stock.md) (Done), [stock#04](../plans/stock/2026-11-14-04-ui-excel-opening-stock.md) (In progress); the capability it needs from item: [item#04](../plans/item/2026-11-14-04-item-directory-stock-flag.md) (Done)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 

@@ -62,3 +62,5 @@ Kinds: **NV** not verified · **GAP** known gap · **DEC** decision the owner ha
 | B52 | stock | GAP | An entered Super Admin's entries show the id only (names come from the company's own accounts) | stock#01 | open |
 | B53 | stock | GAP | A file above the server body limit (6 MB) is refused by the framework's validation problem ("Request body too large") without the module code `stock.import.too_large`; files from 5 MB to 6 MB get the module code | stock#03 | open |
 | B54 | item | DEBT | The item directory's `FindByCodeOrBarcodeAsync` (added for the stock import) is covered by stock#03's checks only; item R16 does not name it yet: add a line to item R16 in the next item spec change | stock#03 | open |
+| B55 | stock | NV | stock#02 screens not seen in a browser: stock list (marks, filters, sort, paging), item stock panel with history, opening and adjustment forms, Staff without forms | stock#02 | open |
+| B56 | stock | NV | stock#04 import dialog not seen in a browser: template download, `.xlsx`/size check before upload, count on success, row report on refusal | stock#04 | open |
