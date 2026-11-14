@@ -3,7 +3,7 @@
 - **Module:** `platform` (cross-cutting; code in `library/BuildingBlocks`)
 - **Status:** carried over from the base project (HautInHousing); describes the code as it is. P18-P22 and PAC13-PAC17 (company-owned data) are Approved by abhishek on 2026-11-14, not built yet.
 - **Source:** the Book Inventory business documents, see [docs index](../README.md) (none of the rules below were derived from them yet).
-- **Plans:** [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Approved, company-owned data P18-P22)
+- **Plans:** [platform#02](../plans/platform/2026-11-14-02-ui-app-shell-theme.md) (U9, UAC5), [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Approved, company-owned data P18-P22)
 
 > Every module builds on these rules. They exist so that `iam`, `mlm`, `finance`, `realty` and `core` look and behave the same, and so that a second project can reuse the library unchanged.
 
@@ -118,8 +118,10 @@ The Angular UI (Nx workspace, three apps: `public-site`, `admin`, `member`, plus
 - **U6** Roles are the API's strings (`SUPER_ADMIN`, `SALES_CRM`, `ACCOUNTS`, `MEMBER`). Staff land in `admin`, `MEMBER` in `member`; route guards and menu items are driven by role. The existing `admin`/`member` role buckets used by legacy code keep working through a mapping.
 - **U7** **No UI business code is deleted** - except the legacy property/inventory, leads and commission code, which the owner allows to be replaced or removed in the plans of their modules (`realty`, `mlm`/`finance`); nothing else without an explicit answer. A module whose new API does not exist yet is hidden from navigation through a feature switch and enabled when its adaptation plan is done. The legacy code is also preserved in the git tag `legacy-snapshot`.
 - **U8** UI changes are verified by `nx build` and `nx lint` of the affected projects plus a real browser/HTTP check (no UI test projects, same rule as the API).
+- **U9** The `admin` and `member` apps share one app shell (sidebar, header bar, layout) and one colour theme taken from the owner's own project `relator-rj-ui` (owner confirmed ownership on 2026-11-14): a dark charcoal sidebar with a brand mark, a "Search menu" box (Ctrl K), menu sections, collapsible sub-menus, an icon-only collapsed state and a user card with Sign out at the bottom; a 56 px header bar with the menu button, theme switch and user menu; the charcoal and gold colour palette, in light and dark mode. Both apps show the same shell and differ only in their menu entries (the Super Admin's in `admin`, the company's Owner and Staff in `member`, by role, U6). The page content (tables, forms, dialogs) keeps its components and takes the new colours only through the shared palette.
 
 - **UAC1** The three apps build and lint (no new lint findings), and `git diff --diff-filter=D legacy-snapshot` lists no business page, library or service (only auth plumbing replaced by the new flow).
 - **UAC2** No token or credential is ever stored in browser storage (inspected after login).
 - **UAC3** Reloading any deep link in `admin`/`member` while logged in stays logged in (refresh bootstrap); after logout it redirects to login.
 - **UAC4** A problem-details error from the API shows the catalogue text for its `code`; an unknown code shows a generic text.
+- **UAC5** After login, `admin` and `member` show the same dark sidebar: the menu filters as the user types in Search menu, Ctrl K focuses it, a sub-menu opens and closes, the collapsed sidebar shows icons only and opens on hover, the user card shows the name and role and Sign out ends the session; the menu entries match the role (U9, U6).
