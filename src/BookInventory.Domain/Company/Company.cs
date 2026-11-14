@@ -68,12 +68,12 @@ public class Company : AggregateRoot, IAuditCompanyScope
     /// <summary>R4/D4: the Owner's user id, generated from the company's name (see <see cref="CompanyOwnerUserId"/>).</summary>
     public string OwnerUserId => CompanyOwnerUserId.From(Name);
 
-    /// <summary>R16: the company's URL segment, derived from its name (nothing is stored, a rename changes it).</summary>
+    /// <summary>R15: the company's URL segment, derived from its name (nothing is stored, a rename changes it).</summary>
     public string Slug => CompanyRules.Slug(Name);
 
     public static string NormalizeName(string? name) => CompanyRules.NormalizeName(name);
 
-    /// <summary>R16: the URL segment a name would get; used to compare two names.</summary>
+    /// <summary>R15: the URL segment a name would get; used to compare two names.</summary>
     public static string SlugOf(string? name) => CompanyRules.Slug(name);
 
     /// <summary>R3/R7: a new company is active at once and its timeline starts with the creation row.</summary>
