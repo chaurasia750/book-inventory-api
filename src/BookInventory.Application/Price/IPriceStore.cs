@@ -21,6 +21,9 @@ public interface IPriceStore
     /// <summary>R4, R9: all versions of the given items, not tracked.</summary>
     Task<IReadOnlyList<PriceVersion>> VersionsOfItemsAsync(IReadOnlyCollection<Guid> itemIds, CancellationToken cancellationToken = default);
 
+    /// <summary>R13: the versions of the given items with this normalised name, tracked, so a bulk change can edit them.</summary>
+    Task<IReadOnlyList<PriceVersion>> FindNamedForManagementAsync(IReadOnlyCollection<Guid> itemIds, string normalizedName, CancellationToken cancellationToken = default);
+
     /// <summary>R8: the versions of the given items with this normalised name, not tracked.</summary>
     Task<IReadOnlyList<PriceVersion>> VersionsNamedAsync(IReadOnlyCollection<Guid> itemIds, string normalizedName, CancellationToken cancellationToken = default);
 }

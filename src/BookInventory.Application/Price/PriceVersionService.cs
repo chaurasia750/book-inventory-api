@@ -1,8 +1,6 @@
-using BookInventory.Application.Iam.Companies;
 using BookInventory.Application.Item;
 using BookInventory.BuildingBlocks.Application.Attributes;
 using BookInventory.BuildingBlocks.Domain.Exceptions;
-using BookInventory.Domain.Core;
 using BookInventory.Domain.Price;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,11 +12,11 @@ namespace BookInventory.Application.Price;
 /// request transaction commit. A version or item of another company is not found (P19).
 /// </summary>
 [AutoRegister(ServiceLifetime.Scoped)]
-public sealed class PriceVersionService(IPriceStore store, IItemDirectory items, ICurrentCompany currentCompany)
+public sealed class PriceVersionService(IPriceStore store, IItemDirectory items, PriceCompanyGuard companyGuard)
 {
     public async Task<PriceVersionResponse> AddAsync(Guid itemId, AddPriceVersionRequest request, CancellationToken cancellationToken)
     {
-        RequireCompany();
+        companyGuard.Require();
         await RequireItemAsync(itemId, cancellationToken);
         await RequireFreeNameAsync(itemId, request.VersionName, excludingId: null, cancellationToken);
 
@@ -29,7 +27,7 @@ public sealed class PriceVersionService(IPriceStore store, IItemDirectory items,
 
     public async Task EditAsync(Guid itemId, Guid versionId, EditPriceVersionRequest request, CancellationToken cancellationToken)
     {
-        RequireCompany();
+        companyGuard.Require();
         var version = await store.FindForManagementAsync(versionId, cancellationToken);
         if (version is null || version.ItemId != itemId)
             throw new NotFoundException(PriceMessages.VersionNotFound);
@@ -41,7 +39,7 @@ public sealed class PriceVersionService(IPriceStore store, IItemDirectory items,
     /// <summary>R8: copies the source version of every selected item that has it and lacks the target; the rest are counted, never overwritten.</summary>
     public async Task<CopyPriceResult> CopyAsync(CopyPriceVersionRequest request, CancellationToken cancellationToken)
     {
-        RequireCompany();
+        companyGuard.Require();
         var from = PriceVersion.NormalizeName(request.FromVersionName);
         var to = PriceVersion.NormalizeName(request.ToVersionName);
         var itemIds = await items.AllIdsAsync((request.Selection ?? new PriceSelection()).ToItemSelection(), cancellationToken);
@@ -59,13 +57,6 @@ public sealed class PriceVersionService(IPriceStore store, IItemDirectory items,
 
         return new CopyPriceResult(
             itemIds.Count, copies.Count, itemIds.Count - sources.Count, sources.Values.Count(s => existing.Contains(s.ItemId)));
-    }
-
-    /// <summary>P20: a write needs a company; a Super Admin with none entered is told so, not that the item does not exist.</summary>
-    private void RequireCompany()
-    {
-        if (currentCompany.CompanyId is null)
-            throw new ForbiddenException(CoreMessages.CompanyRequired);
     }
 
     private async Task RequireItemAsync(Guid itemId, CancellationToken cancellationToken)
