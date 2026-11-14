@@ -19,6 +19,9 @@ public interface IUserDirectory
     /// <summary>R38/R43: the paged, searchable, filterable user list.</summary>
     Task<IPagedList<UserSummary>> SearchAsync(UserSearchQuery query, CancellationToken cancellationToken = default);
 
+    /// <summary>R9/R11 of <c>company</c>: every account of one company (Owner and Staff), oldest first. Never the hidden system account.</summary>
+    Task<IReadOnlyList<UserSummary>> ListCompanyAccountsAsync(Guid companyId, CancellationToken cancellationToken = default);
+
     /// <summary>
     /// R5/AC20: how many active <em>visible</em> Super Admins exist other than <paramref name="excludingUserId"/>. Zero
     /// means the account in question is the last one and must not be deactivated, suspended or demoted. The hidden
