@@ -4,10 +4,10 @@
 - **Kind:** UI (repository `book-inventory-ui`; build `npx nx run-many -t build`, lint `npx nx run-many -t lint`)
 - **Spec:** [../../specs/price.md](../../specs/price.md) - rules covered: R10-R14 (the screen side); AC9, AC10
 - **Owner:** abhishek
-- **Status:** Draft
+- **Status:** Approved
 - **Depends on:** `price#03`, `price#02`
 - **UI plan:** this is itself a UI plan
-- **Approved by / on:** pending
+- **Approved by / on:** abhishek / 2026-11-14 (chat: the open questions answered one by one)
 - **Created:** 2026-11-14
 
 ## 1. In one minute

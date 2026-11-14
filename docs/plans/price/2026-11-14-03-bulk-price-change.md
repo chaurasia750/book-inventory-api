@@ -4,10 +4,10 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/price.md](../../specs/price.md) - rules covered: R10-R14, R17; AC9-AC11
 - **Owner:** abhishek
-- **Status:** Draft
+- **Status:** Approved
 - **Depends on:** `price#01`
 - **UI plan:** price#04
-- **Approved by / on:** pending (R10-R14 are Draft; Q1 rounding and Q3 what a bulk change edits are open)
+- **Approved by / on:** abhishek / 2026-11-14 (chat: the open questions answered one by one)
 - **Created:** 2026-11-14
 
 ## 1. In one minute
@@ -19,7 +19,7 @@ Leaves out: Excel upload, copy (done in price#01), any UI (price#04), creating n
 Schema change: no.
 
 ## 3. Approach
-The calculation lives in one value object, `PriceChange` (kind, direction, value) with `Apply(decimal current)`: it works in exact `decimal`, applies a percentage to the current value of that same field, rounds once at the end with the mode the owner answered for Q1 (written in the spec), and reports "below zero" or "overflow" instead of storing a wrong value. Preview and apply share one function that turns a selection and the changes into a list of (version, old values, new values, skipped reason), so the preview can never differ from what apply does; apply recomputes it on the server and edits each version through its own root in one request transaction (decision D4). The selection is turned into item ids by the item directory (item#03), capped at 5000 items; a selection that matches nothing is `400`.
+The calculation lives in one value object, `PriceChange` (kind, direction, value) with `Apply(decimal current)`: it works in exact `decimal`, applies a percentage to the current value of that same field, rounds once at the end half away from zero at two decimals (the owner's answer to Q1), and reports "below zero" or "overflow" instead of storing a wrong value. Preview and apply share one function that turns a selection and the changes into a list of (version, old values, new values, skipped reason), so the preview can never differ from what apply does; apply recomputes it on the server and edits each version through its own root in one request transaction (decision D4). The selection is turned into item ids by the item directory (item#03), capped at 5000 items; a selection that matches nothing is `400`.
 
 ## 4. Tasks (at most 8)
 - [ ] 1. Domain: `PriceChange` (percent and amount, increase and decrease, the rounding of Q1, below-zero and overflow outcomes) and the `PriceVersion` edit it uses (R11, R17).
@@ -34,11 +34,11 @@ The calculation lives in one value object, `PriceChange` (kind, direction, value
 |---|---|---|
 | `R10`, `R12`, `AC9` | 2, 4 | Preview for one category with MRP +10 percent and purchase -5 rupees: old and new per item, skipped with reasons, totals; SQL shows no row changed |
 | `R13`, `R14`, `AC10` | 3, 4 | Apply with the same body: exactly the previewed items change to the previewed values, one history entry each (`GET audit`), an item that would go below zero is skipped, an empty selection -> 400; documents untouched (none exist) |
-| `R11`, `R17`, `AC11` | 1 | Worked out first and then observed: 2.50 +1 percent -> 2.53 (or 2.52 per Q1); 100.00 -33.33 percent -> 66.67; 125.00 +10 percent -> 137.50; 10.00 minus 10.01 -> skipped below zero; 99.99 +0 percent -> 99.99; the maximum `numeric(18,2)` value +1 percent -> refused as overflow; amounts with three decimals in the request -> 400 |
+| `R11`, `R17`, `AC11` | 1 | Worked out first and then observed: 2.50 +1 percent -> 2.53 (half away from zero, Q1); 100.00 -33.33 percent -> 66.67; 125.00 +10 percent -> 137.50; 10.00 minus 10.01 -> skipped below zero; 99.99 +0 percent -> 99.99; the maximum `numeric(18,2)` value +1 percent -> refused as overflow; amounts with three decimals in the request -> 400 |
 | `R5`, `R6` | 4 | Staff on both endpoints -> 403; anonymous -> 401; the Owner of B cannot change A's versions |
 
 ## 6. Not verified
 To be filled when the plan is closed.
 
 ## 7. Risks and notes
-Rounding (Q1) and what a bulk change edits (Q3) are business decisions: this plan does not start before the owner answers them. A bulk apply over thousands of items is one long transaction; the 5000 cap keeps it bounded.
+Rounding (Q1: half away from zero at two decimals) and what a bulk change edits (Q3: the named version) were answered by the owner on 2026-11-14. A bulk apply over thousands of items is one long transaction; the 5000 cap keeps it bounded.

@@ -1,10 +1,10 @@
 # Spec: item - Item master
 
 - **Module:** `item` (PostgreSQL schema `item`)
-- **Status:** R16 and AC12 Draft (proposed by the assistant for the price spec); R1-R15 Approved by abhishek in chat on 2026-11-14 ("all approved hai kro implement"; Q1-Q12 answered with the recommended answers, D1-D5 with them)
+- **Status:** R16 and AC12 Approved by abhishek on 2026-11-14 (for the price spec); R1-R15 Approved by abhishek in chat on 2026-11-14 ("all approved hai kro implement"; Q1-Q12 answered with the recommended answers, D1-D5 with them)
 - **Last updated:** 2026-11-14
 - **Source docs:** [BRD §1.2, §3, §4.4 Item Master (FR-ITM-01 to FR-ITM-08), §5.4 BR-GST, §5.5 BR-STK, §7.1, §8 Data Model (ItemCategory, Item, ItemBarcode)](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P23; [specs/company.md](company.md); [specs/vendor.md](vendor.md); [specs/school.md](school.md) (the neighbouring masters it follows)
-- **Plans:** [item#03](../plans/item/2026-11-14-03-item-directory.md) (Draft, R16, AC12), [item#01](../plans/item/2026-11-14-01-item-master.md) (Done), [item#02](../plans/item/2026-11-14-02-ui-item-screens.md) (Approved); the capability it needs from vendor: [vendor#03](../plans/vendor/2026-11-14-03-vendor-directory.md) (Approved)
+- **Plans:** [item#03](../plans/item/2026-11-14-03-item-directory.md) (Approved, R16, AC12), [item#01](../plans/item/2026-11-14-01-item-master.md) (Done), [item#02](../plans/item/2026-11-14-02-ui-item-screens.md) (Approved); the capability it needs from vendor: [vendor#03](../plans/vendor/2026-11-14-03-vendor-directory.md) (Approved)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -45,7 +45,7 @@ Out of scope for this feature: price versions, MRP, sale and purchase price (FR-
 - **R15** Changing the **category** or **stock managed** of an item is allowed here; once stock or documents exist, the later modules refuse a change that would break their history (the same way the school's session type works, [specs/school.md](school.md) R3).
 
 **Reading items from other modules**
-- **R16** Other modules (the price module first) read items only through the item module's **directory capability**, never by joining its tables: it tells whether an item exists in the session's company and whether it is active, gives the code and name of a list of item ids, and finds item ids by a search text (name, code, barcode) and a selection of vendor, category, class (ignoring case) and active-only, page by page or all at once (at most 5000). It answers only for the company of the session (platform P19), returns plain values and never the aggregate, and changes nothing. Proposed by the assistant on 2026-11-14 for the price spec (decision D3); Draft.
+- **R16** Other modules (the price module first) read items only through the item module's **directory capability**, never by joining its tables: it tells whether an item exists in the session's company and whether it is active, gives the code and name of a list of item ids, and finds item ids by a search text (name, code, barcode) and a selection of vendor, category, class (ignoring case) and active-only, page by page or all at once (at most 5000). It answers only for the company of the session (platform P19), returns plain values and never the aggregate, and changes nothing. Proposed by the assistant on 2026-11-14 for the price spec (decision D3); Approved by abhishek on 2026-11-14.
 
 ## 4. Data
 

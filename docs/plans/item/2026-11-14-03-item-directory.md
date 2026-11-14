@@ -4,10 +4,10 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/item.md](../../specs/item.md) - rules covered: R16; AC12
 - **Owner:** abhishek
-- **Status:** Draft
+- **Status:** Approved
 - **Depends on:** `item#01` (Done)
 - **UI plan:** none, it adds no screen or endpoint: it is a read capability for other modules
-- **Approved by / on:** pending (rule R16 is Draft; it exists for the price spec)
+- **Approved by / on:** abhishek / 2026-11-14 (chat: the open questions answered one by one)
 - **Created:** 2026-11-14
 
 ## 1. In one minute

@@ -1,10 +1,10 @@
 # Spec: price - Price management
 
 - **Module:** `price` (PostgreSQL schema `price`)
-- **Status:** R1-R17 Draft (proposed by the assistant from the BRD; Q1-Q12 open, each with a recommended answer)
+- **Status:** R1-R17 Approved by abhishek in chat on 2026-11-14 (Q1-Q12 answered one by one, all with the recommended answers; D1-D5 with them)
 - **Last updated:** 2026-11-14
 - **Source docs:** [BRD §1.2, §3 (who may change prices), §4.5 Price Management (FR-PRC-01 to FR-PRC-08), §5.2 BR-PRC, §5.3 BR-DIS, §7.1, §8 Data Model (ItemPriceVersion)](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P23; [specs/company.md](company.md); [specs/item.md](item.md); [specs/core.md](core.md) (the audit trail it reuses for history)
-- **Plans:** [price#01](../plans/price/2026-11-14-01-price-versions.md) (Draft), [price#02](../plans/price/2026-11-14-02-ui-price-versions.md) (Draft), [price#03](../plans/price/2026-11-14-03-bulk-price-change.md) (Draft), [price#04](../plans/price/2026-11-14-04-ui-bulk-price-change.md) (Draft); the capability it needs from item: [item#03](../plans/item/2026-11-14-03-item-directory.md) (Draft)
+- **Plans:** [price#01](../plans/price/2026-11-14-01-price-versions.md) (Approved), [price#02](../plans/price/2026-11-14-02-ui-price-versions.md) (Approved), [price#03](../plans/price/2026-11-14-03-bulk-price-change.md) (Approved), [price#04](../plans/price/2026-11-14-04-ui-bulk-price-change.md) (Approved); the capability it needs from item: [item#03](../plans/item/2026-11-14-03-item-directory.md) (Approved)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -38,7 +38,7 @@ Out of scope for these features: Excel upload of prices (FR-PRC-05, NFR-12: its 
 
 **Bulk price change**
 - **R10** The Owner selects items by any mix of **vendor**, **category**, **class**, or the whole list, optionally only active items, and names the version to change (FR-PRC-04) (Q3).
-- **R11** For each of MRP, sale price and purchase price separately the Owner may give an **increase or decrease** as a percentage or as an amount in rupees, or leave it unchanged (FR-PRC-04). A percentage is of the current value of that same field of that same version. The new value is rounded to two decimals; the rounding mode is a business decision (Q1). A result below zero is not applied: that item is listed in the preview as "would go below zero" and skipped.
+- **R11** For each of MRP, sale price and purchase price separately the Owner may give an **increase or decrease** as a percentage or as an amount in rupees, or leave it unchanged (FR-PRC-04). A percentage is of the current value of that same field of that same version. The new value is rounded to two decimals, halves away from zero (Q1, the owner's answer: `2.525` becomes `2.53`). A result below zero is not applied: that item is listed in the preview as "would go below zero" and skipped.
 - **R12** A **preview** computes, for every selected item that has the named version, the old and the new value of each changed field and the items that will be skipped (no such version, or below zero); it **saves nothing** (FR-PRC-04). The preview is paged and shows the totals (items changed, items skipped).
 - **R13** **Apply** recomputes the change on the server from the same selection and values (it never trusts numbers sent back from the preview) and edits the named version of every changed item in one transaction: all or nothing. Each edit is recorded in the history (R15). A request to apply with a selection that matches no item is refused (`400`).
 - **R14** A bulk change or a copy never touches a document already issued (BR-PRC-03), and only the selected items' versions change.
@@ -95,7 +95,7 @@ Raised by the `PriceVersion` aggregate (past tense, ids and values only): `Price
 - **AC8** Copy `2025-26` to `2026-27` from 2026-04-01 for the items of one vendor: items with `2025-26` get an identical `2026-27`; items without it and items that already have `2026-27` are skipped and counted; nothing is overwritten (R8).
 - **AC9** Bulk preview for the items of one category, MRP +10 percent and purchase price -5 rupees: the preview lists old and new values per item, the skipped items with the reason, and the totals; the database is unchanged afterwards (R10, R11, R12).
 - **AC10** Bulk apply with the same body changes exactly the previewed items to the previewed values, in one transaction, and each changed version has a history entry; an item whose result would be below zero is skipped; a selection that matches no item is `400` (R11, R13).
-- **AC11** Money, worked out independently first (rounding of Q1 as answered): MRP 2.50 with +1 percent is 2.525 and becomes 2.53 when halves round away from zero (2.52 when they round to the even digit); 100.00 with -33.33 percent is 66.67; 125.00 with +10 percent is 137.50; 10.00 with an amount decrease of 10.01 would be -0.01 and is skipped; 99.99 with +0 percent stays 99.99; the maximum `numeric(18,2)` value with +1 percent is refused (overflow) rather than stored wrong (R2, R11, R17).
+- **AC11** Money, worked out independently first (rounding of Q1: halves away from zero): MRP 2.50 with +1 percent is 2.525 and becomes 2.53; 100.00 with -33.33 percent is 66.67; 125.00 with +10 percent is 137.50; 10.00 with an amount decrease of 10.01 would be -0.01 and is skipped; 99.99 with +0 percent stays 99.99; the maximum `numeric(18,2)` value with +1 percent is refused (overflow) rather than stored wrong (R2, R11, R17).
 - **AC12** The history of a version, read by the Owner, shows creation and each edit with the actor, the time and the old and new values; Staff cannot read it (R15, R16).
 
 ## 10. Decisions
@@ -110,7 +110,7 @@ Raised by the `PriceVersion` aggregate (past tense, ids and values only): `Price
 
 ## 11. Open questions
 
-Each has a recommended answer; the rules above already follow the recommendation and stay `Draft` until the owner answers.
+None. Q1-Q12 were answered by the owner one by one on 2026-11-14, all with the recommended answers (Q1: half away from zero at two decimals; Q2: latest effective date not after today; Q3: bulk change edits the named version); the rules above follow them. The list keeps the questions with the answer taken.
 
 - **Q1** **Rounding of a percentage change (a business decision).** Recommended: round half away from zero at two decimals (`2.525` becomes `2.53`), applied once per field at the end (R11, R17). Alternative: round half to the even digit (`2.525` becomes `2.52`), or round to the whole rupee.
 - **Q2** "Newest version" (BR-PRC-02). Recommended: the version with the latest effective date that is not after today in India time; a future-dated version waits for its date (R4). Alternative: the version created last, whatever its date.
