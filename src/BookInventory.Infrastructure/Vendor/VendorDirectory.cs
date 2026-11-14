@@ -15,13 +15,18 @@ public sealed class VendorDirectory(IUnitOfWork unitOfWork) : IVendorDirectory
 {
     private readonly IRepository<VendorRoot> _vendors = unitOfWork.Repository<VendorRoot>();
 
-    public async Task<VendorReference?> GetAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<VendorReference?> GetAsync(Guid id, CancellationToken cancellationToken = default) =>
+        (await ReferencesAsync([id], cancellationToken)).GetValueOrDefault(id);
+
+    public async Task<IReadOnlyDictionary<Guid, VendorReference>> ReferencesAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken = default)
     {
-        var vendor = await _vendors.TableNoTracking
-            .Where(v => v.Id == id)
-            .Select(v => new { v.Id, v.Name, IsActive = v.Status == Domain.Vendor.VendorStatus.Active })
-            .FirstOrDefaultAsync(cancellationToken);
-        return vendor is null ? null : new VendorReference(vendor.Id, vendor.Name, vendor.IsActive);
+        if (ids.Count == 0)
+            return new Dictionary<Guid, VendorReference>();
+
+        return await _vendors.TableNoTracking
+            .Where(v => ids.Contains(v.Id))
+            .Select(v => new VendorReference(v.Id, v.Code, v.Name, v.Status == Domain.Vendor.VendorStatus.Active))
+            .ToDictionaryAsync(v => v.Id, cancellationToken);
     }
 
     public async Task<IReadOnlyDictionary<Guid, string>> NamesAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken = default)
