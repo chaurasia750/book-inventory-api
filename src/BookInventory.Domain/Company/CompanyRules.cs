@@ -9,6 +9,21 @@ internal static partial class CompanyRules
     public static string NormalizeName(string? name) =>
         SpaceRun().Replace(name?.Trim() ?? string.Empty, " ").ToLowerInvariant();
 
+    /// <summary>The first segments of the application's own URLs: a company whose name makes one of these cannot be created (R16).</summary>
+    private static readonly HashSet<string> ReservedSlugs = ["admin", "login", "auth", "error", "welcome", "api", "assets", "unauthorized"];
+
+    /// <summary>R16: the company's URL segment - lower case letters and digits, other characters become single hyphens, none at the ends.</summary>
+    public static string Slug(string? name) =>
+        NonSlugRun().Replace(name?.Trim().ToLowerInvariant() ?? string.Empty, "-").Trim('-');
+
+    /// <summary>R16: a name whose slug is empty or one of the application's own URL segments is refused.</summary>
+    public static void RequireSlug(string name)
+    {
+        var slug = Slug(name);
+        if (slug.Length == 0 || ReservedSlugs.Contains(slug))
+            throw new ValidationFailureException(CompanyMessages.SlugUnavailable);
+    }
+
     /// <summary>R3: the display name, trimmed and with single spaces; 2-150 characters.</summary>
     public static string RequireName(string? name)
     {
@@ -45,4 +60,7 @@ internal static partial class CompanyRules
 
     [GeneratedRegex(@"\s+")]
     private static partial Regex SpaceRun();
+
+    [GeneratedRegex("[^a-z0-9]+")]
+    private static partial Regex NonSlugRun();
 }

@@ -30,7 +30,7 @@ public sealed class CompanyEntryService(
         await store.AddAsync(CompanyEntry.Entered(companyId, currentUser.UserId, Now()), cancellationToken);
 
         return new SessionCompanyResponse(
-            new CurrentCompanyResponse(company.Id, company.Name, company.Status, company.State),
+            new CurrentCompanyResponse(company.Id, company.Name, company.Slug, company.Status, company.State),
             change.AccessToken.Token,
             change.AccessToken.ExpiresAt);
     }

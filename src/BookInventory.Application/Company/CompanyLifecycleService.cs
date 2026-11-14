@@ -25,7 +25,7 @@ public sealed class CompanyLifecycleService(
         var company = await LoadAsync(id, cancellationToken);
         company.Edit(request.ToDetails());
 
-        if (await store.IsNameTakenAsync(company.NameNormalized, company.Id, cancellationToken))
+        if (await store.IsNameTakenAsync(company.Name, company.Id, cancellationToken))
             throw new ConflictException(CompanyMessages.NameTaken);
     }
 

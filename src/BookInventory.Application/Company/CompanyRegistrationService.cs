@@ -23,7 +23,7 @@ public sealed class CompanyRegistrationService(
     public async Task<CreatedCompanyResponse> CreateAsync(CreateCompanyRequest request, CancellationToken cancellationToken)
     {
         var company = CompanyRoot.Create(request.ToDetails(), currentUser.UserId, timeProvider.GetUtcNow().UtcDateTime);
-        if (await store.IsNameTakenAsync(company.NameNormalized, excludingId: null, cancellationToken))
+        if (await store.IsNameTakenAsync(company.Name, excludingId: null, cancellationToken))
             throw new ConflictException(CompanyMessages.NameTaken);
 
         var ownerUserId = company.OwnerUserId;

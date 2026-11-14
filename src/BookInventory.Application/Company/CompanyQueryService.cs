@@ -35,7 +35,7 @@ public sealed class CompanyQueryService(ICompanyStore store, IUserDirectory user
         }
 
         var company = await RequireAsync(id, cancellationToken);
-        return new CurrentCompanyView(new CurrentCompanyResponse(company.Id, company.Name, company.Status, company.State));
+        return new CurrentCompanyView(new CurrentCompanyResponse(company.Id, company.Name, company.Slug, company.Status, company.State));
     }
 
     private async Task<CompanyRoot> RequireAsync(Guid id, CancellationToken cancellationToken) =>

@@ -8,6 +8,7 @@ public static class CompanyMessages
 {
     public const string NotFound = "company.not_found";
     public const string NameTaken = "company.name_taken";
+    public const string SlugUnavailable = "company.slug_unavailable";
     public const string InvalidName = "company.invalid_name";
     public const string InvalidField = "company.invalid_field";
     public const string OwnerIdInvalid = "company.owner_id_invalid";

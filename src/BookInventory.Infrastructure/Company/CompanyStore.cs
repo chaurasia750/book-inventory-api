@@ -33,9 +33,15 @@ public sealed class CompanyStore(IUnitOfWork unitOfWork) : ICompanyStore
     public Task<CompanyRoot?> FindForReadAsync(Guid id, CancellationToken cancellationToken = default) =>
         _companies.TableNoTracking.Include(c => c.StatusHistory).FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
 
-    public Task<bool> IsNameTakenAsync(string normalizedName, Guid? excludingId, CancellationToken cancellationToken = default) =>
-        _companies.TableNoTracking.AnyAsync(
-            c => c.NameNormalized == normalizedName && (excludingId == null || c.Id != excludingId), cancellationToken);
+    public async Task<bool> IsNameTakenAsync(string name, Guid? excludingId, CancellationToken cancellationToken = default)
+    {
+        var slug = CompanyRoot.SlugOf(name);
+        var others = await _companies.TableNoTracking
+            .Where(c => excludingId == null || c.Id != excludingId)
+            .Select(c => c.Name)
+            .ToListAsync(cancellationToken);
+        return others.Exists(other => CompanyRoot.SlugOf(other) == slug);
+    }
 
     public Task<bool> IsActiveAsync(Guid id, CancellationToken cancellationToken = default) =>
         _companies.TableNoTracking.AnyAsync(c => c.Id == id && c.Status == CompanyStatus.Active, cancellationToken);

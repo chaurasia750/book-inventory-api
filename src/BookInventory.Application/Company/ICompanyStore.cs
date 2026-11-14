@@ -22,8 +22,8 @@ public interface ICompanyStore
     /// <summary>The company for reading: not tracked, with its timeline (the caller orders it).</summary>
     Task<CompanyRoot?> FindForReadAsync(Guid id, CancellationToken cancellationToken = default);
 
-    /// <summary>R3: whether another company already holds this normalised name; <paramref name="excludingId"/> is the company being edited.</summary>
-    Task<bool> IsNameTakenAsync(string normalizedName, Guid? excludingId, CancellationToken cancellationToken = default);
+    /// <summary>R3, R16: whether another company already holds this name or one that gives the same URL segment; <paramref name="excludingId"/> is the company being edited.</summary>
+    Task<bool> IsNameTakenAsync(string name, Guid? excludingId, CancellationToken cancellationToken = default);
 
     /// <summary>R63 of <c>iam</c>: whether the company exists and is active - one cheap lookup, nothing tracked.</summary>
     Task<bool> IsActiveAsync(Guid id, CancellationToken cancellationToken = default);

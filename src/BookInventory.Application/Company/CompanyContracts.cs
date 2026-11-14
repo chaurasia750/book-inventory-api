@@ -91,7 +91,7 @@ public sealed record CompanyOwnerCredentials(Guid UserId, string UserName, strin
 public sealed record CreatedCompanyResponse(Guid Id, string Name, CompanyStatus Status, CompanyOwnerCredentials Owner);
 
 /// <summary>R10: what a caller with a company context may read about its company.</summary>
-public sealed record CurrentCompanyResponse(Guid Id, string Name, CompanyStatus Status, string? State);
+public sealed record CurrentCompanyResponse(Guid Id, string Name, string Slug, CompanyStatus Status, string? State);
 
 /// <summary>R10: the answer of `companies/current`: the company of the session, or null for a Super Admin who has not entered one.</summary>
 public sealed record CurrentCompanyView(CurrentCompanyResponse? Company);
