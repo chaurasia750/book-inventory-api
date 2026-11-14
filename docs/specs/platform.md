@@ -1,8 +1,9 @@
 # Spec: platform - Shared conventions and BuildingBlocks
 
 - **Module:** `platform` (cross-cutting; code in `library/BuildingBlocks`)
-- **Status:** carried over from the base project (HautInHousing); describes the code as it is.
+- **Status:** carried over from the base project (HautInHousing); describes the code as it is. P18-P22 and PAC13-PAC17 (company-owned data) are Approved by abhishek on 2026-11-14, not built yet.
 - **Source:** the Book Inventory business documents, see [docs index](../README.md) (none of the rules below were derived from them yet).
+- **Plans:** [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Approved, company-owned data P18-P22)
 
 > Every module builds on these rules. They exist so that `iam`, `mlm`, `finance`, `realty` and `core` look and behave the same, and so that a second project can reuse the library unchanged.
 
@@ -54,6 +55,13 @@ Defines the data, API and configuration conventions that BuildingBlocks enforces
 - **P14** Domain and validation exceptions carry a message **code**; the exception handler returns it as the problem-details extension `code`. Human text is resolved through a message-catalogue port, never hard-coded (`iam` R55).
 - **P15** Configuration sections are bound with validation and fail at startup when invalid (`ValidateOnStart`).
 
+**Company-owned data (Approved)**
+- **P18** Every table that holds one company's business data has a `company_id` column (`uuid`, not null, a plain id with no foreign key across schemas; BRD §8 "Har table me CompanyId"), and its aggregate root implements the shared marker `ICompanyOwned`. Tables of the platform itself (users, companies, notification templates) are not company-owned.
+- **P19** One global query filter limits every read of a company-owned entity to the company of the current session ([specs/company.md](company.md) R6): a company account has its own company, a Super Admin the company they entered. With no company the filter matches nothing, never everything. A row of another company answers `404`, identical to an unknown id.
+- **P20** The `company_id` of a new row is stamped from the session when it is saved, never taken from a request. Saving a new row with no company in the session is refused (`403 core.company_required`). A row's company never changes.
+- **P21** The audit entry of a company-owned row carries the row's company ([specs/core.md](core.md) A5).
+- **P22** A uniqueness rule that is "per company" (a school code, an item barcode) is a unique index that includes `company_id`, so two companies can use the same value.
+
 **Database lifecycle**
 - **P16** The API applies pending EF Core migrations at startup when `Database:MigrateOnStartup` is `true` (the shipped configuration sets it to `true` for every environment; owner decision 2026-10-26, so Development and production both migrate on start). The option defaults to `false`, so a host without the section never migrates. The log names the pending migration ids (a warning naming the environment outside Development), a failed migration stops startup - the host never serves requests against a half-migrated schema - and only forward migrations are applied, never a drop, `update 0` or schema reset. An environment that must keep the step with a person sets the flag to `false`.
 - **P17** Startup order is schema first, data second: the migration runner starts before the seeding hosted services, so a fresh database is migrated and then seeded in one start.
@@ -88,6 +96,11 @@ None.
 - **PAC10** The solution builds with 0 warnings and every criterion above has been run and its observed result recorded in the plan (no automated test project, owner decision).
 - **PAC11** With `Database:MigrateOnStartup=true` and `ASPNETCORE_ENVIRONMENT=Development`, starting against an empty database creates the full schema before the first request and the log lists the applied migration ids; with the flag `false` nothing is applied (P16, P17).
 - **PAC12** With `Database:MigrateOnStartup=true` and `ASPNETCORE_ENVIRONMENT=Production`, starting against an empty database applies the same migrations, logs a warning naming the environment and lists the ids; a failing migration stops startup (P16).
+- **PAC13** A company-owned row saved in company A has `company_id` A; the same request body carrying company B's id still stores A (P20).
+- **PAC14** A caller of company B reading company A's row by id gets `404`, identical to an unknown id, and A's rows never appear in B's lists or counts (P19).
+- **PAC15** A Super Admin with no company entered reads no company-owned rows and a write is refused with `403 core.company_required`; after entering A they read and write A's rows (P19, P20).
+- **PAC16** A saved row's company cannot be changed through any behaviour of the entity (P20).
+- **PAC17** Two companies can each hold a row with the same value of a per-company unique field, and one company cannot hold it twice (P22); the audit entry of a company-owned row names its company (P21).
 
 ## 9. Open questions
 
