@@ -1,0 +1,134 @@
+# Spec: company - Companies and their accounts
+
+- **Module:** `company` (PostgreSQL schema `company`)
+- **Status:** R1-R14 Approved by the owner on 2026-11-14 (AC1-AC15, D1-D10 with them)
+- **Last updated:** 2026-11-14
+- **Source docs:** [BRD §3 Users aur Roles, §4.1 Company (FR-CMP-01, FR-CMP-05), §7 (NFR-07, NFR-08, NFR-11), §8 Data Model](../bussiness/BRD-Book-Inventory-Phase1.md); the owner's requests and answers of 2026-11-14 (each company has its own account and logs in; the company creates its staff logins; one Super Admin manages the companies)
+- **Plans:** [company#01](../plans/company/2026-11-14-01-company-master-and-owner-account.md), [company#02](../plans/company/2026-11-14-02-ui-company-management-screens.md), [company#03](../plans/company/2026-11-14-03-super-admin-enters-a-company.md), [company#04](../plans/company/2026-11-14-04-ui-company-picker.md) (all Approved 2026-11-14); in `iam`: [iam#01](../plans/iam/2026-11-14-01-company-linked-accounts.md), [iam#02](../plans/iam/2026-11-14-02-ui-company-account-login.md), [iam#03](../plans/iam/2026-11-14-03-owner-manages-staff-accounts.md), [iam#04](../plans/iam/2026-11-14-04-ui-owner-staff-screens.md) (all Approved 2026-11-14)
+
+> One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
+
+## 1. Purpose and scope
+
+`company` answers "which business is this, and who may use it": the master record of each company that uses the system, and the rule that every company works with its own data. In Phase 1 there are two companies: **Children Book Center** and **ABC Book Center** (BRD §1); more are added later as a master entry, never as a code change (FR-CMP-05, NFR-11).
+
+Feature **Company accounts** (R1-R14): a Super Admin creates a company together with its first login account (the **Owner**); the Owner creates **Staff** logins for the company's people; everyone logs in with their own user id and sees only their company; the Super Admin manages all companies and can enter any active company to see and work with its data.
+
+Accounts, logins, passwords and sessions stay in `iam` ([specs/iam.md](iam.md) R59-R69); this module never stores a password or a session.
+
+Out of scope for this feature (later features of this module, Q11): logo upload, the company's bank account and UPI id (FR-CMP-02), invoice settings (FR-CMP-03), number series (FR-CMP-04). Out of scope for ever in Phase 1: one login working for two companies (D3).
+
+## 2. Concepts and glossary
+
+- **Company**: one business using the system. Its data is separate from every other company (R1).
+- **Super Admin**: the platform administrator, role `SUPER_ADMIN` of `iam`. Belongs to no company and manages all companies (R2); may enter a company (R13).
+- **Owner**: the main login account of a company, role `OWNER`. Created together with the company (R4).
+- **Staff**: a login account created by the Owner for the company's people, role `STAFF`. May only create orders and sell to customers (R14, D5).
+- **Company account**: any `iam` account that belongs to a company (Owner or Staff).
+- **User id**: the login name of a company account, generated from the company's name (D4, Q15). Company accounts never log in with email or mobile.
+- **Company status**: `ACTIVE` or `INACTIVE` (R7).
+- **Entering a company**: a Super Admin chooses a company; from then on, until they leave, company-owned reads and writes of their session apply to that company (R13).
+
+```mermaid
+stateDiagram-v2
+    [*] --> ACTIVE: Super Admin creates company + Owner
+    ACTIVE --> INACTIVE: deactivated (reason, sessions revoked)
+    INACTIVE --> ACTIVE: reactivated
+```
+
+## 3. Business rules
+
+**Company accounts**
+- **R1** A company is a separate business. Its data is separate from every other company's (FR-CMP-05, NFR-07). Adding a company is a master entry, not a code change (NFR-11).
+- **R2** Only a `SUPER_ADMIN` creates, edits, deactivates and reactivates companies. No other role can (Q12).
+- **R3** A company has: **name** (required, unique ignoring case and surrounding spaces, 2-150 characters), address, mobile, email, GSTIN, PAN, state, tagline (FR-CMP-01). Only the name is required at creation (Q7). Logo, bank account, invoice settings and number series are later features (Q11).
+- **R4** Creating a company also creates its Owner account, in the same transaction, through the `iam` capability (iam R61): the Super Admin gives the Owner's full name; the system generates the **user id from the company's name** (D4, Q15) and a temporary password. The user id and the password are shown **once** (iam R57) and the Owner must change the password at first login (iam R12). If either part fails, nothing is saved.
+- **R5** An account belongs to exactly one company, or to none (Super Admin, hidden system account). A person who works for two companies has two accounts (D3).
+- **R6** The company of a request comes only from the server-side session, never from a request field, header or URL: for a company account it is the company of the account (iam R62); for a Super Admin it is the company they entered (R13), or none. Endpoints of later modules that return company-owned data answer `404`, byte-identical to an unknown id, for another company's records.
+- **R7** A new company is `ACTIVE`. Deactivating requires a reason (5-500 characters), revokes every session of all its accounts at once and stops them logging in; the data is kept. Reactivating restores login. A company is never deleted (iam R37 applies the same way) (Q9).
+- **R8** Every status change writes an immutable history row: from, to, reason, actor, time. It is shown on the company detail and is never edited or deleted.
+- **R9** The Super Admin sees a paged list of companies (searchable by name, filterable by status, sortable by name and created date) and a detail page: master data, status with reason, status history, and the company's accounts (name, user id, role, status).
+- **R10** Any caller with a company context can read that company's name, status and state (`companies/current`), so the UI can show the company at the top (BRD §7.1). A company account cannot edit it (Q12).
+- **R11** The accounts of a company are managed in `iam`: the Super Admin manages every account (iam R28-R41, R67); the Owner manages the Staff of their own company (iam R65-R67). `company` repeats none of those rules.
+- **R12** Every create and change records who did it and when (FR-USR-04, NFR-08), through the standard audit columns and the audit trail of `core`; a Super Admin working inside a company is recorded with their real identity. This module adds no audit mechanism of its own.
+- **R13** A Super Admin can **enter** an `ACTIVE` company to see and work with its data (owner decision 2026-11-14, D6; Q16). The choice is kept on the server with the session; `leave` clears it; with nothing entered the Super Admin has no company data. Entering and leaving are recorded (R12). Nobody else can enter a company.
+- **R14** The Owner creates and manages the Staff accounts of their own company (iam R65-R67). A Staff account may only create orders and sell to customers; it can do nothing else (D5, iam R68). Which endpoints those are is named by the business modules when they are built (Q14).
+
+## 4. Data
+
+Schema `company`:
+- `company` (aggregate root): `id` (UUID v7), `name`, `name_normalized` (unique), `address`, `mobile`, `email`, `gstin`, `pan`, `state`, `tagline`, `status` (`ACTIVE`/`INACTIVE`), `status_reason`, `status_changed_at`, plus the standard audit and concurrency columns.
+- `company_status_history` (child of `company`, insert-only, R8): `company_id`, `from_status`, `to_status`, `reason`, `changed_by`, `changed_at`.
+
+`iam.app_user` gets a nullable `company_id` and `iam.user_session` a nullable `active_company_id` (iam R59, R69). Both are plain ids with no database foreign key across schemas; `company` guarantees the company exists before an id is stored.
+
+Dates and the financial year (April-March, BRD BR-SES-01) are not used by this feature. The business time zone is `Asia/Kolkata` (D7).
+
+## 5. API contract (`/api/v1`)
+
+| Method + route | Who | Notes |
+|---|---|---|
+| `POST companies` | `SUPER_ADMIN` | `{name, address?, mobile?, email?, gstin?, pan?, state?, tagline?, owner: {fullName}}` -> `201` with the company and `owner: {userId, temporaryPassword}` (R4). `409 company.name_taken`; `409` when the generated user id is taken (Q15) |
+| `GET companies` | `SUPER_ADMIN` | paged list (R9) |
+| `GET companies/{id}` | `SUPER_ADMIN` | detail (R9) |
+| `PUT companies/{id}` | `SUPER_ADMIN` | edits the master data (R3); `409 company.name_taken` |
+| `POST companies/{id}/deactivate` | `SUPER_ADMIN` | `{reason}` (R7); `409` when already inactive |
+| `POST companies/{id}/activate` | `SUPER_ADMIN` | optional note; `409` when already active |
+| `POST companies/{id}/enter` | `SUPER_ADMIN` | R13; `409` when the company is inactive; `404` for an unknown id |
+| `POST companies/leave` | `SUPER_ADMIN` | R13 |
+| `GET companies/current` | any caller with a company context | name, status, state of the company of the session (R10); `404` when there is none |
+
+Errors are `ProblemDetails` with a message code from the module's catalogue (platform rules). Validation failures are `400`.
+
+## 6. User interface
+
+Written in the UI plans; summary:
+- **Super Admin console** (`admin` app): company list, create company (form + one-time panel with user id and temporary password), company detail with status history and accounts, edit, deactivate and reactivate with reason, and a company picker at the top to enter and leave a company (Q13).
+- **Company workspace** (`member` app, Q13): after login the company's name is shown at the top (R10). The Owner also sees a "Staff" screen (iam#04). Business screens arrive with later modules.
+
+## 7. Events
+
+Raised by the `Company` aggregate (past tense, ids and values only): `CompanyCreated`, `CompanyDeactivated`, `CompanyReactivated`. Reactions: none in this feature. Revoking the sessions of the company's accounts is done by the deactivate use case through the `iam` capability (iam R63), not by a handler, because a handler runs after the request transaction has saved.
+
+## 8. Dependencies
+
+`company` depends on `iam`: the capability to create the Owner (iam R61), to revoke the sessions of a company's accounts (iam R63) and to remember an entered company on a session (iam R69). `iam` depends on nothing in `company`; it stores only company ids and asks a port whether a company is active, which `company` implements. `core` provides the audit trail (R12).
+
+## 9. Acceptance criteria
+
+- **AC1** A Super Admin creates "Children Book Center" with an Owner: `201`, the company is `ACTIVE`, the user id (generated from the name) and the temporary password are returned once and never again, and the Owner logs in with that user id and is forced to change the password (R4, iam R12).
+- **AC2** Creating a second company whose name differs only in case or surrounding spaces answers `409 company.name_taken` (R3).
+- **AC3** If the generated user id is already taken, the request answers `409` and no company row exists afterwards (R4).
+- **AC4** The Owner's access token carries the company id; `GET companies/current` returns that company only (R5, R6, iam R62).
+- **AC5** With companies A and B, the Owner of A calling `GET companies/{B}` or `PUT companies/{B}` gets `403` and no data of B; a Super Admin asking for an unknown id gets `404` (R2).
+- **AC6** Deactivating A with a reason: A's Owner and Staff get `401` on their next request and cannot log in again, and B's accounts are unaffected (R7, iam R63).
+- **AC7** Reactivating A lets its accounts log in again (R7).
+- **AC8** Deactivating without a reason, or an already inactive company, is rejected (`400` / `409`) (R7).
+- **AC9** After create, deactivate and activate, the detail shows three history rows with from, to, reason, actor, time (R8).
+- **AC10** The list is paged and filters by name and status; an Owner calling `GET companies` gets `403` (R2, R9).
+- **AC11** `GET companies/current?companyId=<B>` (or a `companyId` header or body field) called by the Owner of A still returns company A, never B (R6).
+- **AC12** The Owner of A cannot edit A's master data: `PUT companies/{A}` answers `403` (R2, R10).
+- **AC13** A Super Admin enters A: `GET companies/current` returns A; entering B afterwards returns B; after `leave` it answers `404` (R13).
+- **AC14** An Owner or Staff calling `POST companies/{id}/enter` gets `403`; entering an inactive company answers `409` (R13).
+- **AC15** The enter and leave actions of a Super Admin appear in the audit trail with the Super Admin's real identity and the company id (R12, R13).
+
+## 10. Decisions
+
+Decisions marked "owner" were given by the owner on 2026-11-14; the others were proposed by the assistant and approved with the spec on 2026-11-14.
+
+| # | Decision |
+|---|---|
+| D1 | New module `company` with its own schema. `company` calls `iam` capabilities to create the Owner and to revoke sessions; `iam` only stores company ids, so the dependency direction stays "other modules depend on `iam`". (proposed by the assistant) |
+| D2 | Companies are deactivated, never deleted (R7), the same way as accounts (iam R37). (proposed by the assistant) |
+| D3 | One account belongs to one company (Q3, owner). A person working for two companies has two accounts; there is no company switch for company accounts. |
+| D4 | The login of a company account is a **user id generated from the company's name**; email and mobile are never login identifiers for company accounts (Q4, owner). The exact format is Q15. |
+| D5 | The company creates its staff logins; Staff may **only create orders and sell goods to customers** (Q1, owner). The BRD §3 table gives Staff more rights (masters, payments, ledger, reports); this decision is narrower and wins until the BRD is updated (Q14). |
+| D6 | The Super Admin may see and work with a company's data by entering it (Q2, owner, "yes"). |
+| D7 | The business time zone is `Asia/Kolkata`; instants are stored in UTC. Not used by this feature (Q10, owner confirmed the recommended answer). |
+| D8 | The shared mechanism that limits every company-owned table to the session's company (a `company_id` column plus one global query filter, BRD §8) is a platform convention. It is written into the `platform` spec by the first plan that adds a company-owned table (school master, item master, ...), not by this feature. (proposed by the assistant) |
+| D9 | Q5-Q13 of the first draft were answered "recommended" by the owner: the base-project roles stay untouched until their own retirement plan; the Super Admin rule R2 of `iam` stays as it is; only the company name is required at creation; the name is editable; deactivation blocks all logins; logo, bank, invoice settings and number series are later features; Super Admin only edits master data; `admin` is the Super Admin console and company accounts use the `member` app. |
+| D10 | The owner confirmed the recommended answers to Q14, Q15 and Q16 on 2026-11-14: Staff may create a School Order and a Counter Sale (school counter and Dukaan direct, with the payment taken on that sale) and nothing else, and D5 replaces the wider Staff column of BRD §3 (the BRD is to be updated); user ids are the company name in lowercase letters and digits for the Owner and `<owner id>.<short name>` for Staff, a taken id answers `409`, and a forgotten password is reset to a new temporary password by the Super Admin (Owner) or the Owner (Staff); a Super Admin can enter only `ACTIVE` companies. |
+
+## 11. Open questions
+
+None. Q11 and Q14-Q16 were answered "recommended" by the owner on 2026-11-14 (D9, D10); the rules above follow those answers.
