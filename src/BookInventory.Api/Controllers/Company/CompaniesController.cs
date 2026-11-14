@@ -1,4 +1,5 @@
 using BookInventory.BuildingBlocks.Configuration.Controller;
+using BookInventory.Api.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BookInventory.Application.Company;
@@ -14,7 +15,9 @@ namespace BookInventory.Api.Controllers.Company;
 public sealed class CompaniesController(
     CompanyRegistrationService registration,
     CompanyLifecycleService lifecycle,
-    CompanyQueryService queries) : ApiControllerBase
+    CompanyQueryService queries,
+    CompanyEntryService entry,
+    SessionCookieWriter cookies) : ApiControllerBase
 {
     /// <summary>R3/R4: creates a company with its Owner; the Owner's user id and temporary password are shown once.</summary>
     [HttpPost, Authorize(Roles = "SUPER_ADMIN")]
@@ -57,6 +60,24 @@ public sealed class CompaniesController(
     {
         await lifecycle.ReactivateAsync(id, request ?? new ActivateCompanyRequest(), cancellationToken);
         return NoContent();
+    }
+
+    /// <summary>R13: a Super Admin enters an active company; the answer carries the company and the access token that carries it.</summary>
+    [HttpPost("{id:guid}/enter"), Authorize(Roles = "SUPER_ADMIN")]
+    public async Task<IActionResult> Enter(Guid id, CancellationToken cancellationToken)
+    {
+        var entered = await entry.EnterAsync(id, cancellationToken);
+        cookies.WriteAccess(Response, entered);
+        return Ok(entered);
+    }
+
+    /// <summary>R13: a Super Admin leaves the company they entered and has no company again.</summary>
+    [HttpPost("leave"), Authorize(Roles = "SUPER_ADMIN")]
+    public async Task<IActionResult> Leave(CancellationToken cancellationToken)
+    {
+        var left = await entry.LeaveAsync(cancellationToken);
+        cookies.WriteAccess(Response, left);
+        return Ok(left);
     }
 
     /// <summary>R6/R10: the company of this request's session (a company account's own, or the one a Super Admin entered).</summary>

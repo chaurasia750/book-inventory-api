@@ -132,6 +132,67 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Company.CompanyEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("action");
+
+                    b.Property<DateTime>("At")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("at");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_company_entry");
+
+                    b.HasIndex("CompanyId", "At")
+                        .HasDatabaseName("ix_company_entry_company_id_at");
+
+                    b.ToTable("company_entry", "company", t =>
+                        {
+                            t.HasCheckConstraint("ck_company_entry_action", "\"action\" IN ('ENTERED', 'LEFT')");
+                        });
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Company.CompanyStatusHistory", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1177,6 +1238,16 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
 
                             t.HasCheckConstraint("ck_user_status_history_to_status", "\"to_status\" IN ('PENDING', 'ACTIVE', 'INACTIVE', 'SUSPENDED', 'REJECTED')");
                         });
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Company.CompanyEntry", b =>
+                {
+                    b.HasOne("BookInventory.Domain.Company.Company", null)
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_company_entry_company_company_id");
                 });
 
             modelBuilder.Entity("BookInventory.Domain.Company.CompanyStatusHistory", b =>

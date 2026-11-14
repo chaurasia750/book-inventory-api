@@ -15,6 +15,7 @@ public static class CompanyMessageCatalog
             [CompanyMessages.OwnerIdInvalid] = "The company name needs at least 3 letters or digits to make a login id.",
             [CompanyMessages.ReasonRequired] = "A reason of 5 to 500 characters is required.",
             [CompanyMessages.AlreadyActive] = "The company is already active.",
-            [CompanyMessages.AlreadyInactive] = "The company is already inactive."
+            [CompanyMessages.AlreadyInactive] = "The company is already inactive.",
+            [CompanyMessages.NotActive] = "The company is not active."
         };
 }

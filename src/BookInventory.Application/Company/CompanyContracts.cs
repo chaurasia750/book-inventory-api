@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using BookInventory.Application.Iam.Authentication;
 using BookInventory.Application.Iam;
 using BookInventory.Domain.Company;
 using CompanyRoot = BookInventory.Domain.Company.Company;
@@ -91,3 +92,6 @@ public sealed record CreatedCompanyResponse(Guid Id, string Name, CompanyStatus 
 
 /// <summary>R10: what a caller with a company context may read about its company.</summary>
 public sealed record CurrentCompanyResponse(Guid Id, string Name, CompanyStatus Status, string? State);
+
+/// <summary>R13: the answer of entering or leaving a company: the company now entered (null after leaving) and the access token that carries it.</summary>
+public sealed record SessionCompanyResponse(CurrentCompanyResponse? Company, string AccessToken, DateTime AccessTokenExpiresAt) : IAccessTokenResponse;

@@ -19,9 +19,13 @@ public sealed class CompanyStore(IUnitOfWork unitOfWork) : ICompanyStore
     private static readonly string[] SortableColumns = ["Name", "CreatedAt"];
 
     private readonly IRepository<CompanyRoot> _companies = unitOfWork.Repository<CompanyRoot>();
+    private readonly IRepository<CompanyEntry> _entries = unitOfWork.Repository<CompanyEntry>();
 
     public Task AddAsync(CompanyRoot company, CancellationToken cancellationToken = default) =>
         _companies.AddAsync(company, cancellationToken);
+
+    public Task AddAsync(CompanyEntry entry, CancellationToken cancellationToken = default) =>
+        _entries.AddAsync(entry, cancellationToken);
 
     public Task<CompanyRoot?> FindForManagementAsync(Guid id, CancellationToken cancellationToken = default) =>
         _companies.IncludeMultiple(c => c.StatusHistory).FirstOrDefaultAsync(c => c.Id == id, cancellationToken);

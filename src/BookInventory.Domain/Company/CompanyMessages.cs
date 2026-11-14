@@ -14,4 +14,5 @@ public static class CompanyMessages
     public const string ReasonRequired = "company.reason_required";
     public const string AlreadyActive = "company.already_active";
     public const string AlreadyInactive = "company.already_inactive";
+    public const string NotActive = "company.not_active";
 }

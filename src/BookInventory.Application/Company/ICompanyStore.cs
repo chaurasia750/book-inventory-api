@@ -1,4 +1,5 @@
 using BookInventory.BuildingBlocks.Domain.Models;
+using BookInventory.Domain.Company;
 using CompanyRoot = BookInventory.Domain.Company.Company;
 
 namespace BookInventory.Application.Company;
@@ -11,6 +12,9 @@ namespace BookInventory.Application.Company;
 public interface ICompanyStore
 {
     Task AddAsync(CompanyRoot company, CancellationToken cancellationToken = default);
+
+    /// <summary>R12/R13: appends the record of one enter or leave of a company by a Super Admin; insert-only.</summary>
+    Task AddAsync(CompanyEntry entry, CancellationToken cancellationToken = default);
 
     /// <summary>The company a Super Admin is about to <em>change</em>: tracked, with its timeline. <c>null</c> for an unknown id.</summary>
     Task<CompanyRoot?> FindForManagementAsync(Guid id, CancellationToken cancellationToken = default);
