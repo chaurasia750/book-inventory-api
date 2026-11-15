@@ -34,6 +34,7 @@ public sealed class SchoolOrderQueryService(ISalesStore store, IStockQuantities 
             Session = order.Session,
             IsGstApplied = order.IsGstApplied,
             GstMode = order.GstMode,
+            PaymentType = order.PaymentType,
             TotalDiscount = order.TotalDiscount,
             Remark = order.Remark,
             Status = order.Status,

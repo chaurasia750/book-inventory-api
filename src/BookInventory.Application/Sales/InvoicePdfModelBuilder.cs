@@ -1,5 +1,6 @@
 using System.Net;
 using BookInventory.Application.Company;
+using BookInventory.Domain.Core;
 using BookInventory.Domain.Sales;
 
 namespace BookInventory.Application.Sales;
@@ -29,7 +30,7 @@ public static class InvoicePdfModelBuilder
                 ["order"] = E(d.Summary.OrderNumber), ["session"] = E(d.Session), ["year"] = E(d.FinancialYear)
             },
             ["school"] = School(d),
-            ["payment"] = "Credit",
+            ["payment"] = d.PaymentType == PaymentType.Cash ? "Cash" : "Credit",
             ["show_bands"] = d.Layout == InvoiceLayout.ByClass,
             ["groups"] = d.Groups.Select(g => Group(g, ref number)).ToList(),
             ["line_count"] = d.Groups.Sum(g => g.Lines.Count),
@@ -46,7 +47,8 @@ public static class InvoicePdfModelBuilder
         };
     }
 
-    private static string Title(InvoiceDetail d) => d.IsGstApplied ? "TAX INVOICE" : "CREDIT MEMO";
+    /// <summary>R31: TAX INVOICE with GST; without it CASH MEMO or CREDIT MEMO by the payment type (R34).</summary>
+    private static string Title(InvoiceDetail d) => d.IsGstApplied ? "TAX INVOICE" : d.PaymentType == PaymentType.Cash ? "CASH MEMO" : "CREDIT MEMO";
 
     private static Dictionary<string, object?> Company(CompanyInvoiceSnapshot c, CompanyPrintedIdentity? live) =>
         new()

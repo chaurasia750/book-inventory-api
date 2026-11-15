@@ -2048,6 +2048,11 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(40)")
                         .HasColumnName("order_number");
 
+                    b.Property<string>("PaymentType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("payment_type");
+
                     b.Property<uint>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
@@ -2269,6 +2274,8 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                     b.ToTable("invoice", "sales", t =>
                         {
                             t.HasCheckConstraint("ck_invoice_gst_mode", "\"gst_mode\" IN ('NOT_APPLIED', 'SAME_STATE', 'OTHER_STATE')");
+
+                            t.HasCheckConstraint("ck_invoice_payment_type", "\"payment_type\" IN ('CASH', 'CREDIT')");
 
                             t.HasCheckConstraint("ck_invoice_status", "\"status\" IN ('ISSUED', 'CANCELLED')");
 
@@ -2524,6 +2531,11 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasColumnType("date")
                         .HasColumnName("order_date");
 
+                    b.Property<string>("PaymentType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("payment_type");
+
                     b.Property<string>("Remark")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
@@ -2651,6 +2663,8 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                     b.ToTable("school_order", "sales", t =>
                         {
                             t.HasCheckConstraint("ck_school_order_gst_mode", "\"gst_mode\" IN ('NOT_APPLIED', 'SAME_STATE', 'OTHER_STATE')");
+
+                            t.HasCheckConstraint("ck_school_order_payment_type", "\"payment_type\" IN ('CASH', 'CREDIT')");
 
                             t.HasCheckConstraint("ck_school_order_status", "\"status\" IN ('DRAFT', 'CONFIRMED', 'CLOSED')");
 
@@ -2874,6 +2888,11 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasColumnType("numeric(18,2)")
                         .HasColumnName("opening_balance_amount");
 
+                    b.Property<string>("PaymentType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("payment_type");
+
                     b.Property<uint>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
@@ -2924,6 +2943,8 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
 
                     b.ToTable("school", "school", t =>
                         {
+                            t.HasCheckConstraint("ck_school_payment_type", "\"payment_type\" IN ('CASH', 'CREDIT')");
+
                             t.HasCheckConstraint("ck_school_sale_type", "\"sale_type\" IN ('SCHOOL_ORDER', 'COUNTER_SALE', 'BOTH')");
 
                             t.HasCheckConstraint("ck_school_session_type", "\"session_type\" IN ('APR_MAR', 'JAN_DEC')");

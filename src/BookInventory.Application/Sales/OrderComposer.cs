@@ -39,6 +39,7 @@ public sealed class OrderComposer(
             Session = session,
             IsGstApplied = isGst,
             GstMode = SaleMoney.GstModeOf(isGst, tax?.State, school.State),
+            PaymentType = request.PaymentType ?? school.PaymentType,
             TotalDiscount = request.TotalDiscount?.ToDiscount() ?? Discount.None,
             Remark = request.Remark
         };

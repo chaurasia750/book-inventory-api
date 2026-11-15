@@ -38,7 +38,7 @@ internal static class SchoolResponses
     public static SchoolDetailResponse Detail(SchoolRoot school) =>
         new(
             school.Id, school.Code, school.Name, school.Address, school.ContactPerson, school.Mobile, school.Email, school.Gstin,
-            school.State, school.SessionType, school.SaleType, school.IsGstDefault, school.OpeningBalanceAmount, school.Status,
+            school.State, school.SessionType, school.SaleType, school.PaymentType, school.IsGstDefault, school.OpeningBalanceAmount, school.Status,
             school.CreatedAt, school.UpdatedAt,
             [.. school.Classes.OrderBy(c => c.SortOrder).Select(c => new SchoolClassResponse(c.Id, c.Name, c.SortOrder))]);
 }

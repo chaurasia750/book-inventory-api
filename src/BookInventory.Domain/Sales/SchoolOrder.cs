@@ -45,6 +45,9 @@ public class SchoolOrder : CompanyOwnedRoot
 
     public GstMode GstMode { get; private set; }
 
+    /// <summary>R34: Cash or Credit; starts from the school's default.</summary>
+    public PaymentType PaymentType { get; private set; }
+
     public DiscountKind TotalDiscountKind { get; private set; }
 
     public decimal TotalDiscountValue { get; private set; }
@@ -97,12 +100,7 @@ public class SchoolOrder : CompanyOwnedRoot
     {
         if (Status != SchoolOrderStatus.Confirmed)
             throw new ConflictException(SalesMessages.NotConfirmed);
-
-        if (header.School.Id != SchoolId)
-            throw new ValidationFailureException(SalesMessages.SchoolFixed);
-        if (header.Remark?.Trim().Length > RemarkMaxLength)
-            throw new ValidationFailureException(SalesMessages.InvalidText);
-
+        OrderRules.RequireAmendable(header, SchoolId);
         ChangeTotalsOf(header);
         Remark = string.IsNullOrWhiteSpace(header.Remark) ? null : header.Remark.Trim();
         var kept = OrderRules.Edit(Lines, lines.Where(l => l.LineId is not null).ToList());
@@ -132,13 +130,14 @@ public class SchoolOrder : CompanyOwnedRoot
 
     private void ChangeTotalsOf(OrderHeader header)
     {
-        if (header.IsGstApplied == IsGstApplied && header.TotalDiscount == TotalDiscount)
+        if (header.IsGstApplied == IsGstApplied && header.TotalDiscount == TotalDiscount && header.PaymentType == PaymentType)
             return;
         if (HasInvoicedAnything)
             throw new ConflictException(SalesMessages.TotalsLocked);
 
         IsGstApplied = header.IsGstApplied;
         GstMode = header.GstMode;
+        PaymentType = header.PaymentType;
         TotalDiscountKind = header.TotalDiscount.Kind;
         TotalDiscountValue = header.TotalDiscount.Value;
     }
@@ -279,6 +278,7 @@ public class SchoolOrder : CompanyOwnedRoot
         Session = header.Session.Trim();
         IsGstApplied = header.IsGstApplied;
         GstMode = header.GstMode;
+        PaymentType = header.PaymentType;
         TotalDiscountKind = header.TotalDiscount.Kind;
         TotalDiscountValue = header.TotalDiscount.Value;
         Remark = string.IsNullOrWhiteSpace(header.Remark) ? null : header.Remark.Trim();
