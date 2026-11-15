@@ -89,7 +89,14 @@ public sealed record ReceiptDetail(
     decimal AllocatedAmount,
     decimal AdvanceAmount,
     IReadOnlyList<ReceiptModeDto> Modes,
-    IReadOnlyList<ReceiptAllocationDto> Allocations);
+    IReadOnlyList<ReceiptAllocationDto> Allocations,
+    IReadOnlyList<ReceiptProofDto>? Proofs = null);
+
+/// <summary>R20: a proof file as the list shows it (never its bytes).</summary>
+public sealed record ReceiptProofDto(Guid Id, string FileName, string ContentType, int SizeBytes);
+
+/// <summary>R20: a proof file with its bytes, for reading it back.</summary>
+public sealed record ReceiptProofFile(string FileName, string ContentType, byte[] Content);
 
 /// <summary>R9: the answer of recording a receipt: the new receipt, or only the id of the one already recorded for the same client request.</summary>
 public sealed record RecordedReceipt(Guid Id, ReceiptDetail? Detail);

@@ -25,6 +25,23 @@ public sealed class ReceiptStore(IUnitOfWork unitOfWork) : IReceiptStore
     public Task<Receipt?> FindForManagementAsync(Guid id, CancellationToken cancellationToken = default) =>
         _receipts.Table.Include(r => r.Modes).Include(r => r.Allocations).FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
 
+    public async Task<int> CountProofsAsync(Guid receiptId, CancellationToken cancellationToken = default) =>
+        await _receipts.TableNoTracking.Where(r => r.Id == receiptId).SelectMany(r => r.Proofs).CountAsync(cancellationToken);
+
+    public async Task<IReadOnlyList<ReceiptProofDto>> ProofsOfAsync(Guid receiptId, CancellationToken cancellationToken = default) =>
+        await _receipts.TableNoTracking.Where(r => r.Id == receiptId).SelectMany(r => r.Proofs)
+            .OrderBy(p => p.Id)
+            .Select(p => new ReceiptProofDto(p.Id, p.FileName, p.ContentType, p.SizeBytes))
+            .ToListAsync(cancellationToken);
+
+    public async Task<ReceiptProofFile?> FindProofAsync(Guid receiptId, Guid proofId, CancellationToken cancellationToken = default) =>
+        await _receipts.TableNoTracking.Where(r => r.Id == receiptId).SelectMany(r => r.Proofs).Where(p => p.Id == proofId)
+            .Select(p => new ReceiptProofFile(p.FileName, p.ContentType, p.Content))
+            .FirstOrDefaultAsync(cancellationToken);
+
+    public Task<Receipt?> FindForProofRemovalAsync(Guid receiptId, Guid proofId, CancellationToken cancellationToken = default) =>
+        _receipts.Table.Include(r => r.Proofs.Where(p => p.Id == proofId)).FirstOrDefaultAsync(r => r.Id == receiptId, cancellationToken);
+
     public async Task<IReadOnlyList<Receipt>> FindAppliedToInvoiceAsync(Guid invoiceId, CancellationToken cancellationToken = default) =>
         await _receipts.Table.Include(r => r.Modes).Include(r => r.Allocations)
             .Where(r => r.Allocations.Any(a => a.InvoiceId == invoiceId))

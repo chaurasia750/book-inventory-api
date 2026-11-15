@@ -38,6 +38,6 @@ public sealed class ReceiptQueryService(IReceiptStore store, ISchoolDirectory sc
         var school = await schools.GetAsync(receipt.SchoolId, cancellationToken);
         var numbers = (await invoices.ReferencesAsync([.. receipt.Allocations.Select(a => a.InvoiceId).Distinct()], cancellationToken))
             .ToDictionary(p => p.Key, p => p.Value.Number);
-        return ReceiptResponses.Detail(receipt, school, numbers);
+        return ReceiptResponses.Detail(receipt, school, numbers) with { Proofs = await store.ProofsOfAsync(id, cancellationToken) };
     }
 }

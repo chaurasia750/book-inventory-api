@@ -2011,6 +2011,54 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Payment.ReceiptProof", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("content");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("content_type");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("file_name");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<Guid>("ReceiptId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("receipt_id");
+
+                    b.Property<int>("SizeBytes")
+                        .HasColumnType("integer")
+                        .HasColumnName("size_bytes");
+
+                    b.HasKey("Id")
+                        .HasName("pk_receipt_proof");
+
+                    b.HasIndex("ReceiptId")
+                        .HasDatabaseName("ix_receipt_proof_receipt_id");
+
+                    b.ToTable("receipt_proof", "payment");
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Planning.ClassBookList", b =>
                 {
                     b.Property<Guid>("Id")
@@ -3759,6 +3807,16 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_receipt_mode_receipt_receipt_id");
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Payment.ReceiptProof", b =>
+                {
+                    b.HasOne("BookInventory.Domain.Payment.Receipt", null)
+                        .WithMany("Proofs")
+                        .HasForeignKey("ReceiptId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_receipt_proof_receipt_receipt_id");
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Planning.ClassBookListLine", b =>
                 {
                     b.HasOne("BookInventory.Domain.Planning.ClassBookList", null)
@@ -3834,6 +3892,8 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                     b.Navigation("Allocations");
 
                     b.Navigation("Modes");
+
+                    b.Navigation("Proofs");
                 });
 
             modelBuilder.Entity("BookInventory.Domain.Planning.ClassBookList", b =>

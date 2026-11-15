@@ -26,6 +26,8 @@ public static class PaymentMessageCatalog
             [PaymentMessages.ReceiptNotRecorded] = "Only a recorded receipt can be changed; this one was cancelled.",
             [PaymentMessages.NoAdvance] = "This receipt has no advance to apply.",
             [PaymentMessages.ReceiptHasChequeResult] = "A receipt with a cleared or bounced cheque cannot be cancelled.",
+            [PaymentMessages.ProofInvalid] = "A proof must be a PNG, JPEG or PDF file of at most 5 MB, and a receipt can have at most 5.",
+            [PaymentMessages.ProofNotFound] = "The proof could not be found.",
             [PaymentMessages.TooManyIds] = "At most 100 invoices can be asked at once."
         };
 }

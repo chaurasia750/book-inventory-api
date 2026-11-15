@@ -114,3 +114,4 @@ Kinds: **NV** not verified · **GAP** known gap · **DEC** decision the owner ha
 | B104 | payment | NV | payment#04 not clicked through by a person: the date refusals, Staff view, narrow screen, the school balance on the profile after a bounce | payment#04 | open |
 | B105 | payment | NV | payment#05: adjusting an advance by hand onto several invoices, and two receipts of one school adjusting the same invoice, were not exercised | payment#05 | open |
 | B106 | payment | NV | payment#06 not clicked through by a person: the by-hand adjust, the narrow screen, the school balance after an adjust or cancel, Staff without the actions | payment#06 | open |
+| B107 | payment | NV | payment#07 not exercised: uploads at the exact limits (5 MB, a long file name), memory use when many receipts with five 5 MB proofs are read, virus scanning of uploaded files (none) | payment#07 | open |

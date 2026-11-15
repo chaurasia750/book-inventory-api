@@ -14,11 +14,13 @@ public class Receipt : CompanyOwnedRoot
     public const int MaxModes = 10;
     public const int RemarkMaxLength = 500;
     public const int NumberMaxLength = 30;
+    public const int MaxProofs = 5;
     public const int ReasonMinLength = 5;
     public const int ReasonMaxLength = 500;
 
     private readonly List<ReceiptMode> _modes = [];
     private readonly List<ReceiptAllocation> _allocations = [];
+    private readonly List<ReceiptProof> _proofs = [];
 
     private Receipt()
     {
@@ -49,6 +51,8 @@ public class Receipt : CompanyOwnedRoot
     public IReadOnlyList<ReceiptMode> Modes => _modes.Where(m => !m.IsDeleted).ToList();
 
     public IReadOnlyList<ReceiptAllocation> Allocations => _allocations.Where(a => !a.IsDeleted).ToList();
+
+    public IReadOnlyList<ReceiptProof> Proofs => _proofs.Where(p => !p.IsDeleted).ToList();
 
     /// <summary>The amount applied to invoices now (the sum of the signed allocation rows).</summary>
     public decimal AllocatedAmount => Allocations.Sum(a => a.Amount);
@@ -159,6 +163,25 @@ public class Receipt : CompanyOwnedRoot
         var applied = Allocations.Where(a => a.InvoiceId == invoiceId).Sum(a => a.Amount);
         if (applied > 0m)
             _allocations.Add(ReceiptAllocation.Of(Id, invoiceId, -applied, AllocationReason.InvoiceCancelled, _allocations.Count));
+    }
+
+    /// <summary>R20: attaches a proof file (PNG, JPEG or PDF up to 5 MB, at most 5 per receipt) to a recorded receipt; <paramref name="existingCount"/> is how many it has.</summary>
+    public ReceiptProof AttachProof(string? fileName, byte[]? content, int existingCount)
+    {
+        RequireRecorded();
+        if (existingCount >= MaxProofs)
+            throw new ValidationFailureException(PaymentMessages.ProofInvalid);
+
+        var proof = ReceiptProof.Of(Id, fileName, content);
+        _proofs.Add(proof);
+        return proof;
+    }
+
+    /// <summary>R20: removes a proof (soft-deleted).</summary>
+    public void RemoveProof(Guid proofId)
+    {
+        var proof = _proofs.FirstOrDefault(p => p.Id == proofId && !p.IsDeleted) ?? throw new NotFoundException(PaymentMessages.ProofNotFound);
+        proof.MarkDeleted();
     }
 
     private void RequireRecorded()

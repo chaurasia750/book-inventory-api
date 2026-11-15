@@ -29,5 +29,7 @@ public sealed class ReceiptConfiguration() : ModuleEntityConfiguration<Receipt>(
         builder.Navigation(r => r.Modes).HasField("_modes").UsePropertyAccessMode(PropertyAccessMode.Field);
         builder.HasMany(r => r.Allocations).WithOne().HasForeignKey(a => a.ReceiptId).OnDelete(DeleteBehavior.Restrict);
         builder.Navigation(r => r.Allocations).HasField("_allocations").UsePropertyAccessMode(PropertyAccessMode.Field);
+        builder.HasMany(r => r.Proofs).WithOne().HasForeignKey(p => p.ReceiptId).OnDelete(DeleteBehavior.Restrict);
+        builder.Navigation(r => r.Proofs).HasField("_proofs").UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

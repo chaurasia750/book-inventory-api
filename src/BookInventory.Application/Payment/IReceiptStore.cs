@@ -17,6 +17,18 @@ public interface IReceiptStore
     /// <summary>The receipt about to change: tracked, with its modes and allocations; <c>null</c> for an unknown id or another company's.</summary>
     Task<Receipt?> FindForManagementAsync(Guid id, CancellationToken cancellationToken = default);
 
+    /// <summary>R20: how many live proof files the receipt has.</summary>
+    Task<int> CountProofsAsync(Guid receiptId, CancellationToken cancellationToken = default);
+
+    /// <summary>R20: the receipt's proof files without their bytes, oldest first.</summary>
+    Task<IReadOnlyList<ReceiptProofDto>> ProofsOfAsync(Guid receiptId, CancellationToken cancellationToken = default);
+
+    /// <summary>R20: one proof file with its bytes, or <c>null</c> for an unknown receipt or proof (or another company's).</summary>
+    Task<ReceiptProofFile?> FindProofAsync(Guid receiptId, Guid proofId, CancellationToken cancellationToken = default);
+
+    /// <summary>R20: the receipt tracked with only this one proof loaded, for removing it.</summary>
+    Task<Receipt?> FindForProofRemovalAsync(Guid receiptId, Guid proofId, CancellationToken cancellationToken = default);
+
     /// <summary>R12: the receipts that have something applied to this invoice: tracked, with their modes and allocations.</summary>
     Task<IReadOnlyList<Receipt>> FindAppliedToInvoiceAsync(Guid invoiceId, CancellationToken cancellationToken = default);
 
