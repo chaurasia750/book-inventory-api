@@ -51,6 +51,9 @@ public class School : CompanyOwnedRoot
 
     public SaleType SaleType { get; private set; }
 
+    /// <summary>R20: the default of the orders made for this school (Cash or Credit).</summary>
+    public PaymentType PaymentType { get; private set; }
+
     public bool IsGstDefault { get; private set; }
 
     public decimal OpeningBalanceAmount { get; private set; }
@@ -131,6 +134,7 @@ public class School : CompanyOwnedRoot
         State = IndianState.Require(details.State);
         SessionType = details.SessionType;
         SaleType = details.SaleType;
+        PaymentType = details.PaymentType;
         IsGstDefault = details.IsGstDefault;
         SetOpeningBalance(SchoolRules.OpeningBalance(details.OpeningBalanceAmount));
     }

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using BookInventory.Domain.Core;
 using BookInventory.Domain.School;
 using SchoolRoot = BookInventory.Domain.School.School;
 
@@ -17,11 +18,12 @@ public sealed record CreateSchoolRequest(
     string? Mobile = null,
     string? Email = null,
     string? Gstin = null,
+    PaymentType? PaymentType = null,
     IReadOnlyList<string>? Classes = null)
 {
     public SchoolDetails ToDetails() => new(
         Name, SessionType!.Value, SaleType ?? Domain.School.SaleType.Both, IsGstDefault ?? false, OpeningBalanceAmount ?? 0m,
-        State, Address, ContactPerson, Mobile, Email, Gstin);
+        State, Address, ContactPerson, Mobile, Email, Gstin, PaymentType ?? Domain.Core.PaymentType.Credit);
 }
 
 /// <summary>R2-R5, R7: the master data an Owner may change; not the code, the status or the classes.</summary>
@@ -36,11 +38,12 @@ public sealed record EditSchoolRequest(
     string? ContactPerson = null,
     string? Mobile = null,
     string? Email = null,
-    string? Gstin = null)
+    string? Gstin = null,
+    PaymentType? PaymentType = null)
 {
     public SchoolDetails ToDetails() => new(
         Name, SessionType!.Value, SaleType!.Value, IsGstDefault, OpeningBalanceAmount,
-        State, Address, ContactPerson, Mobile, Email, Gstin);
+        State, Address, ContactPerson, Mobile, Email, Gstin, PaymentType ?? Domain.Core.PaymentType.Credit);
 }
 
 /// <summary>R6: the whole class list in order.</summary>
@@ -97,6 +100,7 @@ public sealed record SchoolDetailResponse(
     string State,
     SessionType SessionType,
     SaleType SaleType,
+    PaymentType PaymentType,
     bool IsGstDefault,
     decimal OpeningBalanceAmount,
     SchoolStatus Status,

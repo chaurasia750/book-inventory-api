@@ -2874,6 +2874,11 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasColumnType("numeric(18,2)")
                         .HasColumnName("opening_balance_amount");
 
+                    b.Property<string>("PaymentType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("payment_type");
+
                     b.Property<uint>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
@@ -2924,6 +2929,8 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
 
                     b.ToTable("school", "school", t =>
                         {
+                            t.HasCheckConstraint("ck_school_payment_type", "\"payment_type\" IN ('CASH', 'CREDIT')");
+
                             t.HasCheckConstraint("ck_school_sale_type", "\"sale_type\" IN ('SCHOOL_ORDER', 'COUNTER_SALE', 'BOTH')");
 
                             t.HasCheckConstraint("ck_school_session_type", "\"session_type\" IN ('APR_MAR', 'JAN_DEC')");
