@@ -1,10 +1,10 @@
 # Spec: sales - School orders and invoices
 
 - **Module:** `sales` (PostgreSQL schema `sales`)
-- **Status:** R1-R18 Approved by abhishek in chat on 2026-11-15 (Q1-Q14 answered one by one: Q1 per-session order numbers and Q3 a counter per company as the owner said, the rest with the recommended answers; D1-D3 with them)
+- **Status:** R19-R25 and AC11-AC16 Approved by abhishek in chat on 2026-11-15 (the wholesale order questions answered one by one, all with the recommended answers); R1-R18 Approved by abhishek in chat on 2026-11-15 (Q1-Q14 answered one by one: Q1 per-session order numbers and Q3 a counter per company as the owner said, the rest with the recommended answers; D1-D3 with them)
 - **Last updated:** 2026-11-15
 - **Source docs:** [BRD §2, §4.10 School Order and Invoice (FR-ORD-01 to FR-ORD-15), §5.1 BR-SES, §5.2 BR-PRC, §5.3 BR-DIS, §5.4 BR-GST, §5.5 the stock movement table, §5.6 BR-LED, §6 Documents, §8 Data Model (SalesOrder, Invoice) and design decisions 3 and 4, §9 Q-01, Q-02, Q-05](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P24, U14; [specs/school.md](school.md) R5, R16, R18, R19; [specs/item.md](item.md) R16; [specs/price.md](price.md) R4, R18; [specs/stock.md](stock.md) R11, R20; [specs/finance.md](finance.md) R5; [specs/company.md](company.md) R16
-- **Plans:** [sales#01](../plans/sales/2026-11-15-01-school-orders.md) (Done), [sales#02](../plans/sales/2026-11-15-02-ui-school-orders.md) (In progress), [sales#03](../plans/sales/2026-11-15-03-invoices.md) (Done), [sales#04](../plans/sales/2026-11-15-04-ui-invoices.md) (In progress); what it needs from other modules: [school#05](../plans/school/2026-11-15-05-session-of-a-date.md) (Done), [school#06](../plans/school/2026-11-15-06-ui-session-cut-offs.md), [price#05](../plans/price/2026-11-15-05-price-directory.md), [stock#05](../plans/stock/2026-11-15-05-stock-quantities.md), [company#06](../plans/company/2026-11-15-06-company-tax-profile.md) (all Approved)
+- **Plans:** [sales#05](../plans/sales/2026-11-15-05-wholesale-orders.md) (Approved), [sales#06](../plans/sales/2026-11-15-06-ui-wholesale-orders.md) (Approved), [sales#01](../plans/sales/2026-11-15-01-school-orders.md) (Done), [sales#02](../plans/sales/2026-11-15-02-ui-school-orders.md) (In progress), [sales#03](../plans/sales/2026-11-15-03-invoices.md) (Done), [sales#04](../plans/sales/2026-11-15-04-ui-invoices.md) (In progress); what it needs from other modules: [school#05](../plans/school/2026-11-15-05-session-of-a-date.md) (Done), [school#06](../plans/school/2026-11-15-06-ui-session-cut-offs.md), [price#05](../plans/price/2026-11-15-05-price-directory.md), [stock#05](../plans/stock/2026-11-15-05-stock-quantities.md), [company#06](../plans/company/2026-11-15-06-company-tax-profile.md) (all Approved)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -51,6 +51,15 @@ Out of scope for this feature: the invoice PDF and print layout (FR-ORD-10, FR-O
 - **R16** Every create and change of an order or invoice is recorded who and when (the standard audit columns and the audit trail of `core`); the postings are the stock entries and ledger transactions themselves.
 - **R17** Money is `numeric(18,2)`, percentages `numeric(5,2)`, never float; the rounding is R7's and happens only in the domain of this module.
 - **R18** Every input is checked at the API boundary (lengths, ranges, at most 500 lines, whole quantities, two decimals) and the rules again in the domain; an order or invoice of another company is `404`, identical to an unknown id.
+
+**Wholesale orders** (owner, 2026-11-15: "single single entry bahut tough hoga")
+- **R19** **Orders menu**: the company app has a BUSINESS parent **Orders** with the order list (all schools, filters school, status, session, search) and the invoice list; "New order" first asks for the school, then opens the order editor. A school's profile keeps its Orders and Invoices tabs (the same documents). This changes platform U14 for orders and invoices.
+- **R20** **A confirmed order can be changed** until it is closed: lines can be added; a line's quantity can be raised or lowered but never below its invoiced quantity; a line with nothing invoiced can be deleted and its price version and item discount changed; a line with something invoiced keeps its price version and item discount; the total discount and the GST choice can be changed only while nothing is invoiced. Every change recomputes the order (R7) and is audited (R16). An order whose remaining quantity becomes zero after a change closes (R6).
+- **R21** Each order line may carry a **class** (one of the school's classes, school R6): the same item for two classes is two lines, so packing and later class-wise invoices follow the class; a line without a class is the school's general need. "One line per item and price version" of R3 becomes one line per item, price version and class.
+- **R22** **Add class sets** (FR-PLN-01, owner's answers): on a draft or confirmed order the user chooses classes and the number of students of each (prefilled with the class's student estimate, planning R3); every book of each class's list of the order's session (planning R2) is added as a line of that class with quantity = students x quantity per student, at the item's default price version on the order date; an item with no price version or no longer active is left out and reported; a line of the same item, version and class already on the order is increased instead of doubled.
+- **R23** **Bulk add**: many items chosen at once (filters: category, class, publisher/vendor, subject, search) are added with one quantity and an optional class, each at its default price version; the rules of R3 and R21 apply to each.
+- **R24** Lines are edited in place on the order (quantity, class, version, discount, delete) with keyboard-friendly entry; the server recomputes after each save (R7). An order holds at most 500 lines (R3).
+- **R25** Every refusal names the line it is about (item code and class) so a long order can be corrected quickly.
 
 ## 4. Data
 
@@ -103,6 +112,12 @@ Raised by the aggregates (past tense, ids and values only): `SchoolOrderConfirme
 - **AC8** The Owner cancels an invoice with a reason: SQL shows the stock reversal and the opposite ledger transaction; the invoice keeps its number and is `CANCELLED`; its quantities are remaining again; cancelling twice is `409`; Staff cancelling is `403` (R12, R14).
 - **AC9** Changing the price version's sale price, the item's name or the school's name after the invoice changes nothing on the invoice (R13).
 - **AC10** The Owner of B gets `404` for A's order and invoice, identical to unknown ids; lists are paged, searchable and filtered; Staff see orders and invoices; anonymous `401` (R1, R14, R15, R18).
+- **AC11** The menu shows BUSINESS > Orders with Order list and Invoices; New order asks for the school first (R19).
+- **AC12** On a confirmed order with line A 10 (4 invoiced): A -> 6 is accepted, A -> 3 is `400`; deleting A is `409`; adding C and deleting C before any invoice are accepted; changing A's version is `409`, changing B's (nothing invoiced) is accepted; the totals are recomputed; lowering every remaining to zero closes the order (R20).
+- **AC13** Class 4 dictionary 40 and Class 5 dictionary 38 are two lines with their classes; a class the school does not have is `400` (R21).
+- **AC14** Adding the sets of Class 4 (45 students) and Class 5 (40) from the 2026-27 lists (Class 4: X 1, Y 2; Class 5: X 1, Z 1) adds X 45, Y 90 (Class 4) and X 40, Z 40 (Class 5); adding Class 5 again raises X and Z to 80; a book without a price is left out and reported (R22).
+- **AC15** Bulk add of 12 ticked items with quantity 30 and class 6 adds 12 lines of 30 for Class 6 (R23).
+- **AC16** A refused save names the line (item code and class) it is about (R25).
 
 ## 10. Decisions
 
@@ -111,6 +126,7 @@ Raised by the aggregates (past tense, ids and values only): `SchoolOrderConfirme
 | D1 | New module `sales` with its own schema for school orders and invoices (later counter sale and returns). `SchoolOrder` and `Invoice` are separate company-owned aggregates; an invoice refers to its order by id and the order keeps the invoiced quantities. (proposed by the assistant, Q1) |
 | D2 | The amounts of R7 are one domain rule used by the order and the invoice, so an order's preview and its invoice can never compute differently. (proposed by the assistant) |
 | D3 | Making and cancelling an invoice post stock and ledger through their capabilities in the same use case and transaction (stock R11, finance R5), not through events, because the invoice must fail as a whole when a posting fails. (proposed by the assistant) |
+| D4 | Owner, 2026-11-15: wholesale order entry: an Orders parent menu, confirmed orders editable above what is invoiced, class on each line, class sets from the planning module's class book lists, bulk add. Platform U14 is changed for orders and invoices accordingly. |
 
 ## 11. Open questions
 
