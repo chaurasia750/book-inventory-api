@@ -98,6 +98,19 @@ public sealed class CompaniesController(
     public async Task<IActionResult> CurrentInvoiceIdentity(CancellationToken cancellationToken) =>
         Ok(await queries.GetInvoiceIdentityAsync(cancellationToken));
 
+    /// <summary>R21: the master data of the session's company (the profile screen).</summary>
+    [HttpGet("current/profile")]
+    public async Task<IActionResult> CurrentProfile(CancellationToken cancellationToken) =>
+        Ok(await queries.GetProfileAsync(cancellationToken));
+
+    /// <summary>R21: the Owner (or a Super Admin inside the company) edits the address, contact, GSTIN, PAN and tagline; not the name or the state.</summary>
+    [HttpPut("{id:guid}/profile"), Authorize(Roles = IdentityWriters)]
+    public async Task<IActionResult> EditProfile(Guid id, [FromBody] EditCompanyProfileRequest request, CancellationToken cancellationToken)
+    {
+        await identity.EditProfileAsync(id, request, cancellationToken);
+        return Ok();
+    }
+
     /// <summary>R19/R20: the Owner (or a Super Admin inside the company) sets the one bank account and the invoice settings.</summary>
     [HttpPut("{id:guid}/invoice-identity"), Authorize(Roles = IdentityWriters)]
     public async Task<IActionResult> SetInvoiceIdentity(Guid id, [FromBody] SetCompanyInvoiceIdentityRequest request, CancellationToken cancellationToken)

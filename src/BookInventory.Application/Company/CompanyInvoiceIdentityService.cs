@@ -22,6 +22,13 @@ public sealed class CompanyInvoiceIdentityService(ICompanyStore store, ICurrentC
         company.SetInvoiceIdentity(request.ToDetails());
     }
 
+    /// <summary>R21: the Owner's edit of the address, contact, GSTIN, PAN and tagline of their own company.</summary>
+    public async Task EditProfileAsync(Guid id, EditCompanyProfileRequest request, CancellationToken cancellationToken = default)
+    {
+        var company = await RequireOwnedAsync(id, cancellationToken);
+        company.EditProfile(request.ToDetails());
+    }
+
     /// <summary>R17: uploads or replaces the logo (PNG or JPEG up to 2 MB).</summary>
     public async Task SetLogoAsync(Guid id, byte[]? content, CancellationToken cancellationToken = default)
     {
