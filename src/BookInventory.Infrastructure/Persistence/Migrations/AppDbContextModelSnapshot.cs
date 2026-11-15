@@ -35,6 +35,31 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("address");
 
+                    b.Property<string>("BankAccountHolder")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("bank_account_holder");
+
+                    b.Property<string>("BankAccountNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("bank_account_number");
+
+                    b.Property<string>("BankBranch")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("bank_branch");
+
+                    b.Property<string>("BankIfsc")
+                        .HasMaxLength(11)
+                        .HasColumnType("character varying(11)")
+                        .HasColumnName("bank_ifsc");
+
+                    b.Property<string>("BankName")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("bank_name");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -53,9 +78,28 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(15)")
                         .HasColumnName("gstin");
 
+                    b.Property<string>("InvoiceFooter")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("invoice_footer");
+
+                    b.Property<string>("InvoiceTerms")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("invoice_terms");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
+
+                    b.Property<byte[]>("Logo")
+                        .HasColumnType("bytea")
+                        .HasColumnName("logo");
+
+                    b.Property<string>("LogoContentType")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("logo_content_type");
 
                     b.Property<string>("Mobile")
                         .HasMaxLength(20)
@@ -79,11 +123,26 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(10)")
                         .HasColumnName("pan");
 
+                    b.Property<bool>("PrintGstin")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("print_gstin");
+
                     b.Property<uint>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("xid")
                         .HasColumnName("xmin");
+
+                    b.Property<byte[]>("Signature")
+                        .HasColumnType("bytea")
+                        .HasColumnName("signature");
+
+                    b.Property<string>("SignatureContentType")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("signature_content_type");
 
                     b.Property<string>("State")
                         .HasMaxLength(100)
@@ -116,6 +175,11 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                     b.Property<Guid?>("UpdatedBy")
                         .HasColumnType("uuid")
                         .HasColumnName("updated_by");
+
+                    b.Property<string>("UpiId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("upi_id");
 
                     b.HasKey("Id")
                         .HasName("pk_company");

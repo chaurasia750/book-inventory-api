@@ -15,6 +15,7 @@
     <!-- Application -->
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.14" />
     <PackageVersion Include="MailKit" Version="4.18.2" />
+    <PackageVersion Include="PuppeteerSharp" Version="25.17.1" />
     <PackageVersion Include="Scriban" Version="7.5.3" />
     <PackageVersion Include="UAParser" Version="3.1.47" />
     <!-- Configuration (web) -->

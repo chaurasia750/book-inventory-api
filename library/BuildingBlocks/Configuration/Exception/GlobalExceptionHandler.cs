@@ -83,6 +83,7 @@ namespace BookInventory.BuildingBlocks.Configuration.Exceptions
             ConflictException => (int)HttpStatusCode.Conflict,
             ForbiddenException => (int)HttpStatusCode.Forbidden,
             UnauthenticatedException => (int)HttpStatusCode.Unauthorized,
+            ServerFailureException => (int)HttpStatusCode.InternalServerError,
             _ => (int)HttpStatusCode.BadRequest
         };
 
