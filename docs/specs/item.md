@@ -1,10 +1,10 @@
 # Spec: item - Item master
 
 - **Module:** `item` (PostgreSQL schema `item`)
-- **Status:** R17 and AC13 Approved by abhishek on 2026-11-14 (for the stock spec); R16 and AC12 Approved by abhishek on 2026-11-14 (for the price spec); R1-R15 Approved by abhishek in chat on 2026-11-14 ("all approved hai kro implement"; Q1-Q12 answered with the recommended answers, D1-D5 with them)
+- **Status:** R18-R22 and AC14-AC16 (the Excel import and bulk update) Approved by abhishek on 2026-11-15 (Q13-Q15 answered with the recommended answers); R17 and AC13 Approved by abhishek on 2026-11-14 (for the stock spec); R16 and AC12 Approved by abhishek on 2026-11-14 (for the price spec); R1-R15 Approved by abhishek in chat on 2026-11-14 ("all approved hai kro implement"; Q1-Q12 answered with the recommended answers, D1-D5 with them)
 - **Last updated:** 2026-11-14; 2026-11-15 (menu: one "Items" menu)
 - **Source docs:** [BRD §1.2, §3, §4.4 Item Master (FR-ITM-01 to FR-ITM-08), §5.4 BR-GST, §5.5 BR-STK, §7.1, §8 Data Model (ItemCategory, Item, ItemBarcode)](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P23; [specs/company.md](company.md); [specs/vendor.md](vendor.md); [specs/school.md](school.md) (the neighbouring masters it follows)
-- **Plans:** [item#04](../plans/item/2026-11-14-04-item-directory-stock-flag.md) (Done, R17, AC13), [item#03](../plans/item/2026-11-14-03-item-directory.md) (Done, R16, AC12), [item#01](../plans/item/2026-11-14-01-item-master.md) (Done), [item#02](../plans/item/2026-11-14-02-ui-item-screens.md) (In progress); the capability it needs from vendor: [vendor#03](../plans/vendor/2026-11-14-03-vendor-directory.md) (Done)
+- **Plans:** [item#05](../plans/item/2026-11-15-05-excel-import.md) (Approved, R18-R22, AC14-AC16), [item#06](../plans/item/2026-11-15-06-ui-excel-import.md) (Approved, UI), [item#04](../plans/item/2026-11-14-04-item-directory-stock-flag.md) (Done, R17, AC13), [item#03](../plans/item/2026-11-14-03-item-directory.md) (Done, R16, AC12), [item#01](../plans/item/2026-11-14-01-item-master.md) (Done), [item#02](../plans/item/2026-11-14-02-ui-item-screens.md) (In progress); the capability it needs from vendor: [vendor#03](../plans/vendor/2026-11-14-03-vendor-directory.md) (Done)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -48,6 +48,13 @@ Out of scope for this feature: price versions, MRP, sale and purchase price (FR-
 - **R16** Other modules (the price module first) read items only through the item module's **directory capability**, never by joining its tables: it tells whether an item exists in the session's company and whether it is active, gives the code and name of a list of item ids, and finds item ids by a search text (name, code, barcode) and a selection of vendor, category, class (ignoring case) and active-only, page by page or all at once (at most 5000). It answers only for the company of the session (platform P19), returns plain values and never the aggregate, and changes nothing. Proposed by the assistant on 2026-11-14 for the price spec (decision D3); Approved by abhishek on 2026-11-14.
 - **R17** The directory capability (R16) also says whether an item is **stock managed** (R4) and can limit a selection to stock-managed items, so the stock module reads that flag from here and never keeps its own copy. Proposed by the assistant on 2026-11-14 for the stock spec (decision D4 there); Approved by abhishek on 2026-11-14.
 
+**Excel import and bulk update** (FR-ITM-06, NFR-12; owner, 2026-11-15)
+- **R18** The Owner (and an entered Super Admin) uploads an `.xlsx` file of items: one row per item with the columns **Item code**, **Barcode**, **Name**, **Category**, **Class**, **Subject**, **HSN code**, **GST rate**, **Vendor** and **Stock managed**; a template with these columns can be downloaded. The file is at most 5 MB and 5000 rows and must be `.xlsx` (the same limits as the opening stock import, stock R17); anything else is refused (`400`).
+- **R19** **New or update** (Q13): a row with an **Item code** (`ITM-0123`) updates that item, and the code must exist in the company (else the row is wrong); a row without an item code but with a **Barcode** that belongs to an item updates that item; a row whose barcode belongs to no item, or a row with neither, is a **new item** (it carries the barcode when one is given). The same item twice in one file, or the same barcode on two rows, makes those rows wrong.
+- **R20** **Values** are the same as when an item is typed (R2-R7), checked by the same rules: a new item needs a **name**; the **category** is one of the seven of R3 (any case); the **class** is written as the standard class name when it matches one ignoring case (`lkg` -> `LKG`) and kept as typed otherwise (up to 50 characters); the **HSN code** is 4 to 8 digits; the **GST rate** is one of 0, 5, 12, 18, 28; the **Vendor** is the name of a vendor of the company (ignoring case; an unknown name makes the row wrong, Q15); **Stock managed** is yes or no (empty takes the category's default, R4); a **barcode** is 4 to 30 characters, letters, digits and hyphens, unique in the company (R6).
+- **R21** **Update rules** (Q14): in an update a **blank cell keeps** the current value; a cell with `-` **clears** an optional value (class, subject, HSN code, vendor); the name and the category cannot be cleared. A barcode given on an update is **added** to the item's barcodes (the existing ones stay); a barcode that already belongs to another item makes the row wrong. Changing a name, class, HSN or GST rate does not touch documents already issued (R14).
+- **R22** **All or nothing**: every row is checked first, by the rules above and against the company's items, vendors and barcodes; if any row is wrong **nothing** is changed and **every** wrong row is reported (row number, column, reason code). Otherwise every new item is created through the same behaviour as a typed one (the generated code of R10, in file order) and every update through the same edit behaviour, in the request transaction, so every change is audited (R11); the answer says how many items were created and how many updated. The file itself is not kept.
+
 ## 4. Data
 
 Schema `item`:
@@ -63,6 +70,8 @@ All routes are company-scoped by the session (platform P19, P20); the company is
 | Method + route | Who | Notes |
 |---|---|---|
 | `POST items` | `OWNER`, `SUPER_ADMIN` (entered) | `{name, category, vendorId?, className?, subject?, hsnCode?, gstRatePercent?, isStockManaged?, barcodes?}` -> `201` with the generated `code`; `400` for invalid values (a `code` in the body is ignored); `409` a barcode already used; `403 core.company_required` with no company |
+| `GET items/import/template` | `OWNER`, `SUPER_ADMIN` (entered) | the `.xlsx` template with the ten columns (R18) |
+| `POST items/import` | `OWNER`, `SUPER_ADMIN` (entered) | multipart: the file -> `200 {created, updated}`, or `400` with the report of every wrong row (row number, column, code); nothing is changed when any row is wrong (R19-R22) |
 | `GET items` | `OWNER`, `STAFF`, `SUPER_ADMIN` (entered) | paged list (R12); Staff sees active items only |
 | `GET items/{id}` | `OWNER`, `STAFF`, `SUPER_ADMIN` (entered) | the item with its barcodes and the vendor's name; Staff only an active item; `404` otherwise |
 | `PUT items/{id}` | `OWNER`, `SUPER_ADMIN` (entered) | edits R2-R4, R5, R7 (not the code, not the status, not the barcodes) |
@@ -73,7 +82,7 @@ Errors are `ProblemDetails` with a message code from the module's catalogue. Val
 
 ## 6. User interface
 
-The class of an item is chosen from a drop-down of the standard class names (Nursery, LKG, UKG, 1st to 12th, the list a new school starts with, school R6) in the add and edit forms, like the class of an order line; it stays the optional text of R2, so an item whose class is not in the list keeps it.
+The Owner also sees an **Import** button on the item list: it downloads the template, uploads the file and shows the result or the report of wrong rows (item#06). The class of an item is chosen from a drop-down of the standard class names (Nursery, LKG, UKG, 1st to 12th, the list a new school starts with, school R6) in the add and edit forms, like the class of an order line; it stays the optional text of R2, so an item whose class is not in the list keeps it.
 
 Written in the UI plan; summary: in the company workspace (`member` app) the Owner and Staff get the "Item list" entry of the "Items" menu: a list with search and filters; an item opens beside the list with an X to close it, and adding and editing open in the same panel (platform U10); the Owner edits the barcode list there and activates or deactivates; Staff see the same list and detail read-only. Each state shows loading, empty, error with retry and success. (Since 2026-11-15, at the owner's request, "Items", "Prices" and "Stock" are the three entries of one "Items" menu: Item list, Prices, Stock.)
 
@@ -100,6 +109,9 @@ Raised by the `Item` aggregate (past tense, ids and values only): `ItemCreated`,
 - **AC11** Every create and change of an item appears in the audit trail with the actor and company A (R13).
 - **AC12** The directory capability, called for the Owner of A, finds A's item (id, code, name, active) and returns nothing for B's item id; codes and names of two ids come back; a search by name, barcode, vendor and class (any case) returns A's matching items only; an empty selection returns all of A's items (R16).
 - **AC13** The directory capability, called for the Owner of A, says a book is stock managed and a pen is not, and a selection limited to stock-managed items lists only those (R17).
+- **AC14** A file with 3 new rows (one with the barcode `NEWBOOK-001`), 2 updates by item code (one with the Class cell blank, one with `-` in Subject) and 1 update by an existing barcode imports: `created: 3, updated: 3`; the new items have consecutive generated codes in file order; the blank class stays, the subject is cleared, the new barcode is on its item (R18-R22).
+- **AC15** A file with one right row and rows with an unknown `ITM-9999`, a barcode of another item on a new row, the category `XYZ`, the GST rate 7, an unknown vendor, the same item twice and a new item without a name imports **nothing** (the item count is unchanged) and reports exactly those rows with their columns and codes; a `.csv`, a file above 5 MB and a file of 5001 rows are refused (R18-R22).
+- **AC16** A Staff caller gets `403` on the import and the template; the Owner of company B cannot update company A's `ITM-` code (it is "unknown" in B) (R18, R1).
 
 ## 10. Decisions
 
@@ -110,6 +122,7 @@ Raised by the `Item` aggregate (past tense, ids and values only): `ItemCreated`,
 | D3 | Items are deactivated, never deleted (R8), like the other masters. (proposed by the assistant) |
 | D4 | The vendor of an item is read through a capability of the vendor module (vendor R15), not by joining across schemas, so each module keeps its own tables. (proposed by the assistant) |
 | D5 | Prices are not on the item: price versions are the Price module's, so a price change never touches an item. (BRD FR-PRC, proposed by the assistant) |
+| D6 | Owner, 2026-11-15: the import creates and updates in one file; the item code (or, without it, the barcode) decides which (Q13); a blank cell keeps the current value and `-` clears an optional one (Q14); the vendor is given by name (Q15); all or nothing with a full report, like the opening stock import. |
 
 ## 11. Open questions
 
@@ -127,3 +140,6 @@ None. Q1-Q12 were answered by the owner on 2026-11-14 with the recommended answe
 - **Q10** Delete. Recommended: never, only deactivate (R8).
 - **Q11** The Super Admin's item screens in the `admin` app. Recommended: later, like the school and vendor screens.
 - **Q12** The same item entered twice. Recommended: no name rule (R1): books and variants share names; only the code and the barcodes are unique. Alternative: refuse the same name, class and vendor together.
+- **Q13** How a row is new or an update? Answered: **an item code or a barcode that matches means update, otherwise a new item** (R19); alternative: two separate files.
+- **Q14** What a blank cell does in an update? Answered: **keeps the current value**, `-` clears an optional value (R21); alternative: a blank clears.
+- **Q15** Is the vendor a column? Answered: **yes, by the vendor's name**, an unknown name is a wrong row (R20); alternative: no vendor column.
