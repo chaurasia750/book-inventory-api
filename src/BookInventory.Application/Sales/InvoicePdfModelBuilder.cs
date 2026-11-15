@@ -41,11 +41,20 @@ public static class InvoicePdfModelBuilder
             ["totals"] = Totals(d),
             ["words"] = E(d.AmountInWords),
             ["bank"] = Bank(c),
-            ["terms"] = Lines(c.Terms),
+            ["terms"] = Lines(InvoiceTerms.Resolve(c.Terms, TermsValues(d, c))),
             ["footer_line"] = E(c.Footer),
             ["signature"] = live?.Signature is { Length: > 0 } sig ? DataUri(live.SignatureContentType, sig) : null
         };
     }
+
+    /// <summary>R35: the invoice's own values for the placeholders of the terms text.</summary>
+    private static Dictionary<string, string> TermsValues(InvoiceDetail d, CompanyInvoiceSnapshot c) =>
+        new()
+        {
+            ["company_name"] = c.Name, ["school_name"] = d.School.Name, ["school_code"] = d.School.Code, ["invoice_number"] = d.Summary.Number,
+            ["invoice_date"] = InvoiceFormat.Date(d.Summary.InvoiceDate), ["financial_year"] = d.FinancialYear, ["session"] = d.Session,
+            ["order_number"] = d.Summary.OrderNumber
+        };
 
     /// <summary>R31: TAX INVOICE with GST; without it CASH MEMO or CREDIT MEMO by the payment type (R34).</summary>
     private static string Title(InvoiceDetail d) => d.IsGstApplied ? "TAX INVOICE" : d.PaymentType == PaymentType.Cash ? "CASH MEMO" : "CREDIT MEMO";

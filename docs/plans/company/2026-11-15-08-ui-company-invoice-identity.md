@@ -26,7 +26,8 @@ Following the existing member screens and the owner's document pattern: one page
 - [x] 2. Company profile screen: the logo and the signature (upload, replace, remove, preview).
 - [x] 3. The profile form (address, mobile, email, GSTIN, PAN, tagline), the bank account form and the invoice settings form, each with save and validation.
 - [x] 4. Menu entry and roles: the screen for the Owner (and an entered Super Admin); hidden for Staff.
-- [ ] 5. Build and lint; record what was seen.
+- [ ] 5. Under the terms box a hint lists the placeholders the invoice fills (sales R35).
+- [ ] 6. Build and lint; record what was seen.
 
 ## 5. Spec coverage
 | Rule / AC | Task | Verification (input -> observed output) |
