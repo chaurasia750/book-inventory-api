@@ -100,3 +100,4 @@ Kinds: **NV** not verified · **GAP** known gap · **DEC** decision the owner ha
 | B90 | company | GAP | The GSTIN and email of a company are checked only for length; a vendor checks the GSTIN shape and a school only its length: one shared GSTIN (and email) rule for vendors, schools and companies is missing | company#10 | closed by company#11 and school#09 |
 | B91 | company | NV | company#08 screen (SETTINGS > Company profile) not seen in a browser: details, logo and signature upload, bank account, terms and footer, and the Staff refusal | company#08 | open |
 | B92 | item | NV | item#05 import not exercised with a file saved by Excel itself, and the same new item twice in one file only through barcode and code cases | item#05 | open |
+| B93 | item | NV | item#06 screen not clicked through in a browser: upload from the dialog, success counts, the table of wrong rows, Staff without the Import button, narrow screen | item#06 | open |
