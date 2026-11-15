@@ -43,3 +43,5 @@ Done and observed: build `npx nx run-many -t build` -> "Successfully ran target 
 
 ## 7. Risks and notes
 Written without a browser; expect small visual fixes after the owner's first look.
+
+Redesigned on 2026-11-15 at the owner's request after the owner's own tulas UI (look only, the owner's project): the profile header is one compact card (name, status, code and contact line, actions) with money tiles (opening balance, total debit, total credit, balance due / to pay, in red when due); tabs are chips; the ledger statement has its filter chips and inputs on one line, a compact table, an opening row, a totals row and cancelled entries tinted and struck through.
