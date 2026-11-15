@@ -1,10 +1,10 @@
 # Spec: finance - Ledger
 
 - **Module:** `finance` (PostgreSQL schema `finance`)
-- **Status:** R17 and AC9 Approved by abhishek in chat on 2026-11-15 (the school and vendor profile questions: profile panel with tabs, balance column in the lists, the same for vendors); R1-R16 Approved by abhishek in chat on 2026-11-14 (Q1-Q11 answered one by one, all with the recommended answers; D1-D4 with them)
+- **Status:** R18-R19 and AC10-AC12 (the ledger statement PDF and links) Draft, waiting for approval (Q12 and Q13 answered with the recommended answers on 2026-11-16); R17 and AC9 Approved by abhishek in chat on 2026-11-15 (the school and vendor profile questions: profile panel with tabs, balance column in the lists, the same for vendors); R1-R16 Approved by abhishek in chat on 2026-11-14 (Q1-Q11 answered one by one, all with the recommended answers; D1-D4 with them)
 - **Last updated:** 2026-11-14
 - **Source docs:** [BRD §2, §4.15 Ledger (FR-LED-01 to FR-LED-10), §5.1 BR-SES-01 to BR-SES-03 and BR-SES-07, §5.5 the stock movement table (ledger columns), §5.6 BR-LED-01 to BR-LED-05, §8 Data Model (PartyLedger) and design decisions 2 and 4](../bussiness/BRD-Book-Inventory-Phase1.md); [CLAUDE.project.md](../../CLAUDE.project.md) "Money and ledger"; [specs/platform.md](platform.md) P18-P21; [specs/school.md](school.md) R7, R16, R17, D3, D7; [specs/vendor.md](vendor.md) R6, R15, R16; [specs/stock.md](stock.md) (the posting capability it mirrors)
-- **Plans:** [finance#05](../plans/finance/2026-11-15-05-party-balances.md) (Done, R17, AC9), [finance#06](../plans/finance/2026-11-15-06-ui-party-profile-ledger.md) (In progress, UI), [finance#01](../plans/finance/2026-11-14-01-ledger-core.md) (Done), [finance#02](../plans/finance/2026-11-14-02-opening-balances.md) (Done), [finance#03](../plans/finance/2026-11-14-03-ledger-statement.md) (Done), [finance#04](../plans/finance/2026-11-14-04-ui-ledger-screens.md) (Superseded by finance#06); what it needs from other modules: [school#03](../plans/school/2026-11-14-03-school-directory.md) (Done), [school#04](../plans/school/2026-11-14-04-opening-balance-event.md) (Done), [vendor#04](../plans/vendor/2026-11-14-04-opening-balance-event.md) (Done)
+- **Plans:** [finance#07](../plans/finance/2026-11-16-07-ledger-pdf.md) (Draft, R18, AC10, AC11), [finance#08](../plans/finance/2026-11-16-08-ui-ledger-pdf.md) (Draft, UI), [finance#09](../plans/finance/2026-11-16-09-ui-ledger-links.md) (Draft, UI, R19, AC12), [finance#05](../plans/finance/2026-11-15-05-party-balances.md) (Done, R17, AC9), [finance#06](../plans/finance/2026-11-15-06-ui-party-profile-ledger.md) (In progress, UI), [finance#01](../plans/finance/2026-11-14-01-ledger-core.md) (Done), [finance#02](../plans/finance/2026-11-14-02-opening-balances.md) (Done), [finance#03](../plans/finance/2026-11-14-03-ledger-statement.md) (Done), [finance#04](../plans/finance/2026-11-14-04-ui-ledger-screens.md) (Superseded by finance#06); what it needs from other modules: [school#03](../plans/school/2026-11-14-03-school-directory.md) (Done), [school#04](../plans/school/2026-11-14-04-opening-balance-event.md) (Done), [vendor#04](../plans/vendor/2026-11-14-04-opening-balance-event.md) (Done)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -47,6 +47,10 @@ Out of scope for this feature: the documents that post most transactions (Invoic
 - **R16** A school's or vendor's ledger keeps its entries when the party is deactivated; the statement and the outstanding list show it under its name with an "inactive" mark.
 - **R17** **Balances of a list of parties** (for the Balance column of the school and vendor lists, section 6): for at most 100 school ids (or vendor ids; 100 ids keep the request line under the server's limit) of the session's company, each one's balance by the sign of R7 (0 for a party with no line; an id of another company or unknown is left out). Read by the Owner and an entered Super Admin only (R13). Added on 2026-11-15 when the owner moved the ledger into the school and vendor profiles.
 
+**Ledger statement PDF and links** (owner, 2026-11-16)
+- **R18** **Ledger statement PDF** (owner: "ledger ka pdf download krna hai according to filters data"): `GET schools/{schoolId}/ledger/pdf` and `GET vendors/{vendorId}/ledger/pdf` take the same filters as R9 and answer the **same statement** (the same lines, the same opening row, the same total debit, total credit and closing balance) as an **A4 portrait PDF**. Only the Owner and an entered Super Admin may ask (R13); more than 5000 lines is the same `400` as R9. The PDF has the company's header (logo, name, address, contact and, when the company prints it, the GSTIN: company R20), the title LEDGER STATEMENT, the party (a school: name, code, address, state, GSTIN; a vendor: name, code, state, GSTIN), the filter in words (`All entries`, `Financial year 2026-27`, `Session 2026-27`, `01 Apr 2026 to 30 Nov 2026`), the table (date, document, detail, debit, credit, balance; the opening row first, a totals row last; an advance is shown as a negative balance, R7), the date and time it was made (Asia/Kolkata) and page numbers; the table header repeats on every page; amounts use Indian grouping. Nothing is stored: every call renders again. The file is named `<party code>-ledger.pdf`.
+- **R19** **Links from the ledger rows** (owner: "order jo invoice se link krna hai"): on the Ledger tab of a school, the **document number** of a school invoice row opens that invoice, the **order number** printed in its detail (`ORD/2026-27/0001`) opens that order, a payment receipt row opens that receipt beside the school's Payments tab (payment R16), and a cheque cleared or cheque bounced row opens the receipt it belongs to; an opening balance row has no link. A number that no longer finds its document (for example another company's) shows as plain text. The statement and the PDF are unchanged; these are links on the screen only.
+
 ## 4. Data
 
 Schema `finance`:
@@ -61,6 +65,7 @@ All routes are company-scoped by the session (platform P19, P20); the company is
 |---|---|---|
 | `GET schools/{schoolId}/ledger` | `OWNER`, `SUPER_ADMIN` (entered) | `?financialYear=&session=&from=&to=` -> the statement of R9; `404` for an unknown school; `400` for more than 5000 lines |
 | `GET vendors/{vendorId}/ledger` | `OWNER`, `SUPER_ADMIN` (entered) | the same for a vendor (no session filter) |
+| `GET schools/{schoolId}/ledger/pdf`, `GET vendors/{vendorId}/ledger/pdf` | `OWNER`, `SUPER_ADMIN` (entered) | R18: the same filters as the statement, answers an A4 `application/pdf` (inline, `<party code>-ledger.pdf`); `404`, `400` as the statement |
 | `GET ledger/outstanding/schools` | `OWNER`, `SUPER_ADMIN` (entered) | R11, `?search=&pageIndex=&pageSize=` |
 | `GET ledger/outstanding/vendors` | `OWNER`, `SUPER_ADMIN` (entered) | R11 |
 | `GET ledger/balances/schools?ids=` / `GET ledger/balances/vendors?ids=` | `OWNER`, `SUPER_ADMIN` (entered) | R17: `{id: balance}` for at most 100 ids; `400` above |
@@ -90,6 +95,9 @@ Raised by the `LedgerTransaction` aggregate (past tense, ids and values only): `
 - **AC7** The Owner of B reading A's school ledger gets `404`, identical to an unknown school; Staff get `403` on every ledger route; anonymous `401`; a Super Admin with no company entered gets empty outstanding lists (R1, R13).
 - **AC8** No route changes or deletes a ledger entry (`PUT`/`DELETE` -> `405`), and SQL shows every transaction balanced (sum of debits = sum of credits per transaction) (R3, R14).
 - **AC9** `GET ledger/balances/schools?ids=S,S2,<B's school>` as the Owner of A returns S and S2 with the balances of their statements and leaves B's out; 101 ids -> `400`; Staff `403` (R17).
+- **AC10** `GET schools/{id}/ledger/pdf?financialYear=2026-27` answers an A4 PDF whose text has the company name, the school's name and code, `Financial year 2026-27`, every document number of `GET schools/{id}/ledger?financialYear=2026-27` and the same total debit, total credit and closing balance; with `from` and `to` only the lines in that range are listed, after an opening row equal to the balance of the lines before `from` (R18, R9).
+- **AC11** `GET vendors/{id}/ledger/pdf` answers the same for a vendor (its balance is what the company owes it, R7); Staff get `403`, the Owner of company B gets `404` for company A's school, and a filter with more than 5000 lines is `400` (R18, R13).
+- **AC12** On the Ledger tab of a school with an invoice and a payment: clicking the invoice number opens that invoice, clicking its order number opens that order, clicking the receipt number opens the receipt panel beside the school's Payments tab; the opening balance row has no link (R19).
 
 ## 10. Decisions
 
@@ -99,6 +107,7 @@ Raised by the `LedgerTransaction` aggregate (past tense, ids and values only): `
 | D2 | The document modules post through one capability of this module (R5) and never write entries themselves, like stock R11. (proposed by the assistant) |
 | D3 | The session of a document is not derived in this module: school D7 already decided it comes with the first order feature; the ledger stores what the document gives (R4). (proposed by the assistant) |
 | D4 | Opening balances reach the ledger through the masters' events (school R17, vendor R16), so the masters never write the ledger and the ledger stays the only writer of balances. (proposed by the assistant, Q3) |
+| D5 | Owner, 2026-11-16: the ledger PDF is the statement of R9 for a school or a vendor with the screen's own filters (Q13); the document numbers of the ledger rows are links on the screen (Q12). Nothing about the ledger's data changes. |
 
 ## 11. Open questions
 
@@ -115,3 +124,7 @@ None. Q1-Q11 were answered by the owner one by one on 2026-11-14, all with the r
 - **Q9** Financial year label. Recommended: April-March of the date, written `2026-27` (R4).
 - **Q10** The session of an opening balance. Recommended: none; it counts as "before" every session and year in the statement (R4, R9).
 - **Q11** Rounding. Recommended: the ledger never rounds; it refuses an amount with more than two decimals (R8). The documents decide their rounding (their own question later).
+
+Open questions of the ledger PDF and links (answered by abhishek on 2026-11-16 with the recommended answers):
+- **Q12** Where is an order linked to its invoice? Answered: **in the ledger rows** (an invoice row opens the invoice, its order number opens the order, a receipt row opens the receipt) (R19); the order screen already lists its invoices and the invoice screen already links its order (sales R13, R15); alternatives not chosen: links in the Orders and Invoices lists, or both.
+- **Q13** What does the ledger PDF cover? Answered: **the statement of a school and of a vendor**, with the screen's filters (R18); alternative not chosen: schools only.
