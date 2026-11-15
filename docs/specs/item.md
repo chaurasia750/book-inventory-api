@@ -73,6 +73,8 @@ Errors are `ProblemDetails` with a message code from the module's catalogue. Val
 
 ## 6. User interface
 
+The class of an item is chosen from a drop-down of the standard class names (Nursery, LKG, UKG, 1st to 12th, the list a new school starts with, school R6) in the add and edit forms, like the class of an order line; it stays the optional text of R2, so an item whose class is not in the list keeps it.
+
 Written in the UI plan; summary: in the company workspace (`member` app) the Owner and Staff get the "Item list" entry of the "Items" menu: a list with search and filters; an item opens beside the list with an X to close it, and adding and editing open in the same panel (platform U10); the Owner edits the barcode list there and activates or deactivates; Staff see the same list and detail read-only. Each state shows loading, empty, error with retry and success. (Since 2026-11-15, at the owner's request, "Items", "Prices" and "Stock" are the three entries of one "Items" menu: Item list, Prices, Stock.)
 
 ## 7. Events
