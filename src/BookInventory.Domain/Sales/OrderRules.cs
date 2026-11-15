@@ -65,6 +65,15 @@ internal static class OrderRules
 
     private static string LabelOf(OrderLineInput line) => line.ClassName is null ? line.Item.Code : $"{line.Item.Code} / {line.ClassName}";
 
+    /// <summary>R20: an amendment keeps the order's school and its remark is short.</summary>
+    internal static void RequireAmendable(OrderHeader header, Guid schoolId)
+    {
+        if (header.School.Id != schoolId)
+            throw new ValidationFailureException(SalesMessages.SchoolFixed);
+        if (header.Remark?.Trim().Length > SchoolOrder.RemarkMaxLength)
+            throw new ValidationFailureException(SalesMessages.InvalidText);
+    }
+
     /// <summary>R2, R6: the date is not in the future, the session is written, the remark is short.</summary>
     internal static void RequireHeader(OrderHeader header, DateOnly today)
     {

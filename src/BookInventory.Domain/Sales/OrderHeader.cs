@@ -1,3 +1,5 @@
+using BookInventory.Domain.Core;
+
 namespace BookInventory.Domain.Sales;
 
 /// <summary>Spec sales R2: the order's header values as the use case resolved them (school, date, session, GST).</summary>
@@ -12,6 +14,8 @@ public sealed record OrderHeader
     public required bool IsGstApplied { get; init; }
 
     public required GstMode GstMode { get; init; }
+
+    public required PaymentType PaymentType { get; init; }
 
     public Discount TotalDiscount { get; init; } = Discount.None;
 

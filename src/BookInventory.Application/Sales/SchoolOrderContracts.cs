@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using BookInventory.Domain.Core;
 using BookInventory.Domain.Sales;
 
 namespace BookInventory.Application.Sales;
@@ -24,6 +25,7 @@ public sealed record SaveSchoolOrderRequest(
     DateOnly? OrderDate = null,
     [param: StringLength(SchoolOrder.SessionMaxLength)] string? Session = null,
     bool? IsGstApplied = null,
+    PaymentType? PaymentType = null,
     DiscountRequest? TotalDiscount = null,
     [param: StringLength(SchoolOrder.RemarkMaxLength)] string? Remark = null,
     [param: MaxLength(SchoolOrder.MaxLines)] IReadOnlyList<SchoolOrderLineRequest>? Lines = null);
@@ -90,6 +92,8 @@ public sealed record SchoolOrderDetail
     public required bool IsGstApplied { get; init; }
 
     public required GstMode GstMode { get; init; }
+
+    public required PaymentType PaymentType { get; init; }
 
     public required Discount TotalDiscount { get; init; }
 

@@ -37,6 +37,7 @@ public sealed class InvoiceQueryService(ISalesStore store, IInvoiceLayoutStore l
             Session = i.Session,
             IsGstApplied = i.IsGstApplied,
             GstMode = i.GstMode,
+            PaymentType = i.PaymentType,
             TotalDiscount = new Discount(i.TotalDiscountKind, i.TotalDiscountValue),
             Totals = i.Totals,
             CancelReason = i.CancelReason,

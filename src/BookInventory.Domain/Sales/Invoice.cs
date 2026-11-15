@@ -55,6 +55,9 @@ public class Invoice : CompanyOwnedRoot
 
     public GstMode GstMode { get; private set; }
 
+    /// <summary>R34: the order's payment type when the invoice was made; with GST off it decides Cash Memo or Credit Memo (R31).</summary>
+    public PaymentType PaymentType { get; private set; }
+
     public DiscountKind TotalDiscountKind { get; private set; }
 
     public decimal TotalDiscountValue { get; private set; }
@@ -109,6 +112,7 @@ public class Invoice : CompanyOwnedRoot
             Session = order.Session,
             IsGstApplied = order.IsGstApplied,
             GstMode = order.GstMode,
+            PaymentType = order.PaymentType,
             TotalDiscountKind = delivery.TotalDiscount.Kind,
             TotalDiscountValue = delivery.TotalDiscount.Value,
             Totals = amounts.Totals,

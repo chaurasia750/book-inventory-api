@@ -54,7 +54,9 @@ public sealed class SchoolOrderService(
     /// <summary>R20: a confirmed order keeps its school and date; its lines, discounts and remark change within the order's limits.</summary>
     private async Task AmendAsync(SchoolOrder order, SaveSchoolOrderRequest request, CancellationToken cancellationToken)
     {
-        var header = await composer.HeaderAsync(request, order.OrderDate, cancellationToken);
+        // R20, R34: what the request leaves out stays as the order has it (it is not reset to the school's defaults).
+        var kept = request with { IsGstApplied = request.IsGstApplied ?? order.IsGstApplied, PaymentType = request.PaymentType ?? order.PaymentType };
+        var header = await composer.HeaderAsync(kept, order.OrderDate, cancellationToken);
         var lines = await composer.LinesAsync(new OrderLinesRequest(order.SchoolId, order.OrderDate, request.Lines ?? []), cancellationToken);
         order.Amend(header, lines);
     }

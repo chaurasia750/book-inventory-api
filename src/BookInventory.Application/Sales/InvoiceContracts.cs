@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using BookInventory.Domain.Core;
 using BookInventory.Domain.Sales;
 
 namespace BookInventory.Application.Sales;
@@ -66,6 +67,8 @@ public sealed record InvoiceDetail
     public required bool IsGstApplied { get; init; }
 
     public required GstMode GstMode { get; init; }
+
+    public required PaymentType PaymentType { get; init; }
 
     public required Discount TotalDiscount { get; init; }
 
