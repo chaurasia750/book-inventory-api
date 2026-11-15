@@ -118,3 +118,5 @@ Kinds: **NV** not verified · **GAP** known gap · **DEC** decision the owner ha
 | B108 | payment | NV | payment#08 not clicked through by a person: the real new tab of Open, a server-refused proof (text renamed to .png), a failed proof upload after the payment is recorded, Staff view, narrow screen | payment#08 | open |
 | B109 | payment | NV | payment#09 receipt PDF not seen with a filled company profile (address, contact, GSTIN, bank account, signature) and with enough allocations to need a second page | payment#09 | open |
 | B110 | payment | NV | payment#10 not clicked through by a person: the real print dialog and downloaded file, the renderer-failure text, Staff view, narrow screen | payment#10 | open |
+| B111 | customer | NV | customer#01: not checked by SQL that every customer row carries the entering company's `company_id`, and not checked that parallel creations get different codes | customer#01 | open |
+| B112 | customer | NV | customer#02, platform#10 and platform#11 are code-complete but not seen in a browser (cards at 375, 768 and 1280 px, layout shift, reduced motion, the customer screens) | customer#02, platform#10, platform#11 | open |

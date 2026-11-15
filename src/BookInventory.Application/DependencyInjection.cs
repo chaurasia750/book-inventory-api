@@ -12,6 +12,7 @@ using BookInventory.Application.Platform;
 using BookInventory.Application.Price;
 using BookInventory.Application.Sales;using BookInventory.Application.Stock;
 using BookInventory.Application.School;
+using BookInventory.Application.Customer;
 using BookInventory.Application.Vendor;
 
 namespace BookInventory.Application
@@ -29,6 +30,7 @@ namespace BookInventory.Application
             services.AddMessages(CompanyMessageCatalog.Messages); // company message codes
             services.AddMessages(SchoolMessageCatalog.Messages); // school message codes
             services.AddMessages(VendorMessageCatalog.Messages); // vendor message codes
+            services.AddMessages(CustomerMessageCatalog.Messages); // customer message codes
             services.AddMessages(ItemMessageCatalog.Messages); // item message codes
             services.AddMessages(PriceMessageCatalog.Messages); // price message codes
             services.AddMessages(StockMessageCatalog.Messages); // stock message codes
