@@ -40,6 +40,10 @@ public class Receipt : CompanyOwnedRoot
 
     public string? Remark { get; private set; }
 
+    public string? CancelReason { get; private set; }
+
+    public DateOnly? CancelledOn { get; private set; }
+
     public Guid ClientRequestId { get; private set; }
 
     public IReadOnlyList<ReceiptMode> Modes => _modes.Where(m => !m.IsDeleted).ToList();
@@ -112,6 +116,41 @@ public class Receipt : CompanyOwnedRoot
         mode.Bounce(date, cleaned);
         AddDomainEvent(new ChequeBounced(Id, mode.Id, SchoolId, mode.Amount));
         return mode;
+    }
+
+    /// <summary>R13: applies the advance to the school's open invoices by the rules of R6 (oldest first, or by hand); nothing is posted to the ledger.</summary>
+    public IReadOnlyList<AllocationInput> AdjustAdvance(IReadOnlyList<OpenInvoice> open, IReadOnlyList<AllocationInput>? requested)
+    {
+        RequireRecorded();
+        var advance = AdvanceAmount;
+        if (advance <= 0m)
+            throw new ConflictException(PaymentMessages.NoAdvance);
+
+        var plan = AllocationPlanner.Plan(advance, open, requested);
+        foreach (var allocation in plan)
+            _allocations.Add(ReceiptAllocation.Of(Id, allocation.InvoiceId, allocation.Amount, AllocationReason.Adjusted, _allocations.Count));
+
+        AddDomainEvent(new AdvanceAdjusted(Id, SchoolId, plan.Sum(a => a.Amount)));
+        return plan;
+    }
+
+    /// <summary>R14: cancels the receipt while none of its cheques has a result; its allocations are taken back (the dues return); the use case posts the ledger reversal.</summary>
+    public void Cancel(string? reason, DateOnly today)
+    {
+        RequireRecorded();
+        var cleaned = reason?.Trim() ?? string.Empty;
+        if (cleaned.Length is < ReasonMinLength or > ReasonMaxLength)
+            throw new ValidationFailureException(PaymentMessages.InvalidReason);
+        if (Modes.Any(m => m.ChequeStatus is ChequeStatus.Cleared or ChequeStatus.Bounced))
+            throw new ConflictException(PaymentMessages.ReceiptHasChequeResult);
+
+        foreach (var (invoiceId, net) in NewestAllocatedFirst().ToList())
+            _allocations.Add(ReceiptAllocation.Of(Id, invoiceId, -net, AllocationReason.ReceiptCancelled, _allocations.Count));
+
+        Status = ReceiptStatus.Cancelled;
+        CancelReason = cleaned;
+        CancelledOn = today;
+        AddDomainEvent(new ReceiptCancelled(Id, SchoolId, Number, TotalAmount));
     }
 
     /// <summary>R12: the invoice was cancelled; what this receipt applied to it becomes advance (a negative allocation row).</summary>

@@ -20,4 +20,6 @@ public static class PaymentMessages
     public const string InvalidResultDate = "payment.invalid_result_date";
     public const string InvalidReason = "payment.invalid_reason";
     public const string ReceiptNotRecorded = "payment.receipt_not_recorded";
+    public const string NoAdvance = "payment.no_advance";
+    public const string ReceiptHasChequeResult = "payment.receipt_has_cheque_result";
 }

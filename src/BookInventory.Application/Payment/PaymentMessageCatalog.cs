@@ -24,6 +24,8 @@ public static class PaymentMessageCatalog
             [PaymentMessages.InvalidResultDate] = "The date cannot be in the future, and a cheque cannot clear before its cheque date.",
             [PaymentMessages.InvalidReason] = "Give the reason, 5 to 500 characters.",
             [PaymentMessages.ReceiptNotRecorded] = "Only a recorded receipt can be changed; this one was cancelled.",
+            [PaymentMessages.NoAdvance] = "This receipt has no advance to apply.",
+            [PaymentMessages.ReceiptHasChequeResult] = "A receipt with a cleared or bounced cheque cannot be cancelled.",
             [PaymentMessages.TooManyIds] = "At most 100 invoices can be asked at once."
         };
 }
