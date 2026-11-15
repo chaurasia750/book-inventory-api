@@ -4,7 +4,7 @@
 - **Kind:** UI (repository `book-inventory-ui`; build `npx nx run-many -t build`, lint `npx nx run-many -t lint`)
 - **Spec:** [../../specs/finance.md](../../specs/finance.md) - rules covered: R9-R11, R13, R16 (the screen side); AC5-AC7
 - **Owner:** abhishek
-- **Status:** In progress (code done; waiting for the owner's look in the browser)
+- **Status:** Superseded by finance#06 (2026-11-15: the owner moved the ledger into the school and vendor profiles)
 - **Depends on:** `finance#03`
 - **UI plan:** this is itself a UI plan
 - **Approved by / on:** abhishek / 2026-11-14 (chat: Q1-Q11 of the finance spec answered one by one, all with the recommended answers)
