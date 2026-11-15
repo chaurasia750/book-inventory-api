@@ -78,7 +78,7 @@ Kinds: **NV** not verified · **GAP** known gap · **DEC** decision the owner ha
 | B68 | school | DEBT | The school directory reference gained state, GST default and GSTIN for orders and invoices; school R16 does not name them yet | sales#01 | open |
 | B69 | sales | GAP | The order editor preview is the saved draft (no unsaved preview endpoint); a 500-line order recomputes on each save | sales#01 | open |
 | B70 | sales | NV | Concurrency of two invoices made at the same moment from one order relies on the order's concurrency token (409 for the second); not exercised | sales#03 | open |
-| B71 | sales | GAP | Invoice PDF, print layout and attachments are later features (sales Q12, owner's document pattern) | sales#03 | open |
+| B71 | sales | GAP | Attachments on documents are still a later feature (owner's document pattern); the invoice PDF is now planned (sales#07, sales#08, platform#09, company#07, company#08) | sales#03 | open |
 | B72 | sales | NV | school#06, sales#02 and sales#04 screens not seen in a browser: Orders and Invoices tabs, the order editor (scan, versions, discounts, totals, confirm, close), make invoice, the invoice view and cancel, Session cut-offs | sales#02, sales#04 | open |
 | B73 | sales | GAP | After "Make invoice" the screen opens the invoice but does not show the items whose stock went to zero or below (the API answers them); show them in a later small change | sales#04 | open |
 | B74 | planning | NV | planning#01: DELETE of a class without a list (404), the audit trail of a removed list and the `IClassBookLists` capability were not exercised; the capability is checked with sales#05 | planning#01 | open |
