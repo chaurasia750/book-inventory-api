@@ -4,10 +4,10 @@
 - **Kind:** UI (repository `book-inventory-ui`; build `npx nx run-many -t build`, lint `npx nx run-many -t lint`)
 - **Spec:** [../../specs/payment.md](../../specs/payment.md) - rules covered: R10-R12, R16 (the screen side); AC8-AC10
 - **Owner:** abhishek
-- **Status:** Draft
+- **Status:** Approved
 - **Depends on:** `payment#03`, `payment#02`
 - **UI plan:** this is itself a UI plan
-- **Approved by / on:** -
+- **Approved by / on:** abhishek / 2026-11-15 (chat: "yes all approve hai"; Q1-Q7 answered with the recommended answers)
 - **Created:** 2026-11-15
 
 ## 1. In one minute

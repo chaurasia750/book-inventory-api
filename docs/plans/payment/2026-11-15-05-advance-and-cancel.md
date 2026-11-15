@@ -4,10 +4,10 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/payment.md](../../specs/payment.md) - rules covered: R13-R15; AC11, AC12
 - **Owner:** abhishek
-- **Status:** Draft
+- **Status:** Approved
 - **Depends on:** `payment#01`, `payment#03`
 - **UI plan:** payment#06
-- **Approved by / on:** -
+- **Approved by / on:** abhishek / 2026-11-15 (chat: "yes all approve hai"; Q1-Q7 answered with the recommended answers)
 - **Created:** 2026-11-15
 
 ## 1. In one minute

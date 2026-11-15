@@ -4,10 +4,10 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/sales.md](../../specs/sales.md) - rules covered: R37; AC30
 - **Owner:** abhishek
-- **Status:** Draft
+- **Status:** Approved
 - **Depends on:** `sales#03` (Done)
 - **UI plan:** none, a read capability with no screen of its own
-- **Approved by / on:** -
+- **Approved by / on:** abhishek / 2026-11-15 (chat: "yes all approve hai"; Q1-Q7 answered with the recommended answers)
 - **Created:** 2026-11-15
 
 ## 1. In one minute
