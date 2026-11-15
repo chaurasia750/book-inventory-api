@@ -13,6 +13,8 @@ public static class ReceiptResponses
         new(
             Summary(receipt, school),
             receipt.Remark,
+            receipt.CancelReason,
+            receipt.CancelledOn,
             receipt.AllocatedAmount,
             receipt.AdvanceAmount,
             [.. receipt.Modes.Select(m => new ReceiptModeDto(m.Id, m.ModeType, m.Amount, m.Reference, m.ChequeNumber, m.ChequeDate, m.BankName, m.ChequeStatus))],

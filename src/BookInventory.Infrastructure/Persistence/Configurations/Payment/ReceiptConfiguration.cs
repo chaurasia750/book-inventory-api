@@ -16,6 +16,7 @@ public sealed class ReceiptConfiguration() : ModuleEntityConfiguration<Receipt>(
         builder.Property(r => r.Number).HasMaxLength(Receipt.NumberMaxLength).IsRequired();
         builder.Property(r => r.FinancialYear).HasMaxLength(10).IsRequired();
         builder.Property(r => r.Remark).HasMaxLength(Receipt.RemarkMaxLength);
+        builder.Property(r => r.CancelReason).HasMaxLength(Receipt.ReasonMaxLength);
         builder.Property(r => r.TotalAmount).HasPrecision(18, 2);
         builder.Ignore(r => r.AllocatedAmount);
         builder.Ignore(r => r.AdvanceAmount);
@@ -28,5 +29,7 @@ public sealed class ReceiptConfiguration() : ModuleEntityConfiguration<Receipt>(
         builder.Navigation(r => r.Modes).HasField("_modes").UsePropertyAccessMode(PropertyAccessMode.Field);
         builder.HasMany(r => r.Allocations).WithOne().HasForeignKey(a => a.ReceiptId).OnDelete(DeleteBehavior.Restrict);
         builder.Navigation(r => r.Allocations).HasField("_allocations").UsePropertyAccessMode(PropertyAccessMode.Field);
+        builder.HasMany(r => r.Proofs).WithOne().HasForeignKey(p => p.ReceiptId).OnDelete(DeleteBehavior.Restrict);
+        builder.Navigation(r => r.Proofs).HasField("_proofs").UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

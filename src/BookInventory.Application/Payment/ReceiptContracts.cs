@@ -36,6 +36,12 @@ public sealed record ClearChequeRequest([param: Required] DateOnly? Date);
 /// <summary>R10: a cheque bounced on this date, with a reason of 5 to 500 characters.</summary>
 public sealed record BounceChequeRequest([param: Required] DateOnly? Date, [param: Required] string? Reason);
 
+/// <summary>R13: where the advance goes; no allocations means oldest invoice first (R6).</summary>
+public sealed record AdjustAdvanceRequest(IReadOnlyList<AllocationRequest>? Allocations = null);
+
+/// <summary>R14: the reason for cancelling a receipt (5 to 500 characters).</summary>
+public sealed record CancelReceiptRequest([param: Required] string? Reason);
+
 /// <summary>R16: the filters of the receipt list.</summary>
 public sealed record ReceiptQuery
 {
@@ -78,10 +84,19 @@ public sealed record ReceiptAllocationDto(Guid InvoiceId, string? InvoiceNumber,
 public sealed record ReceiptDetail(
     ReceiptSummary Summary,
     string? Remark,
+    string? CancelReason,
+    DateOnly? CancelledOn,
     decimal AllocatedAmount,
     decimal AdvanceAmount,
     IReadOnlyList<ReceiptModeDto> Modes,
-    IReadOnlyList<ReceiptAllocationDto> Allocations);
+    IReadOnlyList<ReceiptAllocationDto> Allocations,
+    IReadOnlyList<ReceiptProofDto>? Proofs = null);
+
+/// <summary>R20: a proof file as the list shows it (never its bytes).</summary>
+public sealed record ReceiptProofDto(Guid Id, string FileName, string ContentType, int SizeBytes);
+
+/// <summary>R20: a proof file with its bytes, for reading it back.</summary>
+public sealed record ReceiptProofFile(string FileName, string ContentType, byte[] Content);
 
 /// <summary>R9: the answer of recording a receipt: the new receipt, or only the id of the one already recorded for the same client request.</summary>
 public sealed record RecordedReceipt(Guid Id, ReceiptDetail? Detail);

@@ -14,11 +14,13 @@ public class Receipt : CompanyOwnedRoot
     public const int MaxModes = 10;
     public const int RemarkMaxLength = 500;
     public const int NumberMaxLength = 30;
+    public const int MaxProofs = 5;
     public const int ReasonMinLength = 5;
     public const int ReasonMaxLength = 500;
 
     private readonly List<ReceiptMode> _modes = [];
     private readonly List<ReceiptAllocation> _allocations = [];
+    private readonly List<ReceiptProof> _proofs = [];
 
     private Receipt()
     {
@@ -40,11 +42,17 @@ public class Receipt : CompanyOwnedRoot
 
     public string? Remark { get; private set; }
 
+    public string? CancelReason { get; private set; }
+
+    public DateOnly? CancelledOn { get; private set; }
+
     public Guid ClientRequestId { get; private set; }
 
     public IReadOnlyList<ReceiptMode> Modes => _modes.Where(m => !m.IsDeleted).ToList();
 
     public IReadOnlyList<ReceiptAllocation> Allocations => _allocations.Where(a => !a.IsDeleted).ToList();
+
+    public IReadOnlyList<ReceiptProof> Proofs => _proofs.Where(p => !p.IsDeleted).ToList();
 
     /// <summary>The amount applied to invoices now (the sum of the signed allocation rows).</summary>
     public decimal AllocatedAmount => Allocations.Sum(a => a.Amount);
@@ -52,8 +60,8 @@ public class Receipt : CompanyOwnedRoot
     /// <summary>R10: the amount of the cheques that bounced.</summary>
     public decimal BouncedAmount => Modes.Where(m => m.ChequeStatus == ChequeStatus.Bounced).Sum(m => m.Amount);
 
-    /// <summary>R6, R11: the part of the receipt applied to no invoice (not counting what bounced).</summary>
-    public decimal AdvanceAmount => TotalAmount - AllocatedAmount - BouncedAmount;
+    /// <summary>R6, R11, R14: the part of the receipt applied to no invoice (not counting what bounced); a cancelled receipt has none.</summary>
+    public decimal AdvanceAmount => Status == ReceiptStatus.Cancelled ? 0m : TotalAmount - AllocatedAmount - BouncedAmount;
 
     /// <summary>R8: the prefix of the receipt numbers of a financial year (<c>RCP/2026-27/</c>).</summary>
     public static string NumberSeries(string financialYear) => $"RCP/{financialYear}/";
@@ -114,12 +122,66 @@ public class Receipt : CompanyOwnedRoot
         return mode;
     }
 
+    /// <summary>R13: applies the advance to the school's open invoices by the rules of R6 (oldest first, or by hand); nothing is posted to the ledger.</summary>
+    public IReadOnlyList<AllocationInput> AdjustAdvance(IReadOnlyList<OpenInvoice> open, IReadOnlyList<AllocationInput>? requested)
+    {
+        RequireRecorded();
+        var advance = AdvanceAmount;
+        if (advance <= 0m)
+            throw new ConflictException(PaymentMessages.NoAdvance);
+
+        var plan = AllocationPlanner.Plan(advance, open, requested);
+        foreach (var allocation in plan)
+            _allocations.Add(ReceiptAllocation.Of(Id, allocation.InvoiceId, allocation.Amount, AllocationReason.Adjusted, _allocations.Count));
+
+        AddDomainEvent(new AdvanceAdjusted(Id, SchoolId, plan.Sum(a => a.Amount)));
+        return plan;
+    }
+
+    /// <summary>R14: cancels the receipt while none of its cheques has a result; its allocations are taken back (the dues return); the use case posts the ledger reversal.</summary>
+    public void Cancel(string? reason, DateOnly today)
+    {
+        RequireRecorded();
+        var cleaned = reason?.Trim() ?? string.Empty;
+        if (cleaned.Length is < ReasonMinLength or > ReasonMaxLength)
+            throw new ValidationFailureException(PaymentMessages.InvalidReason);
+        if (Modes.Any(m => m.ChequeStatus is ChequeStatus.Cleared or ChequeStatus.Bounced))
+            throw new ConflictException(PaymentMessages.ReceiptHasChequeResult);
+
+        foreach (var (invoiceId, net) in NewestAllocatedFirst().ToList())
+            _allocations.Add(ReceiptAllocation.Of(Id, invoiceId, -net, AllocationReason.ReceiptCancelled, _allocations.Count));
+
+        Status = ReceiptStatus.Cancelled;
+        CancelReason = cleaned;
+        CancelledOn = today;
+        AddDomainEvent(new ReceiptCancelled(Id, SchoolId, Number, TotalAmount));
+    }
+
     /// <summary>R12: the invoice was cancelled; what this receipt applied to it becomes advance (a negative allocation row).</summary>
     public void ReleaseInvoice(Guid invoiceId)
     {
         var applied = Allocations.Where(a => a.InvoiceId == invoiceId).Sum(a => a.Amount);
         if (applied > 0m)
             _allocations.Add(ReceiptAllocation.Of(Id, invoiceId, -applied, AllocationReason.InvoiceCancelled, _allocations.Count));
+    }
+
+    /// <summary>R20: attaches a proof file (PNG, JPEG or PDF up to 5 MB, at most 5 per receipt) to a recorded receipt; <paramref name="existingCount"/> is how many it has.</summary>
+    public ReceiptProof AttachProof(string? fileName, byte[]? content, int existingCount)
+    {
+        RequireRecorded();
+        if (existingCount >= MaxProofs)
+            throw new ValidationFailureException(PaymentMessages.ProofInvalid);
+
+        var proof = ReceiptProof.Of(Id, fileName, content);
+        _proofs.Add(proof);
+        return proof;
+    }
+
+    /// <summary>R20: removes a proof (soft-deleted).</summary>
+    public void RemoveProof(Guid proofId)
+    {
+        var proof = _proofs.FirstOrDefault(p => p.Id == proofId && !p.IsDeleted) ?? throw new NotFoundException(PaymentMessages.ProofNotFound);
+        proof.MarkDeleted();
     }
 
     private void RequireRecorded()
