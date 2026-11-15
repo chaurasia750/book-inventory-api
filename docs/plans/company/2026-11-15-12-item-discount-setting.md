@@ -4,10 +4,10 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/company.md](../../specs/company.md) - rules covered: R23; AC24
 - **Owner:** abhishek
-- **Status:** Draft
+- **Status:** Approved
 - **Depends on:** `company#08` (the invoice identity, in progress for its screen only)
 - **UI plan:** company#13
-- **Approved by / on:** -
+- **Approved by / on:** abhishek / 2026-11-15 (chat: "yes approve hai"; Q20, Q21 answered with the recommended answers)
 - **Created:** 2026-11-15
 
 ## 1. In one minute

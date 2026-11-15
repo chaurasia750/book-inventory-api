@@ -4,10 +4,10 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/sales.md](../../specs/sales.md) - rules covered: R36; AC28, AC29
 - **Owner:** abhishek
-- **Status:** Draft
+- **Status:** Approved
 - **Depends on:** `company#12`, `sales#01`, `sales#03`, `sales#07` (Done)
 - **UI plan:** sales#13
-- **Approved by / on:** -
+- **Approved by / on:** abhishek / 2026-11-15 (chat: "yes approve hai"; Q20, Q21 answered with the recommended answers)
 - **Created:** 2026-11-15
 
 ## 1. In one minute
