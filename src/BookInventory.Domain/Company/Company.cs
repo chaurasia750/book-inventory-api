@@ -166,14 +166,17 @@ public class Company : AggregateRoot, IAuditCompanyScope
         SignatureContentType = null;
     }
 
-    /// <summary>R19/R20: sets the one bank account and the invoice settings.</summary>
+    /// <summary>R19/R20: sets the one bank account (checked by the shared <see cref="BankAccount"/> rule) and the invoice settings.</summary>
     public void SetInvoiceIdentity(CompanyInvoiceIdentityDetails details)
     {
-        BankAccountHolder = CompanyRules.Optional(details.Bank.AccountHolder, BankAccountHolderMaxLength);
-        BankName = CompanyRules.Optional(details.Bank.BankName, BankNameMaxLength);
-        BankAccountNumber = CompanyRules.Optional(details.Bank.AccountNumber, BankAccountNumberMaxLength);
-        BankIfsc = CompanyRules.Optional(details.Bank.Ifsc, BankIfscMaxLength)?.ToUpperInvariant();
-        BankBranch = CompanyRules.Optional(details.Bank.Branch, BankBranchMaxLength);
+        var account = BankAccount.Validated(
+            new BankAccount(details.Bank.AccountHolder, details.Bank.BankName, details.Bank.Branch, details.Bank.AccountNumber, details.Bank.Ifsc),
+            CompanyMessages.InvalidBank);
+        BankAccountHolder = account?.AccountHolder;
+        BankName = account?.BankName;
+        BankAccountNumber = account?.AccountNumber;
+        BankIfsc = account?.Ifsc;
+        BankBranch = account?.Branch;
         UpiId = CompanyRules.Optional(details.Bank.UpiId, UpiIdMaxLength);
         InvoiceTerms = CompanyRules.Optional(details.Invoice.Terms, TermsMaxLength);
         InvoiceFooter = CompanyRules.Optional(details.Invoice.Footer, FooterMaxLength);

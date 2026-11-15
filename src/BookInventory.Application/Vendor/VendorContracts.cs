@@ -1,13 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using BookInventory.Domain.Vendor;
 using VendorRoot = BookInventory.Domain.Vendor.Vendor;
+using BookInventory.Domain.Core;
 
 namespace BookInventory.Application.Vendor;
 
 /// <summary>R5: the five bank values; all of them are given or none (the aggregate checks it).</summary>
 public sealed record VendorBankRequest(string? AccountHolder, string? BankName, string? Branch, string? AccountNumber, string? Ifsc)
 {
-    public VendorBank ToBank() => new(AccountHolder, BankName, Branch, AccountNumber, Ifsc);
+    public BankAccount ToBank() => new(AccountHolder, BankName, Branch, AccountNumber, Ifsc);
 }
 
 /// <summary>R2-R6: a new vendor. The code is generated (R11), so there is none here.</summary>

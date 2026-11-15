@@ -6,6 +6,7 @@ using BookInventory.BuildingBlocks.Persistence.Extensions;
 using BookInventory.Domain.Vendor;
 using Microsoft.EntityFrameworkCore;
 using VendorRoot = BookInventory.Domain.Vendor.Vendor;
+using BookInventory.Domain.Core;
 
 namespace BookInventory.Infrastructure.Vendor;
 
@@ -62,7 +63,7 @@ public sealed class VendorStore(IUnitOfWork unitOfWork) : IVendorStore
             Items =
             [
                 .. page.Items.Select(r => new VendorSummary(
-                    r.Id, r.Code, r.Name, r.ContactPerson, r.Mobile, r.State, VendorBank.Mask(r.BankAccountNumber), r.Status, r.CreatedAt))
+                    r.Id, r.Code, r.Name, r.ContactPerson, r.Mobile, r.State, BankAccount.Mask(r.BankAccountNumber), r.Status, r.CreatedAt))
             ]
         };
     }

@@ -64,9 +64,9 @@ public class Vendor : CompanyOwnedRoot
     public bool IsActive => Status == VendorStatus.Active;
 
     /// <summary>R5: the bank values as one block, or none.</summary>
-    public VendorBank? Bank => BankAccountNumber is null
+    public BankAccount? Bank => BankAccountNumber is null
         ? null
-        : new VendorBank(BankAccountHolder, BankName, BankBranch, BankAccountNumber, BankIfsc);
+        : new BankAccount(BankAccountHolder, BankName, BankBranch, BankAccountNumber, BankIfsc);
 
     /// <summary>R4: the form a name is compared in; the store uses it to find a vendor with the same name.</summary>
     public static string NormalizeName(string? name) => VendorRules.NormalizeName(name);
@@ -126,7 +126,7 @@ public class Vendor : CompanyOwnedRoot
             AddDomainEvent(new VendorOpeningBalanceChanged(Id, Code, old, amount));
     }
 
-    private void ApplyBank(VendorBank? bank)
+    private void ApplyBank(BankAccount? bank)
     {
         BankAccountHolder = bank?.AccountHolder;
         BankName = bank?.BankName;

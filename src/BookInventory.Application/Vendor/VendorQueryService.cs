@@ -4,6 +4,7 @@ using BookInventory.BuildingBlocks.Domain.Models;
 using BookInventory.Domain.Vendor;
 using Microsoft.Extensions.DependencyInjection;
 using VendorRoot = BookInventory.Domain.Vendor.Vendor;
+using BookInventory.Domain.Core;
 
 namespace BookInventory.Application.Vendor;
 
@@ -26,6 +27,6 @@ internal static class VendorResponses
             vendor.Id, vendor.Code, vendor.Name, vendor.Address, vendor.ContactPerson, vendor.Mobile, vendor.Email, vendor.Gstin,
             vendor.State, Bank(vendor.Bank), vendor.OpeningBalanceAmount, vendor.Status, vendor.CreatedAt, vendor.UpdatedAt);
 
-    private static VendorBankResponse? Bank(VendorBank? bank) =>
+    private static VendorBankResponse? Bank(BankAccount? bank) =>
         bank is null ? null : new VendorBankResponse(bank.AccountHolder!, bank.BankName!, bank.Branch!, bank.AccountNumber!, bank.Ifsc!);
 }

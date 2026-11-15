@@ -19,4 +19,5 @@ public static class CompanyMessages
     public const string LogoInvalid = "company.logo_invalid";
     public const string SignatureInvalid = "company.signature_invalid";
     public const string ImageNotFound = "company.image_not_found";
+    public const string InvalidBank = "company.invalid_bank";
 }

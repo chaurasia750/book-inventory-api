@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using BookInventory.BuildingBlocks.Domain.Exceptions;
 using BookInventory.Domain.Iam;
+using BookInventory.Domain.Core;
 
 namespace BookInventory.Domain.Vendor;
 
@@ -66,23 +67,7 @@ internal static partial class VendorRules
     /// R5: the five bank values all present or all absent. Holder, bank and branch are trimmed text (at most 150 characters),
     /// the account number is 9-18 digits and the IFSC is 4 letters, a zero and 6 letters or digits (upper case).
     /// </summary>
-    public static VendorBank? Bank(VendorBank? bank)
-    {
-        if (bank is null)
-            return null;
-
-        var holder = Optional(bank.AccountHolder, Vendor.BankTextMaxLength);
-        var name = Optional(bank.BankName, Vendor.BankTextMaxLength);
-        var branch = Optional(bank.Branch, Vendor.BankTextMaxLength);
-        var number = bank.AccountNumber?.Trim();
-        var ifsc = bank.Ifsc?.Trim().ToUpperInvariant();
-        var given = new[] { holder, name, branch, number, ifsc }.Count(v => !string.IsNullOrEmpty(v));
-        if (given == 0)
-            return null;
-
-        var valid = given == 5 && AccountNumberShape().IsMatch(number!) && IfscShape().IsMatch(ifsc!);
-        return valid ? new VendorBank(holder, name, branch, number, ifsc) : throw new ValidationFailureException(VendorMessages.InvalidBank);
-    }
+    public static BankAccount? Bank(BankAccount? bank) => BankAccount.Validated(bank, VendorMessages.InvalidBank);
 
     [GeneratedRegex(@"\s+")]
     private static partial Regex SpaceRun();
@@ -90,9 +75,5 @@ internal static partial class VendorRules
     [GeneratedRegex(@"^\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]$")]
     private static partial Regex GstinShape();
 
-    [GeneratedRegex(@"^\d{9,18}$")]
-    private static partial Regex AccountNumberShape();
 
-    [GeneratedRegex(@"^[A-Z]{4}0[A-Z0-9]{6}$")]
-    private static partial Regex IfscShape();
 }
