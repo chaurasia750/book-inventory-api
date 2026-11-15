@@ -8,13 +8,16 @@ namespace BookInventory.Application.Sales;
 
 /// <summary>R13, R15: the invoice list and one invoice with its snapshot, lines and totals.</summary>
 [AutoRegister(ServiceLifetime.Scoped)]
-public sealed class InvoiceQueryService(ISalesStore store)
+public sealed class InvoiceQueryService(ISalesStore store, IInvoiceLayoutStore layouts)
 {
     public Task<IPagedList<InvoiceSummary>> ListAsync(InvoiceQuery query, CancellationToken cancellationToken) => store.SearchInvoicesAsync(query, cancellationToken);
 
-    public async Task<InvoiceDetail> GetAsync(Guid id, CancellationToken cancellationToken)
+    /// <summary>R13, R26: the invoice, its groups shown in <paramref name="layout"/> or, when none is asked, in the school's default.</summary>
+    public async Task<InvoiceDetail> GetAsync(Guid id, InvoiceLayout? layout, CancellationToken cancellationToken)
     {
         var i = await store.FindInvoiceForReadAsync(id, cancellationToken) ?? throw new NotFoundException(SalesMessages.InvoiceNotFound);
+        var chosen = layout ?? (await layouts.FindForReadAsync(i.SchoolId, cancellationToken))?.Layout ?? SchoolInvoiceLayout.Default;
+        var lines = ViewsOf(i);
         return new InvoiceDetail
         {
             Summary = new InvoiceSummary(i.Id, i.Number, i.InvoiceDate, i.SchoolOrderId, i.OrderNumber, i.SchoolId, i.SchoolCode, i.SchoolName, i.Status, i.Totals.GrandTotal),
@@ -29,9 +32,15 @@ public sealed class InvoiceQueryService(ISalesStore store)
             Totals = i.Totals,
             CancelReason = i.CancelReason,
             CancelledOn = i.CancelledOn,
-            Lines = [.. i.Lines.Select(l => new InvoiceLineView(
-                l.Id, l.Delivery.Item, l.Delivery.Price, l.Quantity, l.ItemDiscount,
-                new SaleLineAmounts(l.GrossAmount, l.ItemDiscountAmount, l.LineAmount, l.TotalDiscountShareAmount, l.TaxableAmount, l.CgstAmount, l.SgstAmount, l.IgstAmount)))]
+            Lines = lines,
+            Layout = chosen,
+            Groups = InvoiceLayoutView.Of(chosen, lines)
         };
     }
+
+    private static IReadOnlyList<InvoiceLineView> ViewsOf(Invoice i) =>
+        [.. i.Lines.Select(l => new InvoiceLineView(
+            l.Id, l.Delivery.Item, l.Delivery.Price, l.Quantity, l.ItemDiscount,
+            new SaleLineAmounts(l.GrossAmount, l.ItemDiscountAmount, l.LineAmount, l.TotalDiscountShareAmount, l.TaxableAmount, l.CgstAmount, l.SgstAmount, l.IgstAmount),
+            l.ClassName))];
 }

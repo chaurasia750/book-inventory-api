@@ -2128,6 +2128,11 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasColumnType("numeric(18,2)")
                         .HasColumnName("cgst_amount");
 
+                    b.Property<string>("ClassName")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("class_name");
+
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uuid")
                         .HasColumnName("company_id");
@@ -2252,6 +2257,65 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                     b.ToTable("invoice_line", "sales", t =>
                         {
                             t.HasCheckConstraint("ck_invoice_line_item_discount_kind", "\"item_discount_kind\" IN ('NONE', 'PERCENT', 'AMOUNT')");
+                        });
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Sales.SchoolInvoiceLayout", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Layout")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("layout");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("school_id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id")
+                        .HasName("pk_school_invoice_layout");
+
+                    b.HasIndex("CompanyId", "SchoolId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_school_invoice_layout_company_id_school_id")
+                        .HasFilter("is_deleted = false");
+
+                    b.ToTable("school_invoice_layout", "sales", t =>
+                        {
+                            t.HasCheckConstraint("ck_school_invoice_layout_layout", "\"layout\" IN ('BOOK_LIST', 'BY_CLASS')");
                         });
                 });
 
@@ -2445,6 +2509,11 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)")
                         .HasColumnName("cgst_amount");
+
+                    b.Property<string>("ClassName")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("class_name");
 
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uuid")

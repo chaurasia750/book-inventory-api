@@ -15,6 +15,8 @@ public sealed class SchoolOrderLineConfiguration() : ModuleEntityConfiguration<S
         builder.Ignore(l => l.Price);
         builder.Ignore(l => l.CalculationInput);
         builder.Ignore(l => l.RemainingQuantity);
+        builder.Ignore(l => l.Label);
+        builder.Property(l => l.ClassName).HasMaxLength(50);
         builder.Property(l => l.ItemCode).HasMaxLength(30).IsRequired();
         builder.Property(l => l.ItemName).HasMaxLength(200).IsRequired();
         builder.Property(l => l.HsnCode).HasMaxLength(8);

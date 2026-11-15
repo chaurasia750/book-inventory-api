@@ -1,3 +1,4 @@
+using BookInventory.BuildingBlocks.Domain.Exceptions;
 using BookInventory.Domain.Core;
 
 namespace BookInventory.Domain.Sales;
@@ -21,6 +22,9 @@ public class SchoolOrderLine : CompanyOwnedChild
     public int SortOrder { get; private set; }
 
     public Guid ItemId { get; private set; }
+
+    /// <summary>R21: the school class this line is for, or <c>null</c> for the school's general need.</summary>
+    public string? ClassName { get; private set; }
 
     public string ItemCode { get; private set; }
 
@@ -66,6 +70,9 @@ public class SchoolOrderLine : CompanyOwnedChild
     /// <summary>R8: the part of a rupee item discount the live invoices already applied.</summary>
     public decimal ItemDiscountGiven { get; private set; }
 
+    /// <summary>R25: what a refusal names: the item code and the class.</summary>
+    public string Label => ClassName is null ? ItemCode : $"{ItemCode} / {ClassName}";
+
     public int RemainingQuantity => Quantity - InvoicedQuantity;
 
     public Discount ItemDiscount => new(ItemDiscountKind, ItemDiscountValue);
@@ -82,6 +89,7 @@ public class SchoolOrderLine : CompanyOwnedChild
             SchoolOrderId = orderId,
             SortOrder = sortOrder,
             ItemId = input.Item.Id,
+            ClassName = input.ClassName,
             ItemCode = input.Item.Code,
             ItemName = input.Item.Name,
             HsnCode = input.Item.HsnCode,
@@ -94,6 +102,49 @@ public class SchoolOrderLine : CompanyOwnedChild
             ItemDiscountKind = input.ItemDiscount.Kind,
             ItemDiscountValue = input.ItemDiscount.Value
         };
+
+    /// <summary>R21: the same item, price version and class (compared as the composer wrote them).</summary>
+    internal bool Matches(OrderLineInput input) =>
+        ItemId == input.Item.Id && PriceVersionId == input.Price.VersionId && string.Equals(ClassName, input.ClassName, StringComparison.Ordinal);
+
+    /// <summary>R20, R22, R23: adds to the quantity of a line that already exists.</summary>
+    internal void Raise(int quantity)
+    {
+        if (Quantity + quantity > SchoolOrder.MaxQuantity)
+            throw new ValidationFailureException(SalesMessages.InvalidQuantity) { Subject = Label };
+
+        Quantity += quantity;
+    }
+
+    /// <summary>
+    /// R20: one edit of a line of a confirmed order. The quantity never goes below what is invoiced; a line with something invoiced
+    /// keeps its class, price version and item discount; a version that did not change keeps its snapshot.
+    /// </summary>
+    internal void Edit(OrderLineInput input)
+    {
+        if (input.Item.Id != ItemId)
+            throw new ValidationFailureException(SalesMessages.LineNotFound) { Subject = Label };
+        if (input.Quantity < 1 || input.Quantity > SchoolOrder.MaxQuantity)
+            throw new ValidationFailureException(SalesMessages.InvalidQuantity) { Subject = Label };
+        if (input.Quantity < InvoicedQuantity)
+            throw new ValidationFailureException(SalesMessages.QuantityBelowInvoiced) { Subject = Label };
+
+        var sameVersion = input.Price.VersionId == PriceVersionId;
+        if (InvoicedQuantity > 0 && (!sameVersion || input.ItemDiscount != ItemDiscount || !string.Equals(input.ClassName, ClassName, StringComparison.Ordinal)))
+            throw new ConflictException(SalesMessages.LineInvoiced) { Subject = Label };
+
+        Quantity = input.Quantity;
+        ClassName = input.ClassName;
+        ItemDiscountKind = input.ItemDiscount.Kind;
+        ItemDiscountValue = input.ItemDiscount.Value;
+        if (sameVersion)
+            return;
+
+        PriceVersionId = input.Price.VersionId;
+        PriceVersionName = input.Price.VersionName;
+        MrpAmount = input.Price.Mrp;
+        RateAmount = input.Price.Rate;
+    }
 
     internal void SetAmounts(SaleLineAmounts amounts)
     {
