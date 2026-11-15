@@ -16,6 +16,9 @@ public interface ISalesStore
     /// <summary>The order about to change, tracked, with its lines; <c>null</c> for an unknown id or another company's.</summary>
     Task<SchoolOrder?> FindOrderForManagementAsync(Guid id, CancellationToken cancellationToken = default);
 
+    /// <summary>R6: the order about to be deleted, tracked, without its lines (a root is removed on its own, as the planning module does); <c>null</c> for an unknown id or another company's.</summary>
+    Task<SchoolOrder?> FindOrderForRemovalAsync(Guid id, CancellationToken cancellationToken = default);
+
     /// <summary>The order for reading, not tracked, with its lines.</summary>
     Task<SchoolOrder?> FindOrderForReadAsync(Guid id, CancellationToken cancellationToken = default);
 
