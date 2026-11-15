@@ -2,7 +2,7 @@
 
 - **File:** `docs/plans/sales/2026-11-15-05-wholesale-orders.md`
 - **Kind:** Backend
-- **Spec:** [../../specs/sales.md](../../specs/sales.md) - rules covered: R20-R23, R25; AC12-AC16
+- **Spec:** [../../specs/sales.md](../../specs/sales.md) - rules covered: R20-R23, R25, R26 (data and the school default); AC12-AC17
 - **Owner:** abhishek
 - **Status:** Approved
 - **Depends on:** `sales#01` (Done), `planning#01`
@@ -15,7 +15,7 @@ After this plan a confirmed order can still be changed above what is invoiced, e
 
 ## 2. Touches / leaves out
 Touches: `Domain/Sales` (the order's change rules for confirmed orders, the line class, adding lines in bulk), `Application/Sales` (use cases for class sets and bulk lines, through `IClassBookLists`, `IPriceDirectory`, `IItemDirectory`), persistence (line class column; unique key with class), migration, controller, catalogue.
-Leaves out: screens (sales#06), class-wise invoices. Schema change: yes (one nullable column, additive).
+Leaves out: screens (sales#06), class-wise invoices. Schema change: yes (nullable class columns on order and invoice lines, a small per-school layout table; additive).
 
 ## 3. Approach
 `SchoolOrder.Replace` accepts a confirmed order under the R20 limits (the order checks each line against its invoiced quantity and version), so one PUT covers every edit. Class sets and bulk add are use cases that build line inputs and call the same order behaviour that merges by item, version and class (R21). Refusals name the line (R25).
@@ -25,8 +25,9 @@ Leaves out: screens (sales#06), class-wise invoices. Schema change: yes (one nul
 - [ ] 2. Persistence: class column, migration; show the SQL and target before applying.
 - [ ] 3. Use case: add class sets from the planning lists (R22).
 - [ ] 4. Use case: bulk add (R23).
-- [ ] 5. Controller endpoints and catalogue; build at 0 warnings.
-- [ ] 6. Verify every row of section 5 on the real local database and record the result.
+- [ ] 5. Invoice line keeps the class; the school's invoice layout default (`GET/PUT schools/{id}/invoice-layout`, Owner) and the invoice read in either layout with the R26 merge (R26).
+- [ ] 6. Controller endpoints and catalogue; build at 0 warnings.
+- [ ] 7. Verify every row of section 5 on the real local database and record the result.
 
 ## 5. Spec coverage
 | Rule / AC | Task | Verification (input -> observed output) |
@@ -35,6 +36,7 @@ Leaves out: screens (sales#06), class-wise invoices. Schema change: yes (one nul
 | `R21`, `AC13` | 1 | Class 4 and Class 5 dictionary as two lines; unknown class 400 |
 | `R22`, `AC14` | 3 | Class sets 4 (45) and 5 (40) -> X 45, Y 90, X 40, Z 40; Class 5 again -> 80; no-price book left out and reported |
 | `R23`, `AC15` | 4 | 12 items x 30 for Class 6 -> 12 lines |
+| `R26`, `AC17` | 5 | Invoice with Class 4 dictionary 40, Class 5 dictionary 38 and atlas 38: by class -> two groups with subtotals; book list -> dictionary 78, atlas 38; same grand total; default by class opens by class; Staff PUT default 403 |
 | `R25`, `AC16` | 1 | A refused save names the item code and class |
 
 ## 6. Not verified

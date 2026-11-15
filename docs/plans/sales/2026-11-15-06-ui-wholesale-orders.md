@@ -2,7 +2,7 @@
 
 - **File:** `docs/plans/sales/2026-11-15-06-ui-wholesale-orders.md`
 - **Kind:** UI (repository `book-inventory-ui`; build `npx nx run-many -t build`, lint `npx nx run-many -t lint`)
-- **Spec:** [../../specs/sales.md](../../specs/sales.md) - rules covered: R19-R25 (the screen side); AC11-AC16
+- **Spec:** [../../specs/sales.md](../../specs/sales.md) - rules covered: R19-R27 (the screen side); AC11-AC18
 - **Owner:** abhishek
 - **Status:** Approved
 - **Depends on:** `sales#05`, `planning#02`
@@ -25,13 +25,14 @@ The Orders menu entries reuse the list components of the school tabs without the
 - [ ] 2. Editor: class column, inline edits, confirmed-order limits.
 - [ ] 3. Add class sets dialog.
 - [ ] 4. Bulk item picker (shared with planning#02).
-- [ ] 5. i18n, routes.
-- [ ] 6. Build and lint; record what was seen.
+- [ ] 5. Easy new order (R27: school search only, then the three add ways side by side); invoice layout switch (by class / book list) on the invoice screen and the default in the school profile (R26).
+- [ ] 6. i18n, routes.
+- [ ] 7. Build and lint; record what was seen.
 
 ## 5. Spec coverage
 | Rule / AC | Task | Verification (input -> observed output) |
 |---|---|---|
-| `R19`-`R25`, `AC11`-`AC16` | 1-4 | Orders menu lists all schools' orders; New order with a school; add Class 4 and 5 sets; bulk add; edit a confirmed order; refusals name the line |
+| `R19`-`R25`, `AC11`-`AC16` | 1-4 | Orders menu lists all schools' orders; New order with a school; add Class 4 and 5 sets; bulk add; edit a confirmed order; refusals name the line; invoice switched between by class and book list; new order from a school only |
 
 ## 6. Not verified
 To be filled when the plan is closed.
