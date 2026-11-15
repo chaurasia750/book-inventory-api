@@ -22,6 +22,14 @@ public sealed class ReceiptStore(IUnitOfWork unitOfWork) : IReceiptStore
     public async Task<Guid?> FindIdByClientRequestAsync(Guid clientRequestId, CancellationToken cancellationToken = default) =>
         await _receipts.TableNoTracking.Where(r => r.ClientRequestId == clientRequestId).Select(r => (Guid?)r.Id).FirstOrDefaultAsync(cancellationToken);
 
+    public Task<Receipt?> FindForManagementAsync(Guid id, CancellationToken cancellationToken = default) =>
+        _receipts.Table.Include(r => r.Modes).Include(r => r.Allocations).FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+
+    public async Task<IReadOnlyList<Receipt>> FindAppliedToInvoiceAsync(Guid invoiceId, CancellationToken cancellationToken = default) =>
+        await _receipts.Table.Include(r => r.Modes).Include(r => r.Allocations)
+            .Where(r => r.Allocations.Any(a => a.InvoiceId == invoiceId))
+            .ToListAsync(cancellationToken);
+
     public Task<Receipt?> FindForReadAsync(Guid id, CancellationToken cancellationToken = default) =>
         _receipts.TableNoTracking.Include(r => r.Modes).Include(r => r.Allocations).FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
 

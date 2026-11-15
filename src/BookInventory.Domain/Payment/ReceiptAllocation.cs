@@ -20,6 +20,9 @@ public class ReceiptAllocation : CompanyOwnedChild
 
     public AllocationReason Reason { get; private set; }
 
-    internal static ReceiptAllocation Of(Guid receiptId, Guid invoiceId, decimal amount, AllocationReason reason) =>
-        new() { ReceiptId = receiptId, InvoiceId = invoiceId, Amount = amount, Reason = reason };
+    /// <summary>The place of this row in the receipt's history (0, 1, 2, ...): what makes "the most recently allocated" exact (R11).</summary>
+    public int Sequence { get; private set; }
+
+    internal static ReceiptAllocation Of(Guid receiptId, Guid invoiceId, decimal amount, AllocationReason reason, int sequence) =>
+        new() { ReceiptId = receiptId, InvoiceId = invoiceId, Amount = amount, Reason = reason, Sequence = sequence };
 }

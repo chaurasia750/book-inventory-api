@@ -40,6 +40,21 @@ public class ReceiptMode : CompanyOwnedChild
 
     public string? BounceReason { get; private set; }
 
+    /// <summary>R10: the cheque cleared on this date.</summary>
+    internal void Clear(DateOnly date)
+    {
+        ChequeStatus = ChequeState.Cleared;
+        ResultDate = date;
+    }
+
+    /// <summary>R10: the cheque bounced on this date, for this reason.</summary>
+    internal void Bounce(DateOnly date, string reason)
+    {
+        ChequeStatus = ChequeState.Bounced;
+        ResultDate = date;
+        BounceReason = reason;
+    }
+
     internal static ReceiptMode Of(Guid receiptId, ReceiptModeInput input)
     {
         var mode = new ReceiptMode { ReceiptId = receiptId, ModeType = input.Type, Amount = PaymentMoney.Require(input.Amount) };

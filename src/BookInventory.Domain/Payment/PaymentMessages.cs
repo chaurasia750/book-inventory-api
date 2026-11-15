@@ -15,4 +15,9 @@ public static class PaymentMessages
     public const string InvalidAllocation = "payment.invalid_allocation";
     public const string InvoiceNotOpen = "payment.invoice_not_open";
     public const string TooManyIds = "payment.too_many_ids";
+    public const string ChequeNotFound = "payment.cheque_not_found";
+    public const string ChequeResultSet = "payment.cheque_result_set";
+    public const string InvalidResultDate = "payment.invalid_result_date";
+    public const string InvalidReason = "payment.invalid_reason";
+    public const string ReceiptNotRecorded = "payment.receipt_not_recorded";
 }

@@ -30,6 +30,12 @@ public sealed record RecordReceiptRequest(
     IReadOnlyList<AllocationRequest>? Allocations = null,
     string? Remark = null);
 
+/// <summary>R10: a cheque cleared on this date (not before the cheque date).</summary>
+public sealed record ClearChequeRequest([param: Required] DateOnly? Date);
+
+/// <summary>R10: a cheque bounced on this date, with a reason of 5 to 500 characters.</summary>
+public sealed record BounceChequeRequest([param: Required] DateOnly? Date, [param: Required] string? Reason);
+
 /// <summary>R16: the filters of the receipt list.</summary>
 public sealed record ReceiptQuery
 {

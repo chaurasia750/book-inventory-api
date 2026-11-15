@@ -14,6 +14,12 @@ public interface IReceiptStore
     /// <summary>R9: the id of the receipt already recorded for this client request, or <c>null</c>.</summary>
     Task<Guid?> FindIdByClientRequestAsync(Guid clientRequestId, CancellationToken cancellationToken = default);
 
+    /// <summary>The receipt about to change: tracked, with its modes and allocations; <c>null</c> for an unknown id or another company's.</summary>
+    Task<Receipt?> FindForManagementAsync(Guid id, CancellationToken cancellationToken = default);
+
+    /// <summary>R12: the receipts that have something applied to this invoice: tracked, with their modes and allocations.</summary>
+    Task<IReadOnlyList<Receipt>> FindAppliedToInvoiceAsync(Guid invoiceId, CancellationToken cancellationToken = default);
+
     /// <summary>The receipt for reading: not tracked, with its modes and allocations; <c>null</c> for an unknown id or another company's.</summary>
     Task<Receipt?> FindForReadAsync(Guid id, CancellationToken cancellationToken = default);
 

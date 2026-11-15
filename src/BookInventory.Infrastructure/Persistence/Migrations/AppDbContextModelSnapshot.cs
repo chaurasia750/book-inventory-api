@@ -1909,6 +1909,10 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("receipt_id");
 
+                    b.Property<int>("Sequence")
+                        .HasColumnType("integer")
+                        .HasColumnName("sequence");
+
                     b.HasKey("Id")
                         .HasName("pk_receipt_allocation");
 
