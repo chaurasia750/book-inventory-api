@@ -1,4 +1,5 @@
 using BookInventory.Application.Sales;
+using BookInventory.Domain.Sales;
 using BookInventory.BuildingBlocks.Configuration.Controller;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,8 +26,9 @@ public sealed class InvoicesController(InvoiceService invoices, InvoiceQueryServ
     [HttpGet("invoices"), Authorize(Roles = Sellers)]
     public async Task<IActionResult> List([FromQuery] InvoiceQuery query, CancellationToken cancellationToken) => Ok(await queries.ListAsync(query, cancellationToken));
 
+    /// <summary>R13, R26: one invoice; <c>layout</c> shows its lines by class or as a book list (the school default when empty).</summary>
     [HttpGet("invoices/{id:guid}"), Authorize(Roles = Sellers)]
-    public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken) => Ok(await queries.GetAsync(id, cancellationToken));
+    public async Task<IActionResult> Get(Guid id, [FromQuery] InvoiceLayout? layout, CancellationToken cancellationToken) => Ok(await queries.GetAsync(id, layout, cancellationToken));
 
     /// <summary>R12: the Owner cancels with a reason; stock and ledger are reversed.</summary>
     [HttpPost("invoices/{id:guid}/cancel"), Authorize(Roles = Owners)]

@@ -4,7 +4,7 @@
 - **Status:** R1-R9 Approved by abhishek in chat on 2026-11-15 (the wholesale order questions: the class set is the school's class-wise list of a session, qty = students x per-student qty, copy from the last session)
 - **Last updated:** 2026-11-15
 - **Source docs:** [BRD §4.7 Class-wise Book List and Planning (FR-PLN-01 to FR-PLN-06, FR-PLN-10)](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/school.md](school.md) R6, R16, R18; [specs/item.md](item.md) R16; [specs/sales.md](sales.md) R22
-- **Plans:** [planning#01](../plans/planning/2026-11-15-01-class-book-lists.md) (Approved), [planning#02](../plans/planning/2026-11-15-02-ui-class-book-lists.md) (Approved)
+- **Plans:** [planning#01](../plans/planning/2026-11-15-01-class-book-lists.md) (Done), [planning#02](../plans/planning/2026-11-15-02-ui-class-book-lists.md) (In progress)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 

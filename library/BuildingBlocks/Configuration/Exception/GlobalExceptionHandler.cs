@@ -45,6 +45,8 @@ namespace BookInventory.BuildingBlocks.Configuration.Exceptions
             };
             if (code is not null)
                 problem.Extensions["code"] = code;
+            if (exception is AppException { Subject: { } subject })
+                problem.Extensions["subject"] = subject;
             if (environment.IsDevelopment() && status >= StatusCodes.Status500InternalServerError)
                 problem.Extensions["exception"] = exception.ToString();
 

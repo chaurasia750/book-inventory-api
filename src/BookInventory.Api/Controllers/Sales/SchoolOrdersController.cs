@@ -11,7 +11,8 @@ namespace BookInventory.Api.Controllers.Sales;
 /// only the Owner and an entered Super Admin close one. The company is never a request field.
 /// </summary>
 [Route("school-orders")]
-public sealed class SchoolOrdersController(SchoolOrderService orders, SchoolOrderQueryService queries, ISchoolSessions sessions) : ApiControllerBase
+public sealed class SchoolOrdersController(
+    SchoolOrderService orders, SchoolOrderQueryService queries, OrderLineAdditionService additions, ISchoolSessions sessions) : ApiControllerBase
 {
     private const string Sellers = "OWNER,STAFF,SUPER_ADMIN";
     private const string Owners = "OWNER,SUPER_ADMIN";
@@ -48,6 +49,16 @@ public sealed class SchoolOrdersController(SchoolOrderService orders, SchoolOrde
         await orders.DeleteAsync(id, cancellationToken);
         return NoContent();
     }
+
+    /// <summary>R22: adds the books of whole classes (students x quantity per student) to a draft or confirmed order.</summary>
+    [HttpPost("{id:guid}/class-sets"), Authorize(Roles = Sellers)]
+    public async Task<IActionResult> AddClassSets(Guid id, [FromBody] AddClassSetsRequest request, CancellationToken cancellationToken) =>
+        Ok(await additions.AddClassSetsAsync(id, request, cancellationToken));
+
+    /// <summary>R23: adds many chosen items with one quantity and an optional class.</summary>
+    [HttpPost("{id:guid}/bulk-lines"), Authorize(Roles = Sellers)]
+    public async Task<IActionResult> AddBulkLines(Guid id, [FromBody] AddBulkLinesRequest request, CancellationToken cancellationToken) =>
+        Ok(await additions.AddBulkAsync(id, request, cancellationToken));
 
     [HttpPost("{id:guid}/confirm"), Authorize(Roles = Sellers)]
     public async Task<IActionResult> Confirm(Guid id, CancellationToken cancellationToken)

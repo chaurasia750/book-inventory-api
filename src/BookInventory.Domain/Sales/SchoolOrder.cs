@@ -88,6 +88,85 @@ public class SchoolOrder : CompanyOwnedRoot
         Apply(header, lines, today);
     }
 
+    /// <summary>
+    /// R20: a confirmed order changes above what is invoiced: lines are edited (<see cref="OrderLineInput.LineId"/>), added (no id) or
+    /// left out (deleted, only when nothing is invoiced on them); the total discount and the GST choice change only while nothing is
+    /// invoiced; the remark always. When nothing remains to deliver the order closes.
+    /// </summary>
+    public void Amend(OrderHeader header, IReadOnlyList<OrderLineInput> lines)
+    {
+        if (Status != SchoolOrderStatus.Confirmed)
+            throw new ConflictException(SalesMessages.NotConfirmed);
+
+        if (header.School.Id != SchoolId)
+            throw new ValidationFailureException(SalesMessages.SchoolFixed);
+        if (header.Remark?.Trim().Length > RemarkMaxLength)
+            throw new ValidationFailureException(SalesMessages.InvalidText);
+
+        ChangeTotalsOf(header);
+        Remark = string.IsNullOrWhiteSpace(header.Remark) ? null : header.Remark.Trim();
+        var kept = OrderRules.Edit(Lines, lines.Where(l => l.LineId is not null).ToList());
+        foreach (var gone in Lines.Where(l => !kept.Contains(l.Id)))
+            OrderRules.Withdraw(gone);
+
+        AddMerged(lines.Where(l => l.LineId is null).ToList());
+        OrderRules.RequireNoRepeats(Lines);
+        if (Lines.Count == 0)
+            throw new ValidationFailureException(SalesMessages.NoLines);
+
+        Recalculate();
+        CloseWhenNothingRemains();
+    }
+
+    /// <summary>R22, R23: lines are added to a draft or a confirmed order; the same item, version and class raises that line (R21).</summary>
+    public void AddLines(IReadOnlyList<OrderLineInput> additions)
+    {
+        if (Status is not (SchoolOrderStatus.Draft or SchoolOrderStatus.Confirmed))
+            throw new ConflictException(SalesMessages.NotOpen);
+
+        AddMerged(additions);
+        Recalculate();
+    }
+
+    private bool HasInvoicedAnything => TotalDiscountGiven > 0m || Lines.Any(l => l.InvoicedQuantity > 0);
+
+    private void ChangeTotalsOf(OrderHeader header)
+    {
+        if (header.IsGstApplied == IsGstApplied && header.TotalDiscount == TotalDiscount)
+            return;
+        if (HasInvoicedAnything)
+            throw new ConflictException(SalesMessages.TotalsLocked);
+
+        IsGstApplied = header.IsGstApplied;
+        GstMode = header.GstMode;
+        TotalDiscountKind = header.TotalDiscount.Kind;
+        TotalDiscountValue = header.TotalDiscount.Value;
+    }
+
+    private void AddMerged(IReadOnlyList<OrderLineInput> additions)
+    {
+        foreach (var addition in OrderRules.Merge(additions))
+        {
+            var same = Lines.FirstOrDefault(l => l.Matches(addition));
+            if (same is null)
+                _lines.Add(SchoolOrderLine.Of(Id, _lines.Count == 0 ? 1 : _lines.Max(l => l.SortOrder) + 1, addition));
+            else
+                same.Raise(addition.Quantity);
+        }
+
+        if (Lines.Count > MaxLines)
+            throw new ValidationFailureException(SalesMessages.TooManyLines);
+    }
+
+    private void CloseWhenNothingRemains()
+    {
+        if (Lines.Any(l => l.RemainingQuantity > 0))
+            return;
+
+        Status = SchoolOrderStatus.Closed;
+        AddDomainEvent(new SchoolOrderClosed(Id, SchoolId, Number));
+    }
+
     /// <summary>R6: only a draft is deleted.</summary>
     public void RequireDraft()
     {
@@ -139,7 +218,7 @@ public class SchoolOrder : CompanyOwnedRoot
             var line = lines.FirstOrDefault(l => l.Id == lineId) ?? throw new ValidationFailureException(SalesMessages.NothingToInvoice);
             if (quantity < 0 || quantity > line.RemainingQuantity)
                 throw new ValidationFailureException(SalesMessages.QuantityAboveRemaining);
-            delivery.Add(new DeliveryLine(line.Id, line.Item, line.Price, quantity, line.DiscountFor(quantity)));
+            delivery.Add(new DeliveryLine(line.Id, line.Item, line.Price, quantity, line.DiscountFor(quantity), line.ClassName));
         }
 
         var emptiesOrder = lines.All(l => l.RemainingQuantity == delivery.Where(d => d.OrderLineId == l.Id).Sum(d => d.Quantity));
@@ -189,8 +268,8 @@ public class SchoolOrder : CompanyOwnedRoot
 
     private void Apply(OrderHeader header, IReadOnlyList<OrderLineInput> lines, DateOnly today)
     {
-        RequireHeader(header, today);
-        var merged = Merge(lines);
+        OrderRules.RequireHeader(header, today);
+        var merged = OrderRules.Merge(lines);
 
         SchoolId = header.School.Id;
         SchoolCode = header.School.Code;
@@ -208,32 +287,6 @@ public class SchoolOrder : CompanyOwnedRoot
             old.MarkDeleted();
         _lines.AddRange(merged.Select((l, i) => SchoolOrderLine.Of(Id, i + 1, l)));
         Recalculate();
-    }
-
-    private static void RequireHeader(OrderHeader header, DateOnly today)
-    {
-        if (header.OrderDate == default || header.OrderDate > today)
-            throw new ValidationFailureException(SalesMessages.InvalidDate);
-        if (string.IsNullOrWhiteSpace(header.Session) || header.Session.Trim().Length > SessionMaxLength)
-            throw new ValidationFailureException(SalesMessages.InvalidSession);
-        if (header.Remark?.Trim().Length > RemarkMaxLength)
-            throw new ValidationFailureException(SalesMessages.InvalidText);
-    }
-
-    /// <summary>R3: one line per item and price version (the same again adds its quantity); whole quantities; at most 500 lines.</summary>
-    private static List<OrderLineInput> Merge(IReadOnlyList<OrderLineInput> lines)
-    {
-        if (lines.Any(l => l.Quantity is < 1 or > MaxQuantity))
-            throw new ValidationFailureException(SalesMessages.InvalidQuantity);
-
-        var merged = lines
-            .GroupBy(l => (l.Item.Id, l.Price.VersionId))
-            .Select(g => g.First() with { Quantity = g.Sum(l => l.Quantity) })
-            .ToList();
-        if (merged.Count > MaxLines || merged.Any(l => l.Quantity > MaxQuantity))
-            throw new ValidationFailureException(merged.Count > MaxLines ? SalesMessages.TooManyLines : SalesMessages.InvalidQuantity);
-
-        return merged;
     }
 
     private void Recalculate()

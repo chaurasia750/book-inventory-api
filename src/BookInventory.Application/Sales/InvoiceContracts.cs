@@ -46,7 +46,7 @@ public sealed record InvoiceSummary(
     decimal GrandTotal);
 
 /// <summary>R15: one invoice line as it is read.</summary>
-public sealed record InvoiceLineView(Guid Id, SaleItem Item, SalePrice Price, int Quantity, Discount ItemDiscount, SaleLineAmounts Amounts);
+public sealed record InvoiceLineView(Guid Id, SaleItem Item, SalePrice Price, int Quantity, Discount ItemDiscount, SaleLineAmounts Amounts, string? ClassName = null);
 
 /// <summary>R13, R15: an invoice with its snapshot, lines and totals.</summary>
 public sealed record InvoiceDetail
@@ -76,4 +76,9 @@ public sealed record InvoiceDetail
     public DateOnly? CancelledOn { get; init; }
 
     public required IReadOnlyList<InvoiceLineView> Lines { get; init; }
+
+    /// <summary>R26: the layout the lines are grouped in (the school's default unless asked) and the groups.</summary>
+    public required InvoiceLayout Layout { get; init; }
+
+    public required IReadOnlyList<InvoiceGroupView> Groups { get; init; }
 }

@@ -9,6 +9,9 @@ namespace BookInventory.BuildingBlocks.Domain.Exceptions
         : Exception(message ?? code, innerException)
     {
         public string Code { get; } = code;
+
+        /// <summary>What the failure is about, when the code alone does not say (for example the item code and class of an order line); returned as the problem details <c>subject</c>.</summary>
+        public string? Subject { get; init; }
     }
 
     /// <summary>The request is invalid or breaks a business rule (HTTP 400).</summary>

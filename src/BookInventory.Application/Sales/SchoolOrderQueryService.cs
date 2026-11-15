@@ -49,5 +49,5 @@ public sealed class SchoolOrderQueryService(ISalesStore store, IStockQuantities 
         new(
             l.Id, l.Item, l.Price, l.Quantity, l.ItemDiscount,
             new SaleLineAmounts(l.GrossAmount, l.ItemDiscountAmount, l.LineAmount, l.TotalDiscountShareAmount, l.TaxableAmount, l.CgstAmount, l.SgstAmount, l.IgstAmount),
-            l.InvoicedQuantity, l.RemainingQuantity, mainStock, mainStock is { } main && main < l.RemainingQuantity);
+            l.InvoicedQuantity, l.RemainingQuantity, mainStock, mainStock is { } main && main < l.RemainingQuantity, l.ClassName);
 }

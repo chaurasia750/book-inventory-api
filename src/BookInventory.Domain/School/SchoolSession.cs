@@ -13,6 +13,26 @@ public static class SchoolSession
         return new SessionChoice(Label(type, start), Label(type, start - 1), Label(type, start + 1));
     }
 
+    /// <summary>R18: the type a session label is written in (<c>2026-27</c> Apr-Mar, <c>2027</c> Jan-Dec), or <c>null</c> for any other text.</summary>
+    public static SessionType? TypeOf(string? label) => Parse(label)?.Type;
+
+    /// <summary>R18: the label of the session before <paramref name="label"/>, or <c>null</c> when it is not a session label.</summary>
+    public static string? PreviousOf(string? label) => Parse(label) is { } p ? Label(p.Type, p.Start - 1) : null;
+
+    private static (SessionType Type, int Start)? Parse(string? label)
+    {
+        var text = label?.Trim() ?? string.Empty;
+        if (text.Length == 4 && int.TryParse(text, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var year))
+            return year is >= 2000 and <= 2100 ? (SessionType.JanDec, year) : null;
+
+        if (text.Length != 7 || text[4] != '-'
+            || !int.TryParse(text[..4], System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var start)
+            || !int.TryParse(text[5..], System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var end))
+            return null;
+
+        return start is >= 2000 and <= 2100 && end == (start + 1) % 100 ? (SessionType.AprMar, start) : null;
+    }
+
     private static int AprMarStart(DateOnly date, SessionCutOff cutOff)
     {
         if (date.Month >= 4)

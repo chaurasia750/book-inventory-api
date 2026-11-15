@@ -43,4 +43,13 @@ public sealed class SchoolDirectory(IUnitOfWork unitOfWork) : ISchoolDirectory
             .Select(c => c.Name)
             .FirstOrDefaultAsync(cancellationToken);
     }
+
+    public async Task<IReadOnlyList<string>> ClassesOfAsync(Guid schoolId, CancellationToken cancellationToken = default) =>
+        await _schools.TableNoTracking
+            .Where(s => s.Id == schoolId)
+            .SelectMany(s => s.Classes)
+            .Where(c => !c.IsDeleted)
+            .OrderBy(c => c.SortOrder)
+            .Select(c => c.Name)
+            .ToListAsync(cancellationToken);
 }

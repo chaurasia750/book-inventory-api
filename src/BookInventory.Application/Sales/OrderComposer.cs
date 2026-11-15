@@ -4,6 +4,7 @@ using BookInventory.Application.Price;
 using BookInventory.Application.School;
 using BookInventory.BuildingBlocks.Application.Attributes;
 using BookInventory.BuildingBlocks.Domain.Exceptions;
+using BookInventory.Domain.School;
 using BookInventory.Domain.Sales;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -43,36 +44,79 @@ public sealed class OrderComposer(
         };
     }
 
-    public async Task<IReadOnlyList<OrderLineInput>> LinesAsync(IReadOnlyList<SchoolOrderLineRequest> lines, DateOnly orderDate, CancellationToken cancellationToken)
+    /// <summary>R3, R25: every line or the first refusal, which names the line (item code and class).</summary>
+    public async Task<IReadOnlyList<OrderLineInput>> LinesAsync(OrderLinesRequest request, CancellationToken cancellationToken) =>
+        (await ComposeAsync(request, strict: true, cancellationToken)).Lines;
+
+    /// <summary>R22, R23: the lines that can be made and, for the others, the reason each was left out.</summary>
+    public Task<ComposedLines> TryLinesAsync(OrderLinesRequest request, CancellationToken cancellationToken) =>
+        ComposeAsync(request, strict: false, cancellationToken);
+
+    private async Task<ComposedLines> ComposeAsync(OrderLinesRequest request, bool strict, CancellationToken cancellationToken)
     {
+        var lines = request.Lines;
         if (lines.Count == 0)
-            return [];
+            return new ComposedLines([], []);
         if (lines.Count > SchoolOrder.MaxLines)
             throw new ValidationFailureException(SalesMessages.TooManyLines);
 
+        var classes = await ClassesAsync(request.SchoolId, lines, cancellationToken);
         var itemIds = lines.Select(l => l.ItemId!.Value).Distinct().ToList();
         var references = await items.SaleReferencesAsync(itemIds, cancellationToken);
-        var versions = await prices.VersionsOfItemsAsync(itemIds, orderDate, cancellationToken);
-        return [.. lines.Select(l => LineOf(l, references, versions))];
+        var versions = await prices.VersionsOfItemsAsync(itemIds, request.OrderDate, cancellationToken);
+        var made = new List<OrderLineInput>();
+        var leftOut = new List<LeftOutLine>();
+        foreach (var line in lines)
+        {
+            var className = ClassKey(line.ClassName) is { } key ? classes[key] : null;
+            try
+            {
+                made.Add(LineOf(line, className, references, versions));
+            }
+            catch (ValidationFailureException refusal) when (!strict)
+            {
+                leftOut.Add(new LeftOutLine(line.ItemId, references.GetValueOrDefault(line.ItemId!.Value)?.Item.Code, className, refusal.Code));
+            }
+        }
+
+        return new ComposedLines(made, leftOut);
     }
 
-    private static OrderLineInput LineOf(
-        SchoolOrderLineRequest line, IReadOnlyDictionary<Guid, ItemSaleReference> references, IReadOnlyDictionary<Guid, ItemPriceVersions> versions)
+    /// <summary>R21: each class named, in the school's own spelling; a class the school does not have is refused naming it.</summary>
+    private async Task<Dictionary<string, string>> ClassesAsync(Guid schoolId, IReadOnlyList<SchoolOrderLineRequest> lines, CancellationToken cancellationToken)
     {
-        var reference = references.GetValueOrDefault(line.ItemId!.Value) ?? throw new ValidationFailureException(SalesMessages.ItemNotFound);
+        var resolved = new Dictionary<string, string>();
+        foreach (var name in lines.Select(l => l.ClassName).Where(n => ClassKey(n) is not null).Distinct())
+        {
+            resolved[ClassKey(name)!] = await schools.ClassOfAsync(schoolId, name, cancellationToken)
+                                        ?? throw new ValidationFailureException(SalesMessages.InvalidClass) { Subject = name };
+        }
+
+        return resolved;
+    }
+
+    private static string? ClassKey(string? name) => SchoolClass.KeyOf(name);
+
+    private static OrderLineInput LineOf(
+        SchoolOrderLineRequest line, string? className, IReadOnlyDictionary<Guid, ItemSaleReference> references, IReadOnlyDictionary<Guid, ItemPriceVersions> versions)
+    {
+        var reference = references.GetValueOrDefault(line.ItemId!.Value) ?? throw new ValidationFailureException(SalesMessages.ItemNotFound) { Subject = line.ItemId.ToString() };
+        var subject = className is null ? reference.Item.Code : $"{reference.Item.Code} / {className}";
         if (!reference.Item.IsActive)
-            throw new ValidationFailureException(SalesMessages.ItemInactive);
+            throw new ValidationFailureException(SalesMessages.ItemInactive) { Subject = subject };
 
         var itemVersions = versions[reference.Item.Id];
         if (itemVersions.Versions.Count == 0)
-            throw new ValidationFailureException(SalesMessages.NoPrice);
+            throw new ValidationFailureException(SalesMessages.NoPrice) { Subject = subject };
         var versionId = line.PriceVersionId ?? itemVersions.DefaultVersionId ?? itemVersions.Versions[0].Id;
-        var version = itemVersions.Versions.FirstOrDefault(v => v.Id == versionId) ?? throw new ValidationFailureException(SalesMessages.InvalidPriceVersion);
+        var version = itemVersions.Versions.FirstOrDefault(v => v.Id == versionId) ?? throw new ValidationFailureException(SalesMessages.InvalidPriceVersion) { Subject = subject };
 
         return new OrderLineInput(
             new SaleItem(reference.Item.Id, reference.Item.Code, reference.Item.Name, reference.HsnCode, reference.GstRatePercent),
             new SalePrice(version.Id, version.VersionName, version.MrpAmount, version.SaleAmount),
             line.Quantity!.Value,
-            line.ItemDiscount?.ToDiscount() ?? Discount.None);
+            line.ItemDiscount?.ToDiscount() ?? Discount.None,
+            className,
+            line.LineId);
     }
 }

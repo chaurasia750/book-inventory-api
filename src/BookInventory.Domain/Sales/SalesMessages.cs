@@ -28,5 +28,14 @@ public static class SalesMessages
     public const string NothingToInvoice = "sales.nothing_to_invoice";
     public const string QuantityAboveRemaining = "sales.quantity_above_remaining";
     public const string TotalNotPositive = "sales.total_not_positive";
+    public const string InvalidClass = "sales.invalid_class";
+    public const string LineNotFound = "sales.line_not_found";
+    public const string LineInvoiced = "sales.line_invoiced";
+    public const string QuantityBelowInvoiced = "sales.quantity_below_invoiced";
+    public const string TotalsLocked = "sales.totals_locked";
+    public const string DuplicateLine = "sales.duplicate_line";
+    public const string SchoolFixed = "sales.school_fixed";
+    public const string NotOpen = "sales.order_not_open";
+    public const string NoBookList = "sales.no_book_list";
     public const string AlreadyCancelled = "sales.invoice_already_cancelled";
 }

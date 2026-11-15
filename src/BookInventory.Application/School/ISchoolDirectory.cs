@@ -18,4 +18,7 @@ public interface ISchoolDirectory
 
     /// <summary>The school's own class name that equals <paramref name="text"/> ignoring case and extra spaces (R6), or <c>null</c>.</summary>
     Task<string?> ClassOfAsync(Guid schoolId, string? text, CancellationToken cancellationToken = default);
+
+    /// <summary>The school's class names in the school's order (R6), empty for an unknown school (for planning R2, R4, R7).</summary>
+    Task<IReadOnlyList<string>> ClassesOfAsync(Guid schoolId, CancellationToken cancellationToken = default);
 }

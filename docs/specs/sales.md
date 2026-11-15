@@ -1,10 +1,10 @@
 # Spec: sales - School orders and invoices
 
 - **Module:** `sales` (PostgreSQL schema `sales`)
-- **Status:** R19-R25 and AC11-AC16 Approved by abhishek in chat on 2026-11-15 (the wholesale order questions answered one by one, all with the recommended answers); R1-R18 Approved by abhishek in chat on 2026-11-15 (Q1-Q14 answered one by one: Q1 per-session order numbers and Q3 a counter per company as the owner said, the rest with the recommended answers; D1-D3 with them)
+- **Status:** R19-R27 and AC11-AC18 Approved by abhishek in chat on 2026-11-15 (the wholesale order questions answered one by one, all with the recommended answers); R1-R18 Approved by abhishek in chat on 2026-11-15 (Q1-Q14 answered one by one: Q1 per-session order numbers and Q3 a counter per company as the owner said, the rest with the recommended answers; D1-D3 with them)
 - **Last updated:** 2026-11-15
 - **Source docs:** [BRD §2, §4.10 School Order and Invoice (FR-ORD-01 to FR-ORD-15), §5.1 BR-SES, §5.2 BR-PRC, §5.3 BR-DIS, §5.4 BR-GST, §5.5 the stock movement table, §5.6 BR-LED, §6 Documents, §8 Data Model (SalesOrder, Invoice) and design decisions 3 and 4, §9 Q-01, Q-02, Q-05](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P24, U14; [specs/school.md](school.md) R5, R16, R18, R19; [specs/item.md](item.md) R16; [specs/price.md](price.md) R4, R18; [specs/stock.md](stock.md) R11, R20; [specs/finance.md](finance.md) R5; [specs/company.md](company.md) R16
-- **Plans:** [sales#05](../plans/sales/2026-11-15-05-wholesale-orders.md) (Approved), [sales#06](../plans/sales/2026-11-15-06-ui-wholesale-orders.md) (Approved), [sales#01](../plans/sales/2026-11-15-01-school-orders.md) (Done), [sales#02](../plans/sales/2026-11-15-02-ui-school-orders.md) (In progress), [sales#03](../plans/sales/2026-11-15-03-invoices.md) (Done), [sales#04](../plans/sales/2026-11-15-04-ui-invoices.md) (In progress); what it needs from other modules: [school#05](../plans/school/2026-11-15-05-session-of-a-date.md) (Done), [school#06](../plans/school/2026-11-15-06-ui-session-cut-offs.md), [price#05](../plans/price/2026-11-15-05-price-directory.md), [stock#05](../plans/stock/2026-11-15-05-stock-quantities.md), [company#06](../plans/company/2026-11-15-06-company-tax-profile.md) (all Approved)
+- **Plans:** [sales#05](../plans/sales/2026-11-15-05-wholesale-orders.md) (Done), [sales#06](../plans/sales/2026-11-15-06-ui-wholesale-orders.md) (In progress), [sales#01](../plans/sales/2026-11-15-01-school-orders.md) (Done), [sales#02](../plans/sales/2026-11-15-02-ui-school-orders.md) (In progress), [sales#03](../plans/sales/2026-11-15-03-invoices.md) (Done), [sales#04](../plans/sales/2026-11-15-04-ui-invoices.md) (In progress); what it needs from other modules: [school#05](../plans/school/2026-11-15-05-session-of-a-date.md) (Done), [school#06](../plans/school/2026-11-15-06-ui-session-cut-offs.md), [price#05](../plans/price/2026-11-15-05-price-directory.md), [stock#05](../plans/stock/2026-11-15-05-stock-quantities.md), [company#06](../plans/company/2026-11-15-06-company-tax-profile.md) (all Approved)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -60,6 +60,8 @@ Out of scope for this feature: the invoice PDF and print layout (FR-ORD-10, FR-O
 - **R23** **Bulk add**: many items chosen at once (filters: category, class, publisher/vendor, subject, search) are added with one quantity and an optional class, each at its default price version; the rules of R3 and R21 apply to each.
 - **R24** Lines are edited in place on the order (quantity, class, version, discount, delete) with keyboard-friendly entry; the server recomputes after each save (R7). An order holds at most 500 lines (R3).
 - **R25** Every refusal names the line it is about (item code and class) so a long order can be corrected quickly.
+- **R26** **Invoice layout** (owner, 2026-11-15: "group kar ke dikha sakte hai ya kewal book ka list, both option"): an invoice line keeps the class of its order line. The same invoice is shown and printed in one of two layouts, without changing its data, numbers or totals: **by class** (lines grouped under each class with a class subtotal; lines without a class under "General") or **book list** (no classes; lines of the same item, price version, rate and item discount are shown as one line with the summed quantity and amounts; lines that differ in any of these stay separate). Each school has a default layout kept by this module (initially book list), set by the Owner from the school's profile; the invoice screen opens in the school's default and can be switched there and then.
+- **R27** **Easy new order**: New order asks only for the school (search by name or code); the date is today, the session and GST come from the school (R2, R7) and can be changed; the first screen offers the three ways to add books side by side (class sets R22, bulk add R23, scan or search R24), and the order can be saved as a draft at any time.
 
 ## 4. Data
 
@@ -118,6 +120,8 @@ Raised by the aggregates (past tense, ids and values only): `SchoolOrderConfirme
 - **AC14** Adding the sets of Class 4 (45 students) and Class 5 (40) from the 2026-27 lists (Class 4: X 1, Y 2; Class 5: X 1, Z 1) adds X 45, Y 90 (Class 4) and X 40, Z 40 (Class 5); adding Class 5 again raises X and Z to 80; a book without a price is left out and reported (R22).
 - **AC15** Bulk add of 12 ticked items with quantity 30 and class 6 adds 12 lines of 30 for Class 6 (R23).
 - **AC16** A refused save names the line (item code and class) it is about (R25).
+- **AC17** An invoice of Class 4 dictionary 40 and Class 5 dictionary 38 (same version, rate and discount) and Class 5 atlas 38: by class shows Class 4 (dictionary 40) and Class 5 (dictionary 38, atlas 38) with subtotals; book list shows dictionary 78 and atlas 38; both layouts give the same grand total; a school whose default is by class opens in by class; Staff cannot change the default (`403`) (R26).
+- **AC18** New order with only a school chosen saves a draft with today's date, the school's session and GST choice (R27).
 
 ## 10. Decisions
 
@@ -126,6 +130,7 @@ Raised by the aggregates (past tense, ids and values only): `SchoolOrderConfirme
 | D1 | New module `sales` with its own schema for school orders and invoices (later counter sale and returns). `SchoolOrder` and `Invoice` are separate company-owned aggregates; an invoice refers to its order by id and the order keeps the invoiced quantities. (proposed by the assistant, Q1) |
 | D2 | The amounts of R7 are one domain rule used by the order and the invoice, so an order's preview and its invoice can never compute differently. (proposed by the assistant) |
 | D3 | Making and cancelling an invoice post stock and ledger through their capabilities in the same use case and transaction (stock R11, finance R5), not through events, because the invoice must fail as a whole when a posting fails. (proposed by the assistant) |
+| D5 | Owner, 2026-11-15: invoice layout by class or book list; book list merges the same item, version, rate and discount into one line; a per-school default plus a switch on the invoice screen. The layout is a view only: one invoice, one number, one total. |
 | D4 | Owner, 2026-11-15: wholesale order entry: an Orders parent menu, confirmed orders editable above what is invoiced, class on each line, class sets from the planning module's class book lists, bulk add. Platform U14 is changed for orders and invoices accordingly. |
 
 ## 11. Open questions

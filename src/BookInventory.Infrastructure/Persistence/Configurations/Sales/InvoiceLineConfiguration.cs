@@ -12,6 +12,7 @@ public sealed class InvoiceLineConfiguration() : ModuleEntityConfiguration<Invoi
     {
         builder.Ignore(l => l.ItemDiscount);
         builder.Ignore(l => l.Delivery);
+        builder.Property(l => l.ClassName).HasMaxLength(50);
         builder.Property(l => l.ItemCode).HasMaxLength(30).IsRequired();
         builder.Property(l => l.ItemName).HasMaxLength(200).IsRequired();
         builder.Property(l => l.HsnCode).HasMaxLength(8);

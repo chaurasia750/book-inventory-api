@@ -9,12 +9,14 @@ public sealed record DiscountRequest([param: Required] DiscountKind? Kind, decim
     public Discount ToDiscount() => Discount.Of(Kind ?? DiscountKind.None, Value ?? 0m);
 }
 
-/// <summary>R3: one order line: the item, the chosen price version (empty: the item's default on the order date), the quantity, the item discount.</summary>
+/// <summary>R3, R20, R21: one order line: the class it is for, the line it edits on a confirmed order, the item, the chosen price version (empty: the item's default on the order date), the quantity, the item discount.</summary>
 public sealed record SchoolOrderLineRequest(
     [param: Required] Guid? ItemId,
     Guid? PriceVersionId,
     [param: Required, Range(1, SchoolOrder.MaxQuantity)] int? Quantity,
-    DiscountRequest? ItemDiscount = null);
+    DiscountRequest? ItemDiscount = null,
+    [param: StringLength(50)] string? ClassName = null,
+    Guid? LineId = null);
 
 /// <summary>R2, R3: a draft's values; the session must be the school's session of the order date or the one before or after it.</summary>
 public sealed record SaveSchoolOrderRequest(
@@ -69,7 +71,8 @@ public sealed record SchoolOrderLineView(
     int InvoicedQuantity,
     int RemainingQuantity,
     int? MainStock,
-    bool IsLowStock);
+    bool IsLowStock,
+    string? ClassName = null);
 
 /// <summary>R15: an order with its header, totals, lines, the session choice and its invoices.</summary>
 public sealed record SchoolOrderDetail

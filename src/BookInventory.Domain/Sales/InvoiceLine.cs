@@ -20,6 +20,9 @@ public class InvoiceLine : CompanyOwnedChild
 
     public Guid ItemId { get; private set; }
 
+    /// <summary>R21, R26: the class of the order line this line was delivered from (none: general).</summary>
+    public string? ClassName { get; private set; }
+
     public string ItemCode { get; private set; }
 
     public string ItemName { get; private set; }
@@ -60,7 +63,7 @@ public class InvoiceLine : CompanyOwnedChild
 
     public Discount ItemDiscount => new(ItemDiscountKind, ItemDiscountValue);
 
-    public DeliveryLine Delivery => new(OrderLineId, new SaleItem(ItemId, ItemCode, ItemName, HsnCode, GstRatePercent), new SalePrice(PriceVersionId, PriceVersionName, MrpAmount, RateAmount), Quantity, ItemDiscount);
+    public DeliveryLine Delivery => new(OrderLineId, new SaleItem(ItemId, ItemCode, ItemName, HsnCode, GstRatePercent), new SalePrice(PriceVersionId, PriceVersionName, MrpAmount, RateAmount), Quantity, ItemDiscount, ClassName);
 
     internal static InvoiceLine Of(Guid invoiceId, int sortOrder, DeliveryLine d, SaleLineAmounts a) =>
         new()
@@ -69,6 +72,7 @@ public class InvoiceLine : CompanyOwnedChild
             OrderLineId = d.OrderLineId,
             SortOrder = sortOrder,
             ItemId = d.Item.Id,
+            ClassName = d.ClassName,
             ItemCode = d.Item.Code,
             ItemName = d.Item.Name,
             HsnCode = d.Item.HsnCode,

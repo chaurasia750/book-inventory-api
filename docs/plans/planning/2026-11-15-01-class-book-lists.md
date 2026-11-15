@@ -4,7 +4,8 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/planning.md](../../specs/planning.md) - rules covered: R1-R9; AC1-AC5
 - **Owner:** abhishek
-- **Status:** Approved
+- **Status:** Done (2026-11-15)
+- **Base branch:** `docs/orders-wholesale` (branch `feature/planning-01`)
 - **Depends on:** `school#05` (Done)
 - **UI plan:** planning#02
 - **Approved by / on:** abhishek / 2026-11-15 (chat: the wholesale order questions answered one by one, all with the recommended answers)
@@ -31,14 +32,16 @@ One aggregate per school, session and class, created by the first PUT and replac
 ## 5. Spec coverage
 | Rule / AC | Task | Verification (input -> observed output) |
 |---|---|---|
-| `R2`, `R3`, `R6`, `R7`, `AC1` | 1, 3, 4, 5 | Save Class 5 of S 2026-27 (X 2, Y 1, estimate 40); read shows it and the other classes empty; Staff read 200, save 403 |
-| `R2`, `R9`, `AC2` | 1, 3 | Unknown class, qty 0 and 51, unknown item, 201 lines -> 400; X twice -> one line |
-| `R4`, `AC3` | 3 | Copy 2026-27 -> 2027-28 (no estimates); again without replace -> skipped; from school T -> only S's classes |
-| `R7`, `AC4` | 4 | 2027-28 changed -> added, removed, changed marked against 2026-27 |
-| `R1`, `AC5` | 5 | Owner of B on A's school -> 404 |
+| `R2`, `R3`, `R6`, `R7`, `AC1` | 1, 3, 4, 5 | Owner PUT `schools/{S}/book-lists/2026-27/5th` `{studentEstimate:40, lines:[ITM-0001 x2, ITM-0003 x1]}` -> 204; GET `?session=2026-27` -> 5th has 2 books and estimate 40, no other class has a list, `previousSession` 2025-26; Staff (Children Book Center) GET 200, PUT 403. PASS |
+| `R2`, `R9`, `AC2` | 1, 3 | PUT with class `13th`, qty 0, qty 51, unknown item, inactive item, 201 lines, session `2027` for an Apr-Mar school -> each 400; ITM-0001 sent twice (1 and 2) -> 204, GET shows one line with qty 3. PASS |
+| `R4`, `AC3` | 3 | POST `2027-28/copy` `{fromSession:2026-27}` -> copied [5th]; GET 2027-28 5th has 2 books and no estimate; same call again -> copied [], skipped [5th]; from school T with `replaceExisting` -> copied [4th, 5th] (T's classes that S has). PASS |
+| `R7`, `AC4` | 4 | 2027-28 5th saved as ITM-0001 x3 + ITM-0004 x1 against 2026-27 (ITM-0001 x2, ITM-0003 x1) -> ITM-0004 ADDED, ITM-0001 CHANGED (previous 2), removed [ITM-0003]. PASS |
+| `R1`, `AC5` | 5 | Owner of Children Book Center on ABC's school: GET -> 404, PUT -> 404; no token -> 401. PASS |
 
 ## 6. Not verified
-To be filled when the plan is closed.
+Run: 19 of 19 checks passed on the real local database `book_inventory` (scratch script, not committed). The check found a real bug (DELETE answered 500 because the lines were loaded with the list); fixed with `FindForRemovalAsync` and re-run.
+
+NOT verified: `DELETE` of a class that has no list (404 `planning.list_not_found`) and the removal of a list as seen from the audit trail were not exercised; the child rows of a removed list stay soft-undeleted under the deleted list (same as orders). `IClassBookLists` is checked only by sales#05.
 
 ## 7. Risks and notes
-Additive migration; rollback: drop schema `planning`.
+Additive migration `Planning_ClassBookLists` applied to the local `book_inventory` after its SQL was shown; rollback: drop schema `planning`. `docs/Code_Map.md` gets its planning line with sales#05 (no pattern used by sales yet).

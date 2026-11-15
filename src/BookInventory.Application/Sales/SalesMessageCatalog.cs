@@ -30,6 +30,15 @@ public static class SalesMessageCatalog
             [SalesMessages.NothingToInvoice] = "Choose at least one line with a quantity to invoice.",
             [SalesMessages.QuantityAboveRemaining] = "A quantity is more than what remains to deliver on that line.",
             [SalesMessages.TotalNotPositive] = "An invoice total must be above zero.",
+            [SalesMessages.InvalidClass] = "Choose one of the school's classes.",
+            [SalesMessages.LineNotFound] = "That line is not on this order.",
+            [SalesMessages.LineInvoiced] = "Part of this line is already invoiced: it cannot be deleted, and its price version, discount and class cannot change.",
+            [SalesMessages.QuantityBelowInvoiced] = "The quantity cannot be below what is already invoiced.",
+            [SalesMessages.TotalsLocked] = "The total discount and the GST choice cannot change once something is invoiced.",
+            [SalesMessages.DuplicateLine] = "The same item, price version and class is on two lines; keep one.",
+            [SalesMessages.SchoolFixed] = "The school of an order cannot be changed.",
+            [SalesMessages.NotOpen] = "Lines can be added only to a draft or a confirmed order.",
+            [SalesMessages.NoBookList] = "This class has no book list for the order's session.",
             [SalesMessages.AlreadyCancelled] = "This invoice is already cancelled."
         };
 }
