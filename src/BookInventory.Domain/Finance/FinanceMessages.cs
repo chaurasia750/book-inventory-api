@@ -19,4 +19,5 @@ public static class FinanceMessages
     public const string PartyNotFound = "finance.party_not_found";
     public const string InvalidFilter = "finance.invalid_filter";
     public const string TooManyLines = "finance.too_many_lines";
+    public const string TooManyIds = "finance.too_many_ids";
 }

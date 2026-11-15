@@ -13,9 +13,10 @@ namespace BookInventory.Application.Finance;
 /// the totals and the sign of a balance follow R7; nothing here posts.
 /// </summary>
 [AutoRegister(ServiceLifetime.Scoped)]
-public sealed class LedgerStatementService(ILedgerStatementStore store, ISchoolDirectory schools, IVendorDirectory vendors)
+public sealed class LedgerStatementService(ILedgerStatementStore store, ILedgerBalances balances, ISchoolDirectory schools, IVendorDirectory vendors)
 {
     public const int MaxLines = 5000;
+    public const int MaxBalanceIds = 100;
     private const int DefaultPageSize = 20;
     private const int MaxPageSize = 200;
 
@@ -56,6 +57,17 @@ public sealed class LedgerStatementService(ILedgerStatementStore store, ISchoolD
         return new OutstandingPage(
             [.. rows.Skip((pageIndex - 1) * pageSize).Take(pageSize)], pageIndex, pageSize, rows.Count,
             (int)Math.Ceiling(rows.Count / (double)pageSize), rows.Sum(r => r.Balance));
+    }
+
+    /// <summary>R17: the balances of the listed parties of the session's company (another company's or unknown ids are left out).</summary>
+    public async Task<IReadOnlyDictionary<Guid, decimal>> BalancesAsync(PartyType partyType, IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken)
+    {
+        var distinct = ids.Distinct().ToList();
+        if (distinct.Count > MaxBalanceIds)
+            throw new ValidationFailureException(FinanceMessages.TooManyIds);
+
+        var known = await HeadersAsync(partyType, distinct, cancellationToken);
+        return await balances.BalancesAsync(partyType, [.. known.Keys], cancellationToken);
     }
 
     private async Task<LedgerStatement> StatementAsync(LedgerParty party, PartyHeader header, LedgerStatementQuery query, CancellationToken cancellationToken)

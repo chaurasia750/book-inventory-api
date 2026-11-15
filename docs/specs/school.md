@@ -79,6 +79,8 @@ Errors are `ProblemDetails` with a message code from the module's catalogue. Val
 
 Written in the UI plan; summary: in the company workspace (`member` app) the Owner gets a "Schools" menu: a list with search and filters, an add and edit form with the class list editor, and activate and deactivate; Staff get the same list read-only. Each state shows loading, empty, error with retry and success.
 
+Since 2026-11-15 (owner): a school opens beside the list as its profile with tabs (Profile, Classes, Ledger; later the school documents), and the Owner sees a Balance column and a "with a balance only" filter in the list ([specs/finance.md](finance.md) section 6, R17).
+
 ## 7. Events
 
 Raised by the `School` aggregate (past tense, ids and values only): `SchoolCreated`, `SchoolDeactivated`, `SchoolReactivated`. Reactions: none in this feature.

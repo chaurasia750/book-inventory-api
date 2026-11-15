@@ -20,6 +20,7 @@ public static class FinanceMessageCatalog
             [FinanceMessages.AlreadyReversed] = "This document's ledger posting is already reversed.",
             [FinanceMessages.PartyNotFound] = "The school or vendor could not be found.",
             [FinanceMessages.InvalidFilter] = "Give either a financial year (like 2026-27), a session, or a date range with from before to.",
-            [FinanceMessages.TooManyLines] = "The statement has more than 5000 lines; narrow the filter."
+            [FinanceMessages.TooManyLines] = "The statement has more than 5000 lines; narrow the filter.",
+            [FinanceMessages.TooManyIds] = "Ask for the balances of at most 100 schools or vendors at a time."
         };
 }

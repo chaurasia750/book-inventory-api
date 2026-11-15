@@ -1,10 +1,10 @@
 # Spec: finance - Ledger
 
 - **Module:** `finance` (PostgreSQL schema `finance`)
-- **Status:** R1-R16 Approved by abhishek in chat on 2026-11-14 (Q1-Q11 answered one by one, all with the recommended answers; D1-D4 with them)
+- **Status:** R17 and AC9 Approved by abhishek in chat on 2026-11-15 (the school and vendor profile questions: profile panel with tabs, balance column in the lists, the same for vendors); R1-R16 Approved by abhishek in chat on 2026-11-14 (Q1-Q11 answered one by one, all with the recommended answers; D1-D4 with them)
 - **Last updated:** 2026-11-14
 - **Source docs:** [BRD §2, §4.15 Ledger (FR-LED-01 to FR-LED-10), §5.1 BR-SES-01 to BR-SES-03 and BR-SES-07, §5.5 the stock movement table (ledger columns), §5.6 BR-LED-01 to BR-LED-05, §8 Data Model (PartyLedger) and design decisions 2 and 4](../bussiness/BRD-Book-Inventory-Phase1.md); [CLAUDE.project.md](../../CLAUDE.project.md) "Money and ledger"; [specs/platform.md](platform.md) P18-P21; [specs/school.md](school.md) R7, R16, R17, D3, D7; [specs/vendor.md](vendor.md) R6, R15, R16; [specs/stock.md](stock.md) (the posting capability it mirrors)
-- **Plans:** [finance#01](../plans/finance/2026-11-14-01-ledger-core.md) (Done), [finance#02](../plans/finance/2026-11-14-02-opening-balances.md) (Done), [finance#03](../plans/finance/2026-11-14-03-ledger-statement.md) (Done), [finance#04](../plans/finance/2026-11-14-04-ui-ledger-screens.md) (In progress); what it needs from other modules: [school#03](../plans/school/2026-11-14-03-school-directory.md) (Done), [school#04](../plans/school/2026-11-14-04-opening-balance-event.md) (Done), [vendor#04](../plans/vendor/2026-11-14-04-opening-balance-event.md) (Done)
+- **Plans:** [finance#05](../plans/finance/2026-11-15-05-party-balances.md) (Done, R17, AC9), [finance#06](../plans/finance/2026-11-15-06-ui-party-profile-ledger.md) (Approved, UI), [finance#01](../plans/finance/2026-11-14-01-ledger-core.md) (Done), [finance#02](../plans/finance/2026-11-14-02-opening-balances.md) (Done), [finance#03](../plans/finance/2026-11-14-03-ledger-statement.md) (Done), [finance#04](../plans/finance/2026-11-14-04-ui-ledger-screens.md) (In progress); what it needs from other modules: [school#03](../plans/school/2026-11-14-03-school-directory.md) (Done), [school#04](../plans/school/2026-11-14-04-opening-balance-event.md) (Done), [vendor#04](../plans/vendor/2026-11-14-04-opening-balance-event.md) (Done)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -45,6 +45,7 @@ Out of scope for this feature: the documents that post most transactions (Invoic
 - **R14** The ledger's own history is its transactions (each names who posted it and when, R3, R12); the platform audit trail is not used for them (like the stock entries).
 - **R15** Money moved through the ledger is idempotent and atomic: one document's transaction is written in the request transaction of that document, completely or not at all, and the unique posting key of R5 makes a retry harmless (CLAUDE.md "Money").
 - **R16** A school's or vendor's ledger keeps its entries when the party is deactivated; the statement and the outstanding list show it under its name with an "inactive" mark.
+- **R17** **Balances of a list of parties** (for the Balance column of the school and vendor lists, section 6): for at most 100 school ids (or vendor ids; 100 ids keep the request line under the server's limit) of the session's company, each one's balance by the sign of R7 (0 for a party with no line; an id of another company or unknown is left out). Read by the Owner and an entered Super Admin only (R13). Added on 2026-11-15 when the owner moved the ledger into the school and vendor profiles.
 
 ## 4. Data
 
@@ -62,12 +63,13 @@ All routes are company-scoped by the session (platform P19, P20); the company is
 | `GET vendors/{vendorId}/ledger` | `OWNER`, `SUPER_ADMIN` (entered) | the same for a vendor (no session filter) |
 | `GET ledger/outstanding/schools` | `OWNER`, `SUPER_ADMIN` (entered) | R11, `?search=&pageIndex=&pageSize=` |
 | `GET ledger/outstanding/vendors` | `OWNER`, `SUPER_ADMIN` (entered) | R11 |
+| `GET ledger/balances/schools?ids=` / `GET ledger/balances/vendors?ids=` | `OWNER`, `SUPER_ADMIN` (entered) | R17: `{id: balance}` for at most 100 ids; `400` above |
 
 The posting capability of R5 is not an endpoint. Errors are `ProblemDetails` with a message code from the module's catalogue.
 
 ## 6. User interface
 
-Written in the UI plan; summary: in the company workspace (`member` app) the Owner gets a "Ledger" menu in its own group with "Outstanding" (schools and vendors tabs) and, from a school's or vendor's panel and from the outstanding rows, that party's statement with its filters, the opening row, the running balance and the totals. Each state shows loading, empty, error with retry and success.
+Written in the UI plans; summary (owner's decisions of 2026-11-15, platform U14): there is **no Ledger menu and no separate ledger page**. A school opens beside the school list as its **profile** with a header (code, name, status and, for the Owner, its balance) and tabs: Profile, Classes and **Ledger** (the statement of R9 with its filters, opening row, running balance and totals); the later school documents (orders, invoices, payments, returns, samples) become further tabs. A vendor opens the same way with the tabs Profile and Ledger. For the Owner the school list has a **Balance** column (what the school owes) and the vendor list a **Balance** column (what the company owes), filled through R17, and a "with a balance only" filter that lists the outstanding parties of R11, largest first, with the total. Each state shows loading, empty, error with retry and success.
 
 ## 7. Events
 
@@ -87,6 +89,7 @@ Raised by the `LedgerTransaction` aggregate (past tense, ids and values only): `
 - **AC6** The outstanding list of schools shows S with its balance, not a school with balance 0, sorted largest first, with the list total equal to SQL; the vendors list the same for vendors (R11).
 - **AC7** The Owner of B reading A's school ledger gets `404`, identical to an unknown school; Staff get `403` on every ledger route; anonymous `401`; a Super Admin with no company entered gets empty outstanding lists (R1, R13).
 - **AC8** No route changes or deletes a ledger entry (`PUT`/`DELETE` -> `405`), and SQL shows every transaction balanced (sum of debits = sum of credits per transaction) (R3, R14).
+- **AC9** `GET ledger/balances/schools?ids=S,S2,<B's school>` as the Owner of A returns S and S2 with the balances of their statements and leaves B's out; 101 ids -> `400`; Staff `403` (R17).
 
 ## 10. Decisions
 

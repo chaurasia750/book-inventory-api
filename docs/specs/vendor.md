@@ -72,6 +72,8 @@ Errors are `ProblemDetails` with a message code from the module's catalogue. Val
 
 Written in the UI plan; summary: in the company workspace (`member` app) the Owner gets a "Vendors" menu under MANAGEMENT: a list with search and filters; a vendor opens beside the list with an X to close it, and adding and editing open in the same panel (platform U10); activate and deactivate. Each state shows loading, empty, error with retry and success. Staff do not see the menu.
 
+Since 2026-11-15 (owner): a vendor opens beside the list as its profile with tabs (Profile, Ledger; later vendor orders, purchases, payments, returns), with a Balance column and a "with a balance only" filter in the list ([specs/finance.md](finance.md) section 6, R17).
+
 ## 7. Events
 
 Raised by the `Vendor` aggregate (past tense, ids and values only): `VendorCreated`, `VendorDeactivated`, `VendorReactivated`. Reactions: none in this feature.

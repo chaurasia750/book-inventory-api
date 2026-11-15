@@ -2,7 +2,7 @@
 
 - **Module:** `item` (PostgreSQL schema `item`)
 - **Status:** R17 and AC13 Approved by abhishek on 2026-11-14 (for the stock spec); R16 and AC12 Approved by abhishek on 2026-11-14 (for the price spec); R1-R15 Approved by abhishek in chat on 2026-11-14 ("all approved hai kro implement"; Q1-Q12 answered with the recommended answers, D1-D5 with them)
-- **Last updated:** 2026-11-14
+- **Last updated:** 2026-11-14; 2026-11-15 (menu: one "Items" menu)
 - **Source docs:** [BRD §1.2, §3, §4.4 Item Master (FR-ITM-01 to FR-ITM-08), §5.4 BR-GST, §5.5 BR-STK, §7.1, §8 Data Model (ItemCategory, Item, ItemBarcode)](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P23; [specs/company.md](company.md); [specs/vendor.md](vendor.md); [specs/school.md](school.md) (the neighbouring masters it follows)
 - **Plans:** [item#04](../plans/item/2026-11-14-04-item-directory-stock-flag.md) (Done, R17, AC13), [item#03](../plans/item/2026-11-14-03-item-directory.md) (Done, R16, AC12), [item#01](../plans/item/2026-11-14-01-item-master.md) (Done), [item#02](../plans/item/2026-11-14-02-ui-item-screens.md) (In progress); the capability it needs from vendor: [vendor#03](../plans/vendor/2026-11-14-03-vendor-directory.md) (Done)
 
@@ -73,7 +73,7 @@ Errors are `ProblemDetails` with a message code from the module's catalogue. Val
 
 ## 6. User interface
 
-Written in the UI plan; summary: in the company workspace (`member` app) the Owner and Staff get an "Items" menu under MANAGEMENT: a list with search and filters; an item opens beside the list with an X to close it, and adding and editing open in the same panel (platform U10); the Owner edits the barcode list there and activates or deactivates; Staff see the same list and detail read-only. Each state shows loading, empty, error with retry and success.
+Written in the UI plan; summary: in the company workspace (`member` app) the Owner and Staff get the "Item list" entry of the "Items" menu: a list with search and filters; an item opens beside the list with an X to close it, and adding and editing open in the same panel (platform U10); the Owner edits the barcode list there and activates or deactivates; Staff see the same list and detail read-only. Each state shows loading, empty, error with retry and success. (Since 2026-11-15, at the owner's request, "Items", "Prices" and "Stock" are the three entries of one "Items" menu: Item list, Prices, Stock.)
 
 ## 7. Events
 
