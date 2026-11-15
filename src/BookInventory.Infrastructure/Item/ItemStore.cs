@@ -101,7 +101,7 @@ public sealed class ItemStore(IUnitOfWork unitOfWork) : IItemStore
     }
 
     private static readonly System.Linq.Expressions.Expression<Func<ItemRoot, ItemRow>> RowOf =
-        i => new ItemRow(i.Id, i.Code, i.Name, i.Category, i.ClassName, i.VendorId, i.GstRatePercent, i.IsStockManaged, i.Status, i.CreatedAt);
+        i => new ItemRow(i.Id, i.Code, i.Name, i.Category, i.ClassName, i.VendorId, i.GstRatePercent, i.IsStockManaged, i.Status, i.CreatedAt, i.HsnCode);
 
     /// <summary>The platform <c>OrderBy(string)</c> accepts any property, so the column is checked here first; anything else falls back to the default order.</summary>
     private static string? WhitelistedOrder(string? orderBy)
