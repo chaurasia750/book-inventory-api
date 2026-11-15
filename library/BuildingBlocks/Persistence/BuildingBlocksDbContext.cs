@@ -177,17 +177,50 @@ namespace BookInventory.BuildingBlocks.Persistence
             return base.SaveChanges(acceptAllChangesOnSuccess);
         }
 
+        /// <summary>The most save rounds one save may take while event handlers keep leaving changes; more means an event loop.</summary>
+        private const int MaxSaveRounds = 5;
+
+        /// <summary>
+        /// Saves, then dispatches the domain events of that save. What the handlers write (rows, changes, their own events) is
+        /// saved again in further rounds inside the same transaction, at most <see cref="MaxSaveRounds"/> rounds; a longer chain
+        /// is a bug and throws. The result is the number of rows written by all rounds.
+        /// </summary>
         public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
-            ApplySoftDeleteAndAudit();
+            var result = 0;
+            for (var round = 1; ; round++)
+            {
+                OnSavingRound();
+                ApplySoftDeleteAndAudit();
 
-            var events = CollectDomainEvents();
-            var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+                var events = CollectDomainEvents();
+                result += await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
 
-            if (events.Count > 0 && _eventDispatcher is not null)
-                await _eventDispatcher.DispatchAsync(events, cancellationToken);
+                if (events.Count > 0 && _eventDispatcher is not null)
+                    await _eventDispatcher.DispatchAsync(events, cancellationToken);
 
-            return result;
+                // Without accepting the changes every entry would still look pending, so such a save takes one round only.
+                if (!acceptAllChangesOnSuccess || !HasPendingWork())
+                    return result;
+                if (round == MaxSaveRounds)
+                    throw new InvalidOperationException(
+                        $"Domain event handlers still left changes after {MaxSaveRounds} save rounds; an event chain is looping.");
+            }
+        }
+
+        /// <summary>
+        /// Runs before every save round (the first save and each round that saves what event handlers wrote), so a derived
+        /// context can prepare the rows of that round, for example stamp an owner or capture an audit trail.
+        /// </summary>
+        protected virtual void OnSavingRound()
+        {
+        }
+
+        private bool HasPendingWork()
+        {
+            ChangeTracker.DetectChanges();
+            return HasPendingDomainEvents()
+                   || ChangeTracker.Entries().Any(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted);
         }
 
         private void ApplySoftDeleteAndAudit()

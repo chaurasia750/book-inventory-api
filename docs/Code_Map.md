@@ -12,7 +12,7 @@ For the agent and new developers. Every path below exists; copy the neighbouring
 | `src/BookInventory.Infrastructure/` | EF configurations, stores (port adapters), options, migrations |
 | `src/BookInventory.Api/` | `src/BookInventory.Api/Program.cs`, controllers, hosted services, auth wiring |
 
-Modules present today: `Iam`, `Core`, `Company`, `School`, `Vendor`, `Item`, `Price`, `Stock` (folders match the schemas `iam`, `core`, `company`, `school`, `vendor`, `item`, `price`, `stock`). The aggregate class `Company` shares its name with its namespace, so files that use it add `using CompanyRoot = BookInventory.Domain.Company.Company;`.
+Modules present today: `Iam`, `Core`, `Company`, `School`, `Vendor`, `Item`, `Price`, `Stock`, `Finance` (folders match the schemas `iam`, `core`, `company`, `school`, `vendor`, `item`, `price`, `stock`, `finance`). The aggregate class `Company` shares its name with its namespace, so files that use it add `using CompanyRoot = BookInventory.Domain.Company.Company;`.
 
 ## Base types of the shared library
 
@@ -39,7 +39,9 @@ Modules present today: `Iam`, `Core`, `Company`, `School`, `Vendor`, `Item`, `Pr
 | Move stock from a document | inject `src/BookInventory.Application/Stock/IStockPosting.cs` (`PostAsync` a document's lines, `ReverseAsync` on cancel); never write stock entries yourself (stock R11); implementation `src/BookInventory.Application/Stock/StockPosting.cs` |
 | Aggregate that appends insert-only children without loading them | `src/BookInventory.Domain/Stock/ItemStock.cs` with `src/BookInventory.Domain/Stock/StockEntry.cs` (company-owned `TransactionDomainBase` child); store `src/BookInventory.Infrastructure/Stock/StockStore.cs` reads children through the root (`SelectMany`) |
 | Read an Excel file / write a template | inject `src/BookInventory.Application/Core/ISpreadsheetReader.cs` (first sheet as text cells, header skipped, a row cap) and `src/BookInventory.Application/Core/ISpreadsheetWriter.cs`; adapters `src/BookInventory.Infrastructure/Core/ClosedXmlSpreadsheetReader.cs` and `ClosedXmlSpreadsheetWriter.cs` (the only users of ClosedXML); an all-or-nothing import with a row report: `src/BookInventory.Application/Stock/OpeningStockImportService.cs` and `src/BookInventory.Api/Controllers/Stock/OpeningStockImportController.cs` (multipart, body limit) |
-| Read another module's vendors | inject `src/BookInventory.Application/Vendor/IVendorDirectory.cs` (exists/active, names by id, ids matching a text); never join the vendor tables (vendor R15); adapter `src/BookInventory.Infrastructure/Vendor/VendorDirectory.cs` |
+| Post money to the ledger | inject `src/BookInventory.Application/Finance/ILedgerPosting.cs` with a balanced `LedgerPosting` (`src/BookInventory.Domain/Finance/LedgerPosting.cs`, accounts in `LedgerAccount.cs`); `ReverseAsync` on cancel; never write ledger rows yourself (finance R5); balances: `ILedgerBalances.cs` |
+| Read another module's schools | inject `src/BookInventory.Application/School/ISchoolDirectory.cs` (reference by id, references, a class of the school's list); adapter `src/BookInventory.Infrastructure/School/SchoolDirectory.cs` |
+| Read another module's vendors | inject `src/BookInventory.Application/Vendor/IVendorDirectory.cs` (exists/active, references with code, names by id, ids matching a text); never join the vendor tables (vendor R15); adapter `src/BookInventory.Infrastructure/Vendor/VendorDirectory.cs` |
 | Generated code `PREFIX-0001` (P23) | inject `src/BookInventory.Application/Core/ICompanyCodes.cs` and call `NextAsync("VEN")`; never keep a counter of your own; copy the use of it in `src/BookInventory.Application/School/SchoolRegistrationService.cs` (adapter: `src/BookInventory.Infrastructure/Core/CompanyCodes.cs`) |
 | Company-owned aggregate (P18-P22) | derive from `src/BookInventory.Domain/Core/CompanyOwnedRoot.cs` (a child entity: `src/BookInventory.Domain/Core/CompanyOwnedChild.cs`); copy `src/BookInventory.Domain/School/School.cs` with `src/BookInventory.Domain/School/SchoolClass.cs`; the filter and the stamping are `src/BookInventory.Infrastructure/Persistence/CompanyScope.cs`; a per-company unique index starts with `company_id` (`builder.HasIndex(x => new { x.CompanyId, x.Code }).IsUnique()`) |
 | Audit capture (the save override) | `src/BookInventory.Infrastructure/Persistence/AppDbContext.cs` with `src/BookInventory.Infrastructure/Core/AuditCapture.cs` |
@@ -53,4 +55,4 @@ Modules present today: `Iam`, `Core`, `Company`, `School`, `Vendor`, `Item`, `Pr
 | Background job | `src/BookInventory.Api/Hosting/PeriodicSweeper.cs`, used by `src/BookInventory.Api/Hosting/ExpiredSessionSweeper.cs` |
 | Seed | `src/BookInventory.Api/Hosting/IamSeedHostedService.cs` |
 
-No domain event handler class (`IDomainEventHandler<T>`) exists in `src/` yet; the port is in the library.
+Domain event handler: copy `src/BookInventory.Application/Finance/SchoolOpeningBalanceHandler.cs` (registered by scanning the Application assembly); what a handler writes is saved in the same transaction (platform P24, `BuildingBlocksDbContext.SaveChangesAsync` save rounds with the `OnSavingRound` hook).

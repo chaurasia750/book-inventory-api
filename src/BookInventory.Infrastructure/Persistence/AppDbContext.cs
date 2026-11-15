@@ -45,11 +45,8 @@ namespace BookInventory.Infrastructure.Persistence
             return base.SaveChanges(acceptAllChangesOnSuccess);
         }
 
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
-        {
-            PrepareSave();
-            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        }
+        /// <summary>P24: every save round (also the rounds that save what event handlers wrote) is stamped and audited.</summary>
+        protected override void OnSavingRound() => PrepareSave();
 
         /// <summary>The company is stamped first, so the audit entry of a new row already carries it (P21).</summary>
         private void PrepareSave()

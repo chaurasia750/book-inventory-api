@@ -132,6 +132,15 @@ public class School : CompanyOwnedRoot
         SessionType = details.SessionType;
         SaleType = details.SaleType;
         IsGstDefault = details.IsGstDefault;
-        OpeningBalanceAmount = SchoolRules.OpeningBalance(details.OpeningBalanceAmount);
+        SetOpeningBalance(SchoolRules.OpeningBalance(details.OpeningBalanceAmount));
+    }
+
+    /// <summary>R7, R17: a changed opening balance (a new school counts from zero) is told to the ledger through an event.</summary>
+    private void SetOpeningBalance(decimal amount)
+    {
+        var old = OpeningBalanceAmount;
+        OpeningBalanceAmount = amount;
+        if (old != amount)
+            AddDomainEvent(new SchoolOpeningBalanceChanged(Id, Code, old, amount));
     }
 }

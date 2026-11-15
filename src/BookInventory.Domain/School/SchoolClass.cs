@@ -26,6 +26,9 @@ public class SchoolClass : CompanyOwnedChild
 
     public int SortOrder { get; private set; }
 
+    /// <summary>R6, R16: the form a class name is compared in (trimmed, single spaces, lower case), or null for an empty text.</summary>
+    public static string? KeyOf(string? name) => SchoolRules.ClassKeyOf(name);
+
     internal static SchoolClass Of(Guid schoolId, string name, int sortOrder) =>
         new() { SchoolId = schoolId, Name = name, NameNormalized = SchoolRules.Normalize(name), SortOrder = sortOrder };
 

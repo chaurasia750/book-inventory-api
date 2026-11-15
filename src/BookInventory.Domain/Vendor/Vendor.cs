@@ -114,7 +114,16 @@ public class Vendor : CompanyOwnedRoot
         Gstin = VendorRules.Gstin(details.Gstin);
         State = VendorState.RequireOrNone(details.State);
         ApplyBank(VendorRules.Bank(details.Bank));
-        OpeningBalanceAmount = VendorRules.OpeningBalance(details.OpeningBalanceAmount);
+        SetOpeningBalance(VendorRules.OpeningBalance(details.OpeningBalanceAmount));
+    }
+
+    /// <summary>R6, R16: a changed opening balance (a new vendor counts from zero) is told to the ledger through an event.</summary>
+    private void SetOpeningBalance(decimal amount)
+    {
+        var old = OpeningBalanceAmount;
+        OpeningBalanceAmount = amount;
+        if (old != amount)
+            AddDomainEvent(new VendorOpeningBalanceChanged(Id, Code, old, amount));
     }
 
     private void ApplyBank(VendorBank? bank)

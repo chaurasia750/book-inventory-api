@@ -1,10 +1,10 @@
 # Spec: vendor - Vendor / publication master
 
 - **Module:** `vendor` (PostgreSQL schema `vendor`)
-- **Status:** R1-R14 Approved by abhishek in chat on 2026-11-14 ("approved hai kro implement"; Q1-Q10 answered with the recommended answers, D1-D4 with them); R15 and AC13 Approved by abhishek in chat on 2026-11-14 ("all approved hai kro implement", for the item master, D4 of the item spec)
-- **Last updated:** 2026-11-14 (R15, AC13 added for item#01)
+- **Status:** R1-R14 Approved by abhishek in chat on 2026-11-14 ("approved hai kro implement"; Q1-Q10 answered with the recommended answers, D1-D4 with them); R15 and AC13 Approved by abhishek in chat on 2026-11-14 ("all approved hai kro implement", for the item master, D4 of the item spec); R16 and AC14 Approved by abhishek on 2026-11-14 (for the finance spec, its decision D4)
+- **Last updated:** 2026-11-14 (R15, AC13 added for item#01; R16, AC14 for the ledger)
 - **Source docs:** [BRD §1.2, §3, §4.3 Vendor / Publication Master (FR-VEN-01 to FR-VEN-03), §5.4 BR-GST, §5.6 BR-LED, §7.1, §8 Data Model (Vendor)](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P22; [specs/company.md](company.md); [specs/school.md](school.md) (the neighbouring master it follows)
-- **Plans:** [vendor#03](../plans/vendor/2026-11-14-03-vendor-directory.md) (Done, R15, AC13), [vendor#01](../plans/vendor/2026-11-14-01-vendor-master.md) (Done), [vendor#02](../plans/vendor/2026-11-14-02-ui-vendor-screens.md) (In progress); the platform mechanism it needs: [platform#07](../plans/platform/2026-11-14-07-company-code-series.md) (Done)
+- **Plans:** [vendor#04](../plans/vendor/2026-11-14-04-opening-balance-event.md) (Done, R16, AC14), [vendor#03](../plans/vendor/2026-11-14-03-vendor-directory.md) (Done, R15, AC13), [vendor#01](../plans/vendor/2026-11-14-01-vendor-master.md) (Done), [vendor#02](../plans/vendor/2026-11-14-02-ui-vendor-screens.md) (In progress); the platform mechanism it needs: [platform#07](../plans/platform/2026-11-14-07-company-code-series.md) (Done)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -43,6 +43,9 @@ Out of scope for this feature: Excel import of vendors (FR-VEN-03, NFR-12: its o
 
 **Reading vendors from other modules**
 - **R15** Other modules (the item master first) read vendors only through the vendor module's **directory capability**, never by joining its tables: it tells whether a vendor exists in the session's company and is active, gives the names of a list of vendor ids, and gives the ids of the vendors whose name or code contains a text (at most 200). It answers only for the company of the session (platform P19), returns plain values and never the aggregate, and changes nothing. Proposed by the assistant on 2026-11-14 for the item spec (decision D4); Approved by abhishek on 2026-11-14.
+
+**Telling the ledger about the opening balance**
+- **R16** When a vendor is created with an opening balance above zero, or its opening balance is changed (R6), the vendor raises the event `VendorOpeningBalanceChanged` with the vendor's id, the old amount and the new amount. The ledger reacts to it ([specs/finance.md](finance.md) R6), so the vendor never writes the ledger. An edit that keeps the same amount raises nothing. Proposed by the assistant on 2026-11-14 for the finance spec (decision D4 there); Approved by abhishek on 2026-11-14.
 
 ## 4. Data
 
@@ -92,6 +95,7 @@ Raised by the `Vendor` aggregate (past tense, ids and values only): `VendorCreat
 - **AC11** Every create and change of a vendor appears in the audit trail with the actor and company A (R12).
 - **AC12** Mobile `+91 98765 00001`, `0 98765 00001` and `9876500001` are stored as `9876500001` (R3).
 - **AC13** The directory capability, called for the Owner of A, finds A's vendor (id, name, active) and returns nothing for B's vendor id; the names of two ids come back; a text search returns A's matching vendors only and at most 200 (R15).
+- **AC14** Creating a vendor with opening balance 2000.00 raises one `VendorOpeningBalanceChanged` (0 -> 2000.00); editing it to 2500.00 raises one (2000.00 -> 2500.00); an edit that keeps it and a vendor created with 0 raise none (R16).
 
 ## 10. Decisions
 
