@@ -1782,6 +1782,222 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                     b.ToTable("item_barcode", "item");
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Payment.Receipt", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ClientRequestId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("client_request_id");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("FinancialYear")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("financial_year");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("number");
+
+                    b.Property<DateOnly>("ReceiptDate")
+                        .HasColumnType("date")
+                        .HasColumnName("receipt_date");
+
+                    b.Property<string>("Remark")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("remark");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("school_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("total_amount");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id")
+                        .HasName("pk_receipt");
+
+                    b.HasIndex("CompanyId", "ClientRequestId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_receipt_company_id_client_request_id");
+
+                    b.HasIndex("CompanyId", "Number")
+                        .IsUnique()
+                        .HasDatabaseName("ix_receipt_company_id_number");
+
+                    b.HasIndex("CompanyId", "SchoolId", "ReceiptDate")
+                        .HasDatabaseName("ix_receipt_company_id_school_id_receipt_date");
+
+                    b.ToTable("receipt", "payment", t =>
+                        {
+                            t.HasCheckConstraint("ck_receipt_status", "\"status\" IN ('RECORDED', 'CANCELLED')");
+                        });
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Payment.ReceiptAllocation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("invoice_id");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("reason");
+
+                    b.Property<Guid>("ReceiptId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("receipt_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_receipt_allocation");
+
+                    b.HasIndex("InvoiceId")
+                        .HasDatabaseName("ix_receipt_allocation_invoice_id");
+
+                    b.HasIndex("ReceiptId")
+                        .HasDatabaseName("ix_receipt_allocation_receipt_id");
+
+                    b.ToTable("receipt_allocation", "payment", t =>
+                        {
+                            t.HasCheckConstraint("ck_receipt_allocation_reason", "\"reason\" IN ('ALLOCATED', 'BOUNCED', 'INVOICE_CANCELLED', 'RECEIPT_CANCELLED', 'ADJUSTED')");
+                        });
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Payment.ReceiptMode", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<string>("BankName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("bank_name");
+
+                    b.Property<string>("BounceReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("bounce_reason");
+
+                    b.Property<DateOnly?>("ChequeDate")
+                        .HasColumnType("date")
+                        .HasColumnName("cheque_date");
+
+                    b.Property<string>("ChequeNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("cheque_number");
+
+                    b.Property<string>("ChequeStatus")
+                        .HasColumnType("text")
+                        .HasColumnName("cheque_status");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("ModeType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("mode_type");
+
+                    b.Property<Guid>("ReceiptId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("receipt_id");
+
+                    b.Property<string>("Reference")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("reference");
+
+                    b.Property<DateOnly?>("ResultDate")
+                        .HasColumnType("date")
+                        .HasColumnName("result_date");
+
+                    b.HasKey("Id")
+                        .HasName("pk_receipt_mode");
+
+                    b.HasIndex("ReceiptId")
+                        .HasDatabaseName("ix_receipt_mode_receipt_id");
+
+                    b.ToTable("receipt_mode", "payment", t =>
+                        {
+                            t.HasCheckConstraint("ck_receipt_mode_cheque_status", "\"cheque_status\" IN ('PENDING', 'CLEARED', 'BOUNCED')");
+
+                            t.HasCheckConstraint("ck_receipt_mode_mode_type", "\"mode_type\" IN ('CASH', 'UPI', 'BANK_TRANSFER', 'CHEQUE')");
+                        });
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Planning.ClassBookList", b =>
                 {
                     b.Property<Guid>("Id")
@@ -3510,6 +3726,26 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_item_barcode_item_item_id");
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Payment.ReceiptAllocation", b =>
+                {
+                    b.HasOne("BookInventory.Domain.Payment.Receipt", null)
+                        .WithMany("Allocations")
+                        .HasForeignKey("ReceiptId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_receipt_allocation_receipt_receipt_id");
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Payment.ReceiptMode", b =>
+                {
+                    b.HasOne("BookInventory.Domain.Payment.Receipt", null)
+                        .WithMany("Modes")
+                        .HasForeignKey("ReceiptId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_receipt_mode_receipt_receipt_id");
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Planning.ClassBookListLine", b =>
                 {
                     b.HasOne("BookInventory.Domain.Planning.ClassBookList", null)
@@ -3578,6 +3814,13 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("BookInventory.Domain.Item.Item", b =>
                 {
                     b.Navigation("Barcodes");
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Payment.Receipt", b =>
+                {
+                    b.Navigation("Allocations");
+
+                    b.Navigation("Modes");
                 });
 
             modelBuilder.Entity("BookInventory.Domain.Planning.ClassBookList", b =>
