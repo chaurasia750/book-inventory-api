@@ -16,4 +16,8 @@ public static class CompanyMessages
     public const string AlreadyActive = "company.already_active";
     public const string AlreadyInactive = "company.already_inactive";
     public const string NotActive = "company.not_active";
+    public const string LogoInvalid = "company.logo_invalid";
+    public const string SignatureInvalid = "company.signature_invalid";
+    public const string ImageNotFound = "company.image_not_found";
+    public const string InvalidBank = "company.invalid_bank";
 }

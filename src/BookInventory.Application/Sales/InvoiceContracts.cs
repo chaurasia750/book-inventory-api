@@ -81,4 +81,13 @@ public sealed record InvoiceDetail
     public required InvoiceLayout Layout { get; init; }
 
     public required IReadOnlyList<InvoiceGroupView> Groups { get; init; }
+
+    /// <summary>R32: the GST summed by HSN and rate (empty when GST is off), the same rows the PDF prints.</summary>
+    public required IReadOnlyList<GstRateSummaryRow> GstSummary { get; init; }
+
+    /// <summary>R32: the grand total in words (Indian numbering).</summary>
+    public required string AmountInWords { get; init; }
 }
+
+/// <summary>R28, R33: an invoice with the company identity it kept when it was made; only the PDF is shown the bank account and terms.</summary>
+public sealed record PrintableInvoice(InvoiceDetail Detail, CompanyInvoiceSnapshot Company);

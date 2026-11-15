@@ -22,6 +22,9 @@ public interface ICompanyStore
     /// <summary>The company for reading: not tracked, with its timeline (the caller orders it).</summary>
     Task<CompanyRoot?> FindForReadAsync(Guid id, CancellationToken cancellationToken = default);
 
+    /// <summary>R17/R18: the bytes of one of a company's images, or <c>null</c> when the company or that image is absent; nothing tracked.</summary>
+    Task<CompanyImageFile?> FindImageAsync(Guid id, CompanyImageKind kind, CancellationToken cancellationToken = default);
+
     /// <summary>R3, R15: whether another company already holds this name or one that gives the same URL segment; <paramref name="excludingId"/> is the company being edited.</summary>
     Task<bool> IsNameTakenAsync(string name, Guid? excludingId, CancellationToken cancellationToken = default);
 

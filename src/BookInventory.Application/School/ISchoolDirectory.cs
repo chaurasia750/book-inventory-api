@@ -1,7 +1,7 @@
 namespace BookInventory.Application.School;
 
 /// <summary>R16: what another module may know about a school: its id, code, name and whether it can be chosen for a new document.</summary>
-public sealed record SchoolReference(Guid Id, string Code, string Name, bool IsActive, string? State = null, bool IsGstDefault = false, string? Gstin = null);
+public sealed record SchoolReference(Guid Id, string Code, string Name, bool IsActive, string? State = null, bool IsGstDefault = false, string? Gstin = null, string? Address = null);
 
 /// <summary>
 /// R16: the capability other modules (the ledger and the customer master) use to read schools, never by joining the school

@@ -98,3 +98,22 @@ public sealed record CurrentCompanyView(CurrentCompanyResponse? Company);
 
 /// <summary>R13: the answer of entering or leaving a company: the company now entered (null after leaving) and the access token that carries it.</summary>
 public sealed record SessionCompanyResponse(CurrentCompanyResponse? Company, string AccessToken, DateTime AccessTokenExpiresAt) : IAccessTokenResponse;
+
+/// <summary>R19/R20: the bank account and the invoice settings as the Owner sends them; an absent part keeps the current values.</summary>
+public sealed record SetCompanyInvoiceIdentityRequest(
+    CompanyBankDetails? Bank = null,
+    CompanyInvoiceSettings? Invoice = null)
+{
+    public CompanyInvoiceIdentityDetails ToDetails() =>
+        new(Bank ?? new CompanyBankDetails(), Invoice ?? new CompanyInvoiceSettings());
+}
+
+/// <summary>
+/// R20: the invoice identity of the session's company as the API answers it: a URL for each image (null when there is
+/// none), the one bank account and the invoice settings.
+/// </summary>
+public sealed record CompanyInvoiceIdentityResponse(
+    string? LogoUrl,
+    string? SignatureUrl,
+    CompanyBankDetails Bank,
+    CompanyInvoiceSettings Invoice);

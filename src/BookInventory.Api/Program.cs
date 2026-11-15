@@ -15,6 +15,7 @@ using BookInventory.Application.Iam.Registration;
 using BookInventory.Application.Core;
 using BookInventory.Infrastructure;
 using BookInventory.Infrastructure.Core.Configuration;
+using BookInventory.Infrastructure.Documents.Configuration;
 using BookInventory.Infrastructure.Iam;
 using BookInventory.Infrastructure.Iam.Configuration;
 using BookInventory.Infrastructure.Persistence.Configuration;
@@ -48,6 +49,8 @@ builder.Services.AddValidatedOptions<DatabaseMigrationOptions>(builder.Configura
 builder.Services.AddValidatedOptions<NotificationOptions>(builder.Configuration, NotificationOptions.SectionName);
 builder.Services.AddValidatedOptions<EmailOptions>(builder.Configuration, EmailOptions.SectionName);
 builder.Services.AddValidatedOptions<MasterLayoutOptions>(builder.Configuration, MasterLayoutOptions.SectionName);
+// P25: the headless Chromium used to render PDFs. BrowserPath empty means "find the installed Chrome, else Edge".
+builder.Services.AddValidatedOptions<DocumentsPdfOptions>(builder.Configuration, DocumentsPdfOptions.SectionName);
 builder.Services.AddSingleton(serviceProvider => serviceProvider.GetRequiredService<IOptions<NotificationOptions>>().Value
     .ToNotificationSettings(serviceProvider.GetRequiredService<IOptions<MasterLayoutOptions>>().Value));
 

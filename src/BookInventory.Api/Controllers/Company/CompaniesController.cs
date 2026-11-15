@@ -1,15 +1,19 @@
+using System.ComponentModel.DataAnnotations;
 using BookInventory.BuildingBlocks.Configuration.Controller;
 using BookInventory.Api.Auth;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using BookInventory.Application.Company;
+using CompanyRoot = BookInventory.Domain.Company.Company;
 
 namespace BookInventory.Api.Controllers.Company;
 
 /// <summary>
-/// R2-R10: the company endpoints. The controller only binds, calls one use case and answers. Everything but
+/// R2-R10, R17-R20: the company endpoints. The controller only binds, calls one use case and answers. Everything but
 /// <c>companies/current</c> is for the Super Admin only; <c>current</c> answers any authenticated caller with the
-/// company of its own session, never of a request field (R6, R10).
+/// company of its own session, never of a request field (R6, R10). The invoice identity (R17-R20) is set by the
+/// company's Owner or a Super Admin inside the company, and read by anyone with a company context.
 /// </summary>
 [Route("companies")]
 public sealed class CompaniesController(
@@ -17,8 +21,12 @@ public sealed class CompaniesController(
     CompanyLifecycleService lifecycle,
     CompanyQueryService queries,
     CompanyEntryService entry,
+    CompanyInvoiceIdentityService identity,
     SessionCookieWriter cookies) : ApiControllerBase
 {
+    private const string IdentityWriters = "OWNER,SUPER_ADMIN";
+    private const long ImageBodyLimit = CompanyRoot.ImageMaxBytes + (1024 * 1024);
+
     /// <summary>R3/R4: creates a company with its Owner; the Owner's user id and temporary password are shown once.</summary>
     [HttpPost, Authorize(Roles = "SUPER_ADMIN")]
     public async Task<IActionResult> Create([FromBody] CreateCompanyRequest request, CancellationToken cancellationToken)
@@ -84,4 +92,76 @@ public sealed class CompaniesController(
     [HttpGet("current")]
     public async Task<IActionResult> Current(CancellationToken cancellationToken) =>
         Ok(await queries.GetCurrentAsync(cancellationToken));
+
+    /// <summary>R20: the invoice identity of the session's company; empty values when nothing is set, <c>403</c> without a company context.</summary>
+    [HttpGet("current/invoice-identity")]
+    public async Task<IActionResult> CurrentInvoiceIdentity(CancellationToken cancellationToken) =>
+        Ok(await queries.GetInvoiceIdentityAsync(cancellationToken));
+
+    /// <summary>R19/R20: the Owner (or a Super Admin inside the company) sets the one bank account and the invoice settings.</summary>
+    [HttpPut("{id:guid}/invoice-identity"), Authorize(Roles = IdentityWriters)]
+    public async Task<IActionResult> SetInvoiceIdentity(Guid id, [FromBody] SetCompanyInvoiceIdentityRequest request, CancellationToken cancellationToken)
+    {
+        await identity.SetAsync(id, request, cancellationToken);
+        return Ok();
+    }
+
+    /// <summary>R17: uploads or replaces the logo; a PNG or JPEG up to 2 MB, else <c>400 company.logo_invalid</c>.</summary>
+    [HttpPost("{id:guid}/logo"), Authorize(Roles = IdentityWriters)]
+    [RequestSizeLimit(ImageBodyLimit), RequestFormLimits(MultipartBodyLengthLimit = ImageBodyLimit)]
+    public async Task<IActionResult> UploadLogo(Guid id, [Required] IFormFile file, CancellationToken cancellationToken)
+    {
+        await identity.SetLogoAsync(id, await ReadImageAsync(file, cancellationToken), cancellationToken);
+        return Ok();
+    }
+
+    /// <summary>R17: removes the logo.</summary>
+    [HttpDelete("{id:guid}/logo"), Authorize(Roles = IdentityWriters)]
+    public async Task<IActionResult> RemoveLogo(Guid id, CancellationToken cancellationToken)
+    {
+        await identity.RemoveLogoAsync(id, cancellationToken);
+        return NoContent();
+    }
+
+    /// <summary>R17: the logo bytes with the stored content type; <c>404</c> when there is none.</summary>
+    [HttpGet("{id:guid}/logo")]
+    public Task<IActionResult> Logo(Guid id, CancellationToken cancellationToken) =>
+        ImageAsync(id, CompanyImageKind.Logo, cancellationToken);
+
+    /// <summary>R18: uploads or replaces the signature; a PNG or JPEG up to 2 MB, else <c>400 company.signature_invalid</c>.</summary>
+    [HttpPost("{id:guid}/signature"), Authorize(Roles = IdentityWriters)]
+    [RequestSizeLimit(ImageBodyLimit), RequestFormLimits(MultipartBodyLengthLimit = ImageBodyLimit)]
+    public async Task<IActionResult> UploadSignature(Guid id, [Required] IFormFile file, CancellationToken cancellationToken)
+    {
+        await identity.SetSignatureAsync(id, await ReadImageAsync(file, cancellationToken), cancellationToken);
+        return Ok();
+    }
+
+    /// <summary>R18: removes the signature.</summary>
+    [HttpDelete("{id:guid}/signature"), Authorize(Roles = IdentityWriters)]
+    public async Task<IActionResult> RemoveSignature(Guid id, CancellationToken cancellationToken)
+    {
+        await identity.RemoveSignatureAsync(id, cancellationToken);
+        return NoContent();
+    }
+
+    /// <summary>R18: the signature bytes with the stored content type; <c>404</c> when there is none.</summary>
+    [HttpGet("{id:guid}/signature")]
+    public Task<IActionResult> Signature(Guid id, CancellationToken cancellationToken) =>
+        ImageAsync(id, CompanyImageKind.Signature, cancellationToken);
+
+    private async Task<IActionResult> ImageAsync(Guid id, CompanyImageKind kind, CancellationToken cancellationToken)
+    {
+        var image = await queries.GetImageAsync(id, kind, cancellationToken);
+        Response.Headers.CacheControl = "private, max-age=300";   // the image changes rarely; the browser may cache it briefly
+        return File(image.Content, image.ContentType);
+    }
+
+    private static async Task<byte[]> ReadImageAsync(IFormFile file, CancellationToken cancellationToken)
+    {
+        await using var source = file.OpenReadStream();
+        using var buffer = new MemoryStream();
+        await source.CopyToAsync(buffer, cancellationToken);
+        return buffer.ToArray();
+    }
 }

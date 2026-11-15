@@ -10,6 +10,7 @@
 		<PackageReference Include="ClosedXML" />
 		<!-- Parses the user agent into browser/OS/device (R22). The only package the application needs. -->
 		<PackageReference Include="MailKit" />
+		<PackageReference Include="PuppeteerSharp" />
 		<PackageReference Include="Scriban" />
 		<PackageReference Include="UAParser" />
 	</ItemGroup>

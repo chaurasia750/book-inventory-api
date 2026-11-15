@@ -17,6 +17,10 @@ public static class CompanyMessageCatalog
             [CompanyMessages.ReasonRequired] = "A reason of 5 to 500 characters is required.",
             [CompanyMessages.AlreadyActive] = "The company is already active.",
             [CompanyMessages.AlreadyInactive] = "The company is already inactive.",
-            [CompanyMessages.NotActive] = "The company is not active."
+            [CompanyMessages.NotActive] = "The company is not active.",
+            [CompanyMessages.InvalidBank] = "Give all five bank details (holder, bank, branch, account number, IFSC): an account number of 9 to 18 digits and a valid IFSC.",
+            [CompanyMessages.LogoInvalid] = "The logo must be a PNG or JPEG image up to 2 MB.",
+            [CompanyMessages.SignatureInvalid] = "The signature must be a PNG or JPEG image up to 2 MB.",
+            [CompanyMessages.ImageNotFound] = "The company has no such image."
         };
 }

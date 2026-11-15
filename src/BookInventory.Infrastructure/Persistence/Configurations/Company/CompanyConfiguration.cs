@@ -8,7 +8,8 @@ namespace BookInventory.Infrastructure.Persistence.Configurations.Company;
 
 /// <summary>
 /// <c>company.company</c>: the unique index on the normalised name is the real guard of R3 (two parallel creations
-/// cannot both pass the lookup); the status timeline of R8 is a child table.
+/// cannot both pass the lookup); the status timeline of R8 is a child table. The invoice identity of R17-R20 lives on the
+/// same row: the two images as <c>bytea</c>, the bank account, the invoice settings and <c>print_gstin</c> (default true).
 /// </summary>
 public sealed class CompanyConfiguration() : ModuleEntityConfiguration<CompanyRoot>("company")
 {
@@ -24,6 +25,20 @@ public sealed class CompanyConfiguration() : ModuleEntityConfiguration<CompanyRo
         builder.Property(c => c.State).HasMaxLength(100);
         builder.Property(c => c.Tagline).HasMaxLength(200);
         builder.Property(c => c.StatusReason).HasMaxLength(CompanyRoot.ReasonMaxLength);
+
+        builder.Property(c => c.Logo).HasColumnType("bytea");
+        builder.Property(c => c.LogoContentType).HasMaxLength(100);
+        builder.Property(c => c.Signature).HasColumnType("bytea");
+        builder.Property(c => c.SignatureContentType).HasMaxLength(100);
+        builder.Property(c => c.BankAccountHolder).HasMaxLength(CompanyRoot.BankAccountHolderMaxLength);
+        builder.Property(c => c.BankName).HasMaxLength(CompanyRoot.BankNameMaxLength);
+        builder.Property(c => c.BankAccountNumber).HasMaxLength(CompanyRoot.BankAccountNumberMaxLength);
+        builder.Property(c => c.BankIfsc).HasMaxLength(CompanyRoot.BankIfscMaxLength);
+        builder.Property(c => c.BankBranch).HasMaxLength(CompanyRoot.BankBranchMaxLength);
+        builder.Property(c => c.UpiId).HasMaxLength(CompanyRoot.UpiIdMaxLength);
+        builder.Property(c => c.InvoiceTerms).HasMaxLength(CompanyRoot.TermsMaxLength);
+        builder.Property(c => c.InvoiceFooter).HasMaxLength(CompanyRoot.FooterMaxLength);
+        builder.Property(c => c.PrintGstin).HasDefaultValue(true);
 
         builder.HasIndex(c => c.NameNormalized).IsUnique();
         builder.HasIndex(c => c.Status);

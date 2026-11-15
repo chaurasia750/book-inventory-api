@@ -29,4 +29,8 @@ namespace BookInventory.BuildingBlocks.Domain.Exceptions
 
     /// <summary>The caller is not authenticated or the credentials/token are not valid (HTTP 401).</summary>
     public class UnauthenticatedException(string code, string? message = null) : AppException(code, message);
+
+    /// <summary>The server could not complete the request through no fault of the caller, e.g. a document could not be rendered (HTTP 500).</summary>
+    public class ServerFailureException(string code, string? message = null, Exception? innerException = null)
+        : AppException(code, message, innerException);
 }

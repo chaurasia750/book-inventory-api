@@ -5,9 +5,9 @@ using BookInventory.Domain.Core;
 namespace BookInventory.Domain.Company;
 
 /// <summary>
-/// One business using the system (spec company R1-R14). The aggregate root that owns the master data (R3), the
-/// <c>ACTIVE</c>/<c>INACTIVE</c> status with its reason (R7) and the append-only status timeline (R8); every rule of those
-/// is enforced here, and nothing outside changes its properties.
+/// One business using the system (spec company R1-R20). The aggregate root that owns the master data (R3), the
+/// <c>ACTIVE</c>/<c>INACTIVE</c> status with its reason (R7), the append-only status timeline (R8) and the printed
+/// invoice identity (R17-R20); every rule of those is enforced here, and nothing outside changes its properties.
 /// <list type="bullet">
 /// <item><b>Name (R3).</b> Required, 2-150 characters, unique ignoring case and surrounding or repeated spaces: the
 /// normalised form is what the unique index holds.</item>
@@ -15,6 +15,8 @@ namespace BookInventory.Domain.Company;
 /// <see cref="OwnerUserId"/>; <c>iam</c> only checks that it is free.</item>
 /// <item><b>Status (R7).</b> Deactivating needs a reason of 5-500 characters; each change adds one timeline row. A
 /// company is never deleted.</item>
+/// <item><b>Invoice identity (R17-R20).</b> One logo, one signature (PNG or JPEG up to 2 MB, told apart by their bytes),
+/// one bank account and the invoice settings (terms, footer, whether the GSTIN prints).</item>
 /// </list>
 /// </summary>
 public class Company : AggregateRoot, IAuditCompanyScope
@@ -23,6 +25,17 @@ public class Company : AggregateRoot, IAuditCompanyScope
     public const int NameMaxLength = 150;
     public const int ReasonMinLength = 5;
     public const int ReasonMaxLength = 500;
+
+    /// <summary>R17/R18: the largest logo or signature image the company may store (2 MB).</summary>
+    public const int ImageMaxBytes = 2 * 1024 * 1024;
+    public const int TermsMaxLength = 4000;
+    public const int FooterMaxLength = 200;
+    public const int BankAccountHolderMaxLength = 150;
+    public const int BankNameMaxLength = 150;
+    public const int BankAccountNumberMaxLength = 50;
+    public const int BankIfscMaxLength = 11;
+    public const int BankBranchMaxLength = 150;
+    public const int UpiIdMaxLength = 100;
 
     private readonly List<CompanyStatusHistory> _statusHistory = [];
 
@@ -50,6 +63,39 @@ public class Company : AggregateRoot, IAuditCompanyScope
     public string? State { get; private set; }
 
     public string? Tagline { get; private set; }
+
+    /// <summary>R17: the logo printed in the header of every document; null when none. Never written to the audit trail.</summary>
+    [AuditSecret]
+    public byte[]? Logo { get; private set; }
+
+    public string? LogoContentType { get; private set; }
+
+    /// <summary>R18: the signature printed above the signatory line; null when none. Never written to the audit trail.</summary>
+    [AuditSecret]
+    public byte[]? Signature { get; private set; }
+
+    public string? SignatureContentType { get; private set; }
+
+    /// <summary>R19: the one bank account printed at the bottom of the company's documents.</summary>
+    public string? BankAccountHolder { get; private set; }
+
+    public string? BankName { get; private set; }
+
+    public string? BankAccountNumber { get; private set; }
+
+    public string? BankIfsc { get; private set; }
+
+    public string? BankBranch { get; private set; }
+
+    public string? UpiId { get; private set; }
+
+    /// <summary>R20: the terms and conditions printed on the company's documents.</summary>
+    public string? InvoiceTerms { get; private set; }
+
+    public string? InvoiceFooter { get; private set; }
+
+    /// <summary>R20: whether the GSTIN prints on the company's documents; true by default.</summary>
+    public bool PrintGstin { get; private set; } = true;
 
     public CompanyStatus Status { get; private set; }
 
@@ -91,6 +137,51 @@ public class Company : AggregateRoot, IAuditCompanyScope
 
     /// <summary>R3: changes the master data; the id and the status never change here.</summary>
     public void Edit(CompanyDetails details) => Apply(details);
+
+    /// <summary>R17: stores the logo after checking it is a PNG or JPEG up to 2 MB; replaces any current logo.</summary>
+    public void SetLogo(byte[]? content)
+    {
+        LogoContentType = CompanyImageRules.Require(content, CompanyMessages.LogoInvalid);
+        Logo = content;
+    }
+
+    /// <summary>R17: removes the logo; a company with no logo prints none and stays valid.</summary>
+    public void RemoveLogo()
+    {
+        Logo = null;
+        LogoContentType = null;
+    }
+
+    /// <summary>R18: stores the signature after checking it is a PNG or JPEG up to 2 MB; replaces any current signature.</summary>
+    public void SetSignature(byte[]? content)
+    {
+        SignatureContentType = CompanyImageRules.Require(content, CompanyMessages.SignatureInvalid);
+        Signature = content;
+    }
+
+    /// <summary>R18: removes the signature; the signatory line stays empty.</summary>
+    public void RemoveSignature()
+    {
+        Signature = null;
+        SignatureContentType = null;
+    }
+
+    /// <summary>R19/R20: sets the one bank account (checked by the shared <see cref="BankAccount"/> rule) and the invoice settings.</summary>
+    public void SetInvoiceIdentity(CompanyInvoiceIdentityDetails details)
+    {
+        var account = BankAccount.Validated(
+            new BankAccount(details.Bank.AccountHolder, details.Bank.BankName, details.Bank.Branch, details.Bank.AccountNumber, details.Bank.Ifsc),
+            CompanyMessages.InvalidBank);
+        BankAccountHolder = account?.AccountHolder;
+        BankName = account?.BankName;
+        BankAccountNumber = account?.AccountNumber;
+        BankIfsc = account?.Ifsc;
+        BankBranch = account?.Branch;
+        UpiId = CompanyRules.Optional(details.Bank.UpiId, UpiIdMaxLength);
+        InvoiceTerms = CompanyRules.Optional(details.Invoice.Terms, TermsMaxLength);
+        InvoiceFooter = CompanyRules.Optional(details.Invoice.Footer, FooterMaxLength);
+        PrintGstin = details.Invoice.PrintGstin;
+    }
 
     /// <summary>R7/R8: switches the company off. A reason is required; the timeline gets one row.</summary>
     public void Deactivate(string? reason, Guid actorId, DateTime utcNow)

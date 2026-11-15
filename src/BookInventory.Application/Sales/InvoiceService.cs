@@ -31,12 +31,13 @@ public sealed class InvoiceService(ISalesStore store, InvoicePostings postings, 
             : order.Lines.ToDictionary(l => l.Id, l => l.RemainingQuantity);
 
         var delivery = order.Deliver(quantities);
-        var (school, gstin, companyState) = await parties.OfAsync(order, cancellationToken);
+        var (school, gstin, companySnapshot) = await parties.OfAsync(order, cancellationToken);
         var financialYear = Domain.Finance.FinancialYear.Of(invoiceDate);
         var number = Invoice.NumberOf(financialYear, await codes.NextNumberAsync(Invoice.NumberSeries(financialYear), cancellationToken));
         var invoice = Invoice.Issue(new InvoiceIssue
         {
-            Number = number, InvoiceDate = invoiceDate, Today = today, Order = order, School = school, SchoolGstin = gstin, CompanyState = companyState, Delivery = delivery
+            Number = number, InvoiceDate = invoiceDate, Today = today, Order = order, School = school, SchoolGstin = gstin,
+            CompanyState = companySnapshot.State, CompanySnapshot = companySnapshot, Delivery = delivery
         });
         await store.AddAsync(invoice, cancellationToken);
 

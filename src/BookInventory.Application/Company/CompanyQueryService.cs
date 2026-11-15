@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using BookInventory.Application.Iam;
 using BookInventory.Application.Iam.Companies;
 using BookInventory.Domain.Company;
+using BookInventory.Domain.Core;
 using CompanyRoot = BookInventory.Domain.Company.Company;
 
 namespace BookInventory.Application.Company;
@@ -38,8 +39,47 @@ public sealed class CompanyQueryService(ICompanyStore store, IUserDirectory user
         return new CurrentCompanyView(new CurrentCompanyResponse(company.Id, company.Name, company.Slug, company.Status, company.State));
     }
 
+    /// <summary>R20: the invoice identity of the session's company; <c>403</c> when the caller has no company context.</summary>
+    public async Task<CompanyInvoiceIdentityResponse> GetInvoiceIdentityAsync(CancellationToken cancellationToken)
+    {
+        var company = await RequireCurrentAsync(cancellationToken);
+        return new CompanyInvoiceIdentityResponse(
+            company.Logo is null ? null : ImageUrl(company.Id, CompanyImageKind.Logo),
+            company.Signature is null ? null : ImageUrl(company.Id, CompanyImageKind.Signature),
+            new CompanyBankDetails(
+                company.BankAccountHolder, company.BankName, company.BankAccountNumber, company.BankIfsc,
+                company.BankBranch, company.UpiId),
+            new CompanyInvoiceSettings(company.InvoiceTerms, company.InvoiceFooter, company.PrintGstin));
+    }
+
+    /// <summary>
+    /// R17/R18: the bytes of the session company's logo or signature. <c>403</c> without a company context, <c>404</c>
+    /// for another company's id (R6) or a company that has no such image.
+    /// </summary>
+    public async Task<CompanyImageFile> GetImageAsync(Guid id, CompanyImageKind kind, CancellationToken cancellationToken)
+    {
+        if (currentCompany.CompanyId is not { } ownId)
+            throw new ForbiddenException(CoreMessages.CompanyRequired);
+        if (ownId != id)
+            throw new NotFoundException(CompanyMessages.NotFound);
+
+        return await store.FindImageAsync(id, kind, cancellationToken) ?? throw new NotFoundException(CompanyMessages.ImageNotFound);
+    }
+
+    private async Task<CompanyRoot> RequireCurrentAsync(CancellationToken cancellationToken)
+    {
+        if (currentCompany.CompanyId is not { } id)
+            throw new ForbiddenException(CoreMessages.CompanyRequired);
+
+        return await RequireAsync(id, cancellationToken);
+    }
+
     private async Task<CompanyRoot> RequireAsync(Guid id, CancellationToken cancellationToken) =>
         await store.FindForReadAsync(id, cancellationToken) ?? throw new NotFoundException(CompanyMessages.NotFound);
+
+    /// <summary>The path the image is served from; the same route the controller exposes (R17/R18).</summary>
+    private static string ImageUrl(Guid id, CompanyImageKind kind) =>
+        $"/api/v1/companies/{id}/{(kind == CompanyImageKind.Logo ? "logo" : "signature")}";
 
     private static CompanyDetailResponse ToDetail(CompanyRoot company, IReadOnlyList<UserSummary> accounts) =>
         new(

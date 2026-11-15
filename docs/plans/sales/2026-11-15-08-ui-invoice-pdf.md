@@ -19,7 +19,7 @@ Touches: `apps/member` (`pages/sales/invoices`: the invoice view — the rate-wi
 Leaves out: the PDF generation itself (sales#07); the make-invoice and cancel screens (sales#04).
 
 ## 3. Approach
-The invoice view drops any per-line GST column and shows one **rate-wise summary** table (HSN/rate, taxable value, CGST + SGST or IGST, tax total), the totals and the amount in words, matching the PDF exactly (R32, R33). **Download PDF** opens `GET invoices/{id}/pdf` (with the current layout); **Print** opens the PDF in a new tab for the browser's print dialog. A cancelled invoice still shows the actions and is marked `CANCELLED`. Every state shows loading, empty, error with retry and success.
+The invoice view drops any per-line GST column and shows one **rate-wise summary** table (HSN/rate, taxable value, CGST + SGST or IGST, tax total), the totals and the amount in words, matching the PDF exactly (R32, R33); with GST off the summary and the tax rows are not shown. **Download PDF** opens `GET invoices/{id}/pdf` (with the current layout); **Print** opens the PDF in a new tab for the browser's print dialog. A cancelled invoice still shows the actions and is marked `CANCELLED`. Every state shows loading, empty, error with retry and success.
 
 ## 4. Tasks (at most 8)
 - [ ] 1. Service and models: fetch the PDF (`GET invoices/{id}/pdf`) as a blob and open it.

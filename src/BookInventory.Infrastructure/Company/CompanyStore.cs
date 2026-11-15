@@ -33,6 +33,17 @@ public sealed class CompanyStore(IUnitOfWork unitOfWork) : ICompanyStore
     public Task<CompanyRoot?> FindForReadAsync(Guid id, CancellationToken cancellationToken = default) =>
         _companies.TableNoTracking.Include(c => c.StatusHistory).FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
 
+    public Task<CompanyImageFile?> FindImageAsync(Guid id, CompanyImageKind kind, CancellationToken cancellationToken = default) =>
+        kind == CompanyImageKind.Logo
+            ? _companies.TableNoTracking
+                .Where(c => c.Id == id && c.Logo != null && c.LogoContentType != null)
+                .Select(c => new CompanyImageFile(c.Logo!, c.LogoContentType!))
+                .FirstOrDefaultAsync(cancellationToken)
+            : _companies.TableNoTracking
+                .Where(c => c.Id == id && c.Signature != null && c.SignatureContentType != null)
+                .Select(c => new CompanyImageFile(c.Signature!, c.SignatureContentType!))
+                .FirstOrDefaultAsync(cancellationToken);
+
     public async Task<bool> IsNameTakenAsync(string name, Guid? excludingId, CancellationToken cancellationToken = default)
     {
         var slug = CompanyRoot.SlugOf(name);

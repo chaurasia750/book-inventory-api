@@ -7,9 +7,9 @@ using BookInventory.Application.Iam;
 using BookInventory.Application.Finance;
 using BookInventory.Application.Item;
 using BookInventory.Application.Planning;
+using BookInventory.Application.Platform;
 using BookInventory.Application.Price;
-using BookInventory.Application.Sales;
-using BookInventory.Application.Stock;
+using BookInventory.Application.Sales;using BookInventory.Application.Stock;
 using BookInventory.Application.School;
 using BookInventory.Application.Vendor;
 
@@ -34,6 +34,7 @@ namespace BookInventory.Application
             services.AddMessages(FinanceMessageCatalog.Messages); // finance message codes
             services.AddMessages(SalesMessageCatalog.Messages); // sales message codes
             services.AddMessages(PlanningMessageCatalog.Messages); // planning message codes
+            services.AddMessages(PlatformMessageCatalog.Messages); // platform (BuildingBlocks) message codes, e.g. document.render_failed
 
             return services;
         }

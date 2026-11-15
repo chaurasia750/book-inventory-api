@@ -39,9 +39,15 @@ public class Invoice : CompanyOwnedRoot
 
     public string? SchoolState { get; private set; }
 
+    /// <summary>R31: the school's address as it was when the invoice was made (the "Bill To" block).</summary>
+    public string? SchoolAddress { get; private set; }
+
     public string? SchoolGstin { get; private set; }
 
     public string? CompanyState { get; private set; }
+
+    /// <summary>R33, D7: the company's printed identity at the time of issue (bank account, terms, footer, name, address, GSTIN).</summary>
+    public CompanyInvoiceSnapshot CompanySnapshot { get; private set; } = CompanyInvoiceSnapshot.Empty;
 
     public string Session { get; private set; }
 
@@ -96,8 +102,10 @@ public class Invoice : CompanyOwnedRoot
             SchoolCode = issue.School.Code,
             SchoolName = issue.School.Name,
             SchoolState = issue.School.State,
+            SchoolAddress = issue.School.Address,
             SchoolGstin = issue.SchoolGstin,
             CompanyState = issue.CompanyState,
+            CompanySnapshot = issue.CompanySnapshot,
             Session = order.Session,
             IsGstApplied = order.IsGstApplied,
             GstMode = order.GstMode,
