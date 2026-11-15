@@ -4,11 +4,12 @@
 - **Kind:** UI (repository `book-inventory-ui`; build `npx nx run-many -t build`, lint `npx nx run-many -t lint`)
 - **Spec:** [../../specs/sales.md](../../specs/sales.md) - rules covered: R32, R33 (the screen side); AC24
 - **Owner:** abhishek
-- **Status:** Approved
+- **Status:** In progress (code done; waiting for the owner's look in the browser)
 - **Depends on:** `sales#07`, `sales#04`
 - **UI plan:** this is itself a UI plan
 - **Approved by / on:** abhishek / 2026-11-15 (the invoice PDF approval, Q15-Q20 with the recommended answers)
 - **Created:** 2026-11-15
+- **Base branch:** `main` of `book-inventory-ui` (branch `feature/invoice-pdf-ui`, shared by school#08, sales#10 and sales#08)
 - **Base branch:** `main` of `book-inventory-ui` (to be cut as `feature/sales-ui-08` when approved)
 
 ## 1. In one minute
@@ -22,10 +23,10 @@ Leaves out: the PDF generation itself (sales#07); the make-invoice and cancel sc
 The invoice view drops any per-line GST column and shows one **rate-wise summary** table (HSN/rate, taxable value, CGST + SGST or IGST, tax total), the totals and the amount in words, matching the PDF exactly (R32, R33); with GST off the summary and the tax rows are not shown. **Download PDF** opens `GET invoices/{id}/pdf` (with the current layout); **Print** opens the PDF in a new tab for the browser's print dialog. A cancelled invoice still shows the actions and is marked `CANCELLED`. Every state shows loading, empty, error with retry and success.
 
 ## 4. Tasks (at most 8)
-- [ ] 1. Service and models: fetch the PDF (`GET invoices/{id}/pdf`) as a blob and open it.
-- [ ] 2. Invoice view: replace the per-line GST with the rate-wise summary and add the amount in words (R32).
-- [ ] 3. Print and Download PDF actions; the layout follows the invoice's chosen layout (R33).
-- [ ] 4. Cancelled invoice keeps the actions and shows the `CANCELLED` mark.
+- [x] 1. Service and models: fetch the PDF (`GET invoices/{id}/pdf`) as a blob and open it.
+- [x] 2. Invoice view: replace the per-line GST with the rate-wise summary and add the amount in words (R32).
+- [x] 3. Print and Download PDF actions; the layout follows the invoice's chosen layout (R33).
+- [x] 4. Cancelled invoice keeps the actions and shows the `CANCELLED` mark.
 - [ ] 5. Build and lint; record what was seen.
 
 ## 5. Spec coverage
@@ -34,7 +35,9 @@ The invoice view drops any per-line GST column and shows one **rate-wise summary
 | `R32`, `R33`, `AC24` | 2, 3 | The invoice screen shows the same rate-wise GST summary, totals and amount in words as the PDF; Print and Download PDF produce the same document |
 
 ## 6. Not verified
-To be filled when the plan is closed (the owner's look in the browser, and that screen and PDF agree).
+Every row of section 5 is **NOT verified** in a browser: the owner opens an invoice with GST on (a rate-wise summary and the words, no per-line GST column), one with GST off (no summary), presses Download PDF (a file named like the invoice) and Print (the PDF opens in a new tab), switches Book list / By class and downloads again, and does the same on a cancelled invoice.
+
+Done and observed: `ApiService.getBlob` (a small addition to a shared file), `SalesService.invoicePdf`; the invoice screen lines show the item discount and the line amount (no GST columns), class groups show the sum of their line amounts, a rate-wise GST summary (CGST + SGST or IGST by the invoice's mode) and the amount in words under the lines, Print and Download PDF in the header (the layout on screen is the layout printed; an error shows under the totals). `npx nx run-many -t build` -> "Successfully ran target build for 3 projects"; `npx nx run member:lint` -> only the three known findings (`member-layout.ts`, `account-pages.ts`, `change-password.ts`).
 
 ## 7. Risks and notes
 Written without a browser.
