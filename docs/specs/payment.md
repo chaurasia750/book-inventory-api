@@ -1,7 +1,7 @@
 # Spec: payment - School payment receipts
 
 - **Module:** `payment` (PostgreSQL schema `payment`)
-- **Status:** R1-R20 and AC1-AC15 Draft, waiting for the owner's approval (Q1-Q4 answered by abhishek on 2026-11-15 with the recommended answers; Q5-Q6 open with a recommended answer already written into the rules)
+- **Status:** R1-R20 and AC1-AC15 Draft, waiting for the owner's approval (Q1-Q7 all answered by abhishek on 2026-11-15 with the recommended answers; no open question is left)
 - **Last updated:** 2026-11-15
 - **Source docs:** [BRD §4.14 Payment (A. School se Payment Receive, FR-PAY-01 to FR-PAY-08), §5.6 BR-LED-01 and BR-LED-05, §6 Documents (Payment Receipt, A5), §8 Data Model (PaymentReceipt, PaymentAllocation), §9 Q-08](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/finance.md](finance.md) (R2 accounts, R5 posting, R7 balance); [specs/sales.md](sales.md) (invoices); [specs/company.md](company.md) (D5, R19, R20)
 - **Plans:** [payment#01](../plans/payment/2026-11-15-01-receipt-core.md) (Draft), [payment#02](../plans/payment/2026-11-15-02-ui-receipt-core.md) (Draft, UI), [payment#03](../plans/payment/2026-11-15-03-cheque-status.md) (Draft), [payment#04](../plans/payment/2026-11-15-04-ui-cheque-status.md) (Draft, UI), [payment#05](../plans/payment/2026-11-15-05-advance-and-cancel.md) (Draft), [payment#06](../plans/payment/2026-11-15-06-ui-advance-and-cancel.md) (Draft, UI), [payment#07](../plans/payment/2026-11-15-07-payment-proof.md) (Draft), [payment#08](../plans/payment/2026-11-15-08-ui-payment-proof.md) (Draft, UI), [payment#09](../plans/payment/2026-11-15-09-receipt-pdf.md) (Draft), [payment#10](../plans/payment/2026-11-15-10-ui-receipt-pdf.md) (Draft, UI); depends on [sales#14](../plans/sales/2026-11-15-14-invoice-directory.md) (Draft)
@@ -125,12 +125,12 @@ Raised by the `Receipt` aggregate (past tense, ids and values only): `ReceiptRec
 
 ## 11. Open questions
 
-Answered by abhishek on 2026-11-15 with the recommended answers:
+Answered by abhishek on 2026-11-15, all with the recommended answers:
 - **Q1** Where does the payment live? Answered: a **new `payment` module** (D1); alternatives not chosen: inside `sales`, inside `finance`.
 - **Q2** What happens to an advance? Answered: it **stays on the receipt and is adjusted to invoices later** (R13); alternatives: visible only, or adjusted automatically on the next invoice.
 - **Q3** What does a bounced cheque do to the allocations? Answered: **advance first, then the newest allocation** (R11); alternative: remove all allocations of the receipt.
 - **Q4** What if an invoice with payments is cancelled? Answered: **its payments become advance** (R12); alternative: refuse the cancel until the receipt is cancelled.
 
-Open, with the recommended answer already written into the rules:
-- **Q5** May a deactivated school still pay its dues? Recommended: **yes** (R4); alternative: no.
-- **Q6** May a receipt be dated in the past? Recommended: **yes, never in the future** (R4); alternative: today only, or within a number of days.
+- **Q5** May a deactivated school still pay its dues? Answered: **yes** (R4); alternative not chosen: no.
+- **Q6** May a receipt be dated in the past? Answered: **yes, never in the future** (R4); alternatives not chosen: today only, or within a number of days.
+- **Q7** Who may take a school's payment? Answered: **only the Owner** (and an entered Super Admin), as company D5 says Staff only create orders and sell (R2); alternative not chosen: Staff may record a receipt and only the Owner sets cheque results, adjusts and cancels.
