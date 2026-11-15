@@ -116,3 +116,5 @@ Kinds: **NV** not verified · **GAP** known gap · **DEC** decision the owner ha
 | B106 | payment | NV | payment#06 not clicked through by a person: the by-hand adjust, the narrow screen, the school balance after an adjust or cancel, Staff without the actions | payment#06 | open |
 | B107 | payment | NV | payment#07 not exercised: uploads at the exact limits (5 MB, a long file name), memory use when many receipts with five 5 MB proofs are read, virus scanning of uploaded files (none) | payment#07 | open |
 | B108 | payment | NV | payment#08 not clicked through by a person: the real new tab of Open, a server-refused proof (text renamed to .png), a failed proof upload after the payment is recorded, Staff view, narrow screen | payment#08 | open |
+| B109 | payment | NV | payment#09 receipt PDF not seen with a filled company profile (address, contact, GSTIN, bank account, signature) and with enough allocations to need a second page | payment#09 | open |
+| B110 | payment | NV | payment#10 not clicked through by a person: the real print dialog and downloaded file, the renderer-failure text, Staff view, narrow screen | payment#10 | open |

@@ -1,0 +1,84 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  /* Spec payment R17: the A5 payment receipt: company header, receipt number and date, received from, modes, applied to, total in words, bank account, signature. */
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; font-size: 9.5px; line-height: 1.3; color: #141414; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-variant-numeric: tabular-nums; position: relative; }
+  .head { display: flex; gap: 8px; align-items: flex-start; border-bottom: 1.2px solid #1f1f1f; padding-bottom: 5px; }
+  .head img { width: 46px; height: 46px; object-fit: contain; }
+  .head .co { flex: 1; } .head .name { font-size: 15px; font-weight: 700; line-height: 1.1; } .muted { color: #4a4a4a; }
+  .title { text-align: center; margin: 8px 0 6px; font-size: 13px; font-weight: 700; letter-spacing: .14em; }
+  .meta { display: flex; justify-content: space-between; border: 1px solid #1f1f1f; padding: 4px 7px; margin-bottom: 6px; }
+  .caps { text-transform: uppercase; letter-spacing: .06em; font-size: 7.5px; color: #4a4a4a; font-weight: 600; }
+  .party { border: 1px solid #1f1f1f; padding: 4px 7px; margin-bottom: 6px; } .party .who { font-size: 11px; font-weight: 700; } .party p { margin: 0; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
+  th { background: #f1efe9; border-top: 1px solid #1f1f1f; border-bottom: 1px solid #1f1f1f; padding: 3px 4px; text-align: left; font-size: 7.5px; text-transform: uppercase; letter-spacing: .05em; }
+  td { padding: 2.5px 4px; border-bottom: 1px solid #d3d0c7; vertical-align: top; } .r { text-align: right; }
+  .total { display: flex; justify-content: space-between; background: #f1efe9; font-weight: 700; font-size: 11px; padding: 5px 7px; border: 1px solid #1f1f1f; }
+  .words { border: 1px solid #1f1f1f; border-top: 0; padding: 4px 7px; margin-bottom: 6px; } .words b { font-size: 9.5px; }
+  .foot { display: flex; gap: 10px; margin-top: 8px; border-top: 1px solid #1f1f1f; padding-top: 6px; break-inside: avoid; }
+  .foot .bank { flex: 1; } .foot .sign { width: 130px; text-align: center; } .foot .sign img { max-width: 120px; max-height: 44px; object-fit: contain; }
+  .foot .sign .line { border-top: 1px solid #1f1f1f; margin-top: 2px; padding-top: 2px; font-size: 8px; }
+  .remark { margin: 0 0 6px; }
+  .note { font-size: 8px; color: #4a4a4a; }
+  .stamp { position: absolute; top: 38%; left: 8%; width: 84%; text-align: center; transform: rotate(-24deg); font-size: 58px; font-weight: 800; letter-spacing: .12em; color: rgba(190, 30, 30, .22); border: 5px solid rgba(190, 30, 30, .22); padding: 6px 0; pointer-events: none; }
+</style></head>
+<body>
+{{ if cancelled }}<div class="stamp">CANCELLED</div>{{ end }}
+<div class="head">
+  {{ if company.logo }}<img src="{{ company.logo }}" alt="">{{ end }}
+  <div class="co">
+    <div class="name">{{ company.name }}</div>
+    {{ if company.tagline }}<div class="muted">{{ company.tagline }}</div>{{ end }}
+    {{ if company.address }}<div>{{ company.address }}</div>{{ end }}
+    {{ if company.contact }}<div>{{ company.contact }}</div>{{ end }}
+    {{ if company.gstin }}<div>GSTIN <b>{{ company.gstin }}</b></div>{{ end }}
+  </div>
+</div>
+<div class="title">PAYMENT RECEIPT</div>
+<div class="meta">
+  <div><span class="caps">Receipt no.</span><br><b>{{ receipt.number }}</b></div>
+  <div style="text-align:right;"><span class="caps">Date</span><br><b>{{ receipt.date }}</b></div>
+</div>
+<div class="party">
+  <span class="caps">Received from</span>
+  <p class="who">{{ school.name }}</p>
+  <p class="muted">{{ school.code }}{{ if school.address }} · {{ school.address }}{{ end }}</p>
+</div>
+<table>
+  <thead><tr><th>Mode</th><th>Reference</th><th class="r" style="width:80px">Amount</th></tr></thead>
+  <tbody>
+  {{ for m in modes }}
+    <tr><td>{{ m.mode }}</td><td>{{ m.reference }}</td><td class="r">{{ m.amount }}</td></tr>
+  {{ end }}
+  </tbody>
+</table>
+<div class="total"><span>Total received</span><span>₹ {{ receipt.total }}</span></div>
+<div class="words"><span class="caps">Amount in words</span><br><b>{{ words }}</b></div>
+{{ if has_allocations || advance }}
+<table>
+  <thead><tr><th>Applied to invoice</th><th class="r" style="width:80px">Amount</th></tr></thead>
+  <tbody>
+  {{ for a in allocations }}
+    <tr><td>{{ a.invoice }}</td><td class="r">{{ a.amount }}</td></tr>
+  {{ end }}
+  {{ if advance }}<tr><td>Advance (not applied to an invoice)</td><td class="r">{{ advance }}</td></tr>{{ end }}
+  </tbody>
+</table>
+{{ end }}
+{{ if receipt.remark }}<p class="remark"><span class="caps">Remark</span> {{ receipt.remark }}</p>{{ end }}
+{{ if has_pending_cheque }}<p class="note">Cheque payments are subject to realisation.</p>{{ end }}
+{{ if cancelled }}<p class="note"><b>Cancelled</b>{{ if cancel_note }}: {{ cancel_note }}{{ end }}</p>{{ end }}
+<div class="foot">
+  <div class="bank">
+    {{ if bank.size > 0 }}<span class="caps">Bank account</span>
+      {{ for b in bank }}<div>{{ b.label }}: <b>{{ b.value }}</b></div>{{ end }}
+    {{ end }}
+    {{ if footer_line }}<div class="note" style="margin-top:4px;">{{ footer_line }}</div>{{ end }}
+  </div>
+  <div class="sign">
+    {{ if signature }}<img src="{{ signature }}" alt="">{{ end }}
+    <div class="line">Authorised signatory</div>
+  </div>
+</div>
+</body></html>
