@@ -10,7 +10,7 @@ namespace BookInventory.Domain.Core;
 public class CompanyCodeSeries : CompanyOwnedRoot
 {
     public const int MinDigits = 4;
-    public const int PrefixMaxLength = 10;
+    public const int PrefixMaxLength = 20;
 
     private CompanyCodeSeries()
     {
@@ -24,15 +24,14 @@ public class CompanyCodeSeries : CompanyOwnedRoot
     public static CompanyCodeSeries Start(string prefix)
     {
         if (string.IsNullOrWhiteSpace(prefix) || prefix.Length > PrefixMaxLength)
-            throw new ArgumentException("A code prefix is 1-10 characters.", nameof(prefix));
+            throw new ArgumentException("A code prefix is 1-20 characters.", nameof(prefix));
 
         return new CompanyCodeSeries { Prefix = prefix.Trim().ToUpperInvariant() };
     }
 
     /// <summary>The next code: the prefix, a hyphen and the number with at least four digits (more when needed).</summary>
-    public string Next()
-    {
-        LastNumber++;
-        return $"{Prefix}-{LastNumber.ToString(new string('0', MinDigits))}";
-    }
+    public string Next() => $"{Prefix}-{NextNumber().ToString(new string('0', MinDigits))}";
+
+    /// <summary>P23: the next number of this series; a document module formats it itself (<c>ORD/2026-27/0001</c>).</summary>
+    public int NextNumber() => ++LastNumber;
 }

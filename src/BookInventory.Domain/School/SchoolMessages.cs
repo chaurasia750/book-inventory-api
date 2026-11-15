@@ -18,4 +18,5 @@ public static class SchoolMessages
     public const string DuplicateClass = "school.duplicate_class";
     public const string AlreadyActive = "school.already_active";
     public const string AlreadyInactive = "school.already_inactive";
+    public const string InvalidCutOff = "school.invalid_cut_off";
 }
