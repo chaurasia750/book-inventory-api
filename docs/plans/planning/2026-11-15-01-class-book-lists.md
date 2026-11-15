@@ -22,12 +22,12 @@ Leaves out: the requirement report and vendor order drafts (later planning featu
 One aggregate per school, session and class, created by the first PUT and replaced as a whole (lines and estimate). Classes come from the school directory (school R16 gains the class names) and the session from school R18 labels. Copy reads the source lists and creates the missing targets. The difference is computed per class against the previous session label (school R18).
 
 ## 4. Tasks (at most 8)
-- [ ] 1. Domain: `ClassBookList` with lines, limits and the one-line-per-item rule (R2, R3, R5, R9).
-- [ ] 2. Persistence and migration; show the SQL and target before applying.
-- [ ] 3. Use cases: save one class, delete, copy from a session or school (R4, R6).
-- [ ] 4. Query: a school's session lists with the difference to the previous session (R7); capability `IClassBookLists` for sales.
-- [ ] 5. Controller, catalogue; build at 0 warnings.
-- [ ] 6. Verify every row of section 5 on the real local database and record the result.
+- [x] 1. Domain: `ClassBookList` with lines, limits and the one-line-per-item rule (R2, R3, R5, R9).
+- [x] 2. Persistence and migration; show the SQL and target before applying.
+- [x] 3. Use cases: save one class, delete, copy from a session or school (R4, R6).
+- [x] 4. Query: a school's session lists with the difference to the previous session (R7); capability `IClassBookLists` for sales.
+- [x] 5. Controller, catalogue; build at 0 warnings.
+- [x] 6. Verify every row of section 5 on the real local database and record the result.
 
 ## 5. Spec coverage
 | Rule / AC | Task | Verification (input -> observed output) |
