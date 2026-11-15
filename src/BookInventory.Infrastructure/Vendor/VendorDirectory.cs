@@ -40,6 +40,19 @@ public sealed class VendorDirectory(IUnitOfWork unitOfWork) : IVendorDirectory
             .ToDictionaryAsync(v => v.Id, v => v.Name, cancellationToken);
     }
 
+    public async Task<IReadOnlyDictionary<string, VendorReference>> FindByNamesAsync(IReadOnlyCollection<string> names, CancellationToken cancellationToken = default)
+    {
+        var keys = names.Select(VendorRoot.NormalizeName).Where(n => n.Length > 0).Distinct().ToList();
+        if (keys.Count == 0)
+            return new Dictionary<string, VendorReference>();
+
+        var found = await _vendors.TableNoTracking
+            .Where(v => keys.Contains(v.NameNormalized))
+            .Select(v => new { v.NameNormalized, Reference = new VendorReference(v.Id, v.Code, v.Name, v.Status == Domain.Vendor.VendorStatus.Active) })
+            .ToListAsync(cancellationToken);
+        return found.GroupBy(v => v.NameNormalized).ToDictionary(g => g.Key, g => g.First().Reference);
+    }
+
     public async Task<IReadOnlyList<Guid>> IdsMatchingAsync(string text, CancellationToken cancellationToken = default)
     {
         var search = text.Trim().ToLowerInvariant();

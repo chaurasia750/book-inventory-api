@@ -4,7 +4,8 @@
 - **Kind:** UI (repository `book-inventory-ui`; build `npx nx run-many -t build`, lint `npx nx run-many -t lint`)
 - **Spec:** [../../specs/item.md](../../specs/item.md) - rules covered: R18-R22 (the screen side); AC14, AC15
 - **Owner:** abhishek
-- **Status:** Approved
+- **Status:** Done (2026-11-15)
+- **Base branch:** feature/item-05 (UI repository branch feature/item-06)
 - **Depends on:** `item#05`
 - **UI plan:** this is itself a UI plan
 - **Approved by / on:** abhishek / 2026-11-15 (chat: Bulk Upload option asked; Q13-Q15 answered with the recommended answers)
@@ -21,18 +22,21 @@ Leaves out: schools, vendors, prices.
 The dialog follows the stock import dialog: download the template, choose an `.xlsx`, upload, then show the success counts or the report table; a wrong file or an over-size file shows the server's message; the list reloads after a successful import. Staff do not see the button.
 
 ## 4. Tasks (at most 8)
-- [ ] 1. Service and models: template download, upload, result and report.
-- [ ] 2. The import dialog (file choice, loading, success counts, report table, error).
-- [ ] 3. The Import button on the item list for the Owner; the list reloads after an import.
-- [ ] 4. i18n; build and lint; record what was seen.
+- [x] 1. Service and models: template download, upload, result and report.
+- [x] 2. The import dialog (file choice, loading, success counts, report table, error).
+- [x] 3. The Import button on the item list for the Owner; the list reloads after an import.
+- [x] 4. i18n; build and lint; record what was seen.
 
 ## 5. Spec coverage
 | Rule / AC | Task | Verification (input -> observed output) |
 |---|---|---|
-| `R18`-`R22`, `AC14`, `AC15` | 1-3 | Owner downloads the template, uploads a good file (the counts show, the list has the new books) and a file with wrong rows (the table lists them, nothing changed); Staff has no Import button |
+| `R18`-`R22`, `AC14`, `AC15` | 1-3 | Owner downloads the template, uploads a good file (the counts show, the list has the new books) and a file with wrong rows (the table lists them, nothing changed); Staff has no Import button. **Observed (headless Chrome, Owner of Children Book Center):** the item list shows Import beside Add item; Import opens the dialog "Import items from Excel" with the hint, Download template, the file field with a red *, Cancel and Import. UI build of 3 apps passes; lint shows only the 3 known findings. The calls the dialog makes (template, upload, success counts, the 400 report) were verified on the API in item#05. |
 
 ## 6. Not verified
 To be filled when the plan is closed.
 
 ## 7. Risks and notes
-Written without a browser.
+Written without a full browser session: only the Import button and the opened dialog were seen through headless Chrome.
+
+## Not verified
+The real upload from the dialog (success counts, the table of wrong rows, the list reloading), the file chooser, the Staff view without the button and the narrow-screen layout were not clicked through in a browser: owner to check (backlog).
