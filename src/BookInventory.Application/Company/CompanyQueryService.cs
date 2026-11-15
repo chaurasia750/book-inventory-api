@@ -39,6 +39,13 @@ public sealed class CompanyQueryService(ICompanyStore store, IUserDirectory user
         return new CurrentCompanyView(new CurrentCompanyResponse(company.Id, company.Name, company.Slug, company.Status, company.State));
     }
 
+    /// <summary>R21: the master data of the session's company; <c>403</c> when the caller has no company context.</summary>
+    public async Task<CompanyProfileResponse> GetProfileAsync(CancellationToken cancellationToken)
+    {
+        var c = await RequireCurrentAsync(cancellationToken);
+        return new CompanyProfileResponse(c.Name, c.State, c.Address, c.Mobile, c.Email, c.Gstin, c.Pan, c.Tagline);
+    }
+
     /// <summary>R20: the invoice identity of the session's company; <c>403</c> when the caller has no company context.</summary>
     public async Task<CompanyInvoiceIdentityResponse> GetInvoiceIdentityAsync(CancellationToken cancellationToken)
     {

@@ -99,6 +99,21 @@ public sealed record CurrentCompanyView(CurrentCompanyResponse? Company);
 /// <summary>R13: the answer of entering or leaving a company: the company now entered (null after leaving) and the access token that carries it.</summary>
 public sealed record SessionCompanyResponse(CurrentCompanyResponse? Company, string AccessToken, DateTime AccessTokenExpiresAt) : IAccessTokenResponse;
 
+/// <summary>R21: the values an Owner may change of their company; the name and the state are not part of it.</summary>
+public sealed record EditCompanyProfileRequest(
+    [param: StringLength(500)] string? Address = null,
+    [param: StringLength(20)] string? Mobile = null,
+    [param: StringLength(254)] string? Email = null,
+    [param: StringLength(15)] string? Gstin = null,
+    [param: StringLength(10)] string? Pan = null,
+    [param: StringLength(200)] string? Tagline = null)
+{
+    public CompanyProfileDetails ToDetails() => new(Address, Mobile, Email, Gstin, Pan, Tagline);
+}
+
+/// <summary>R21: the session company's master data as the profile screen shows it (the name and the state are read-only there).</summary>
+public sealed record CompanyProfileResponse(string Name, string? State, string? Address, string? Mobile, string? Email, string? Gstin, string? Pan, string? Tagline);
+
 /// <summary>R19/R20: the bank account and the invoice settings as the Owner sends them; an absent part keeps the current values.</summary>
 public sealed record SetCompanyInvoiceIdentityRequest(
     CompanyBankDetails? Bank = null,

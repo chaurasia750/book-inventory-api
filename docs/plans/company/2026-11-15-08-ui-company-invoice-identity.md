@@ -2,17 +2,17 @@
 
 - **File:** `docs/plans/company/2026-11-15-08-ui-company-invoice-identity.md`
 - **Kind:** UI (repository `book-inventory-ui`; build `npx nx run-many -t build`, lint `npx nx run-many -t lint`)
-- **Spec:** [../../specs/company.md](../../specs/company.md) - rules covered: R17-R20 (the screen side); AC18-AC20
+- **Spec:** [../../specs/company.md](../../specs/company.md) - rules covered: R17-R21 (the screen side); AC18-AC20, AC22
 - **Owner:** abhishek
 - **Status:** Approved
-- **Depends on:** `company#07`
+- **Depends on:** `company#07`, `company#10`
 - **UI plan:** this is itself a UI plan
 - **Approved by / on:** abhishek / 2026-11-15 (the invoice PDF approval, Q17-Q18 with the recommended answers)
 - **Created:** 2026-11-15
 - **Base branch:** `main` of `book-inventory-ui` (to be cut as `feature/company-ui-08` when approved)
 
 ## 1. In one minute
-After this plan the Owner sees a **Company profile** screen: upload, replace or remove the **logo** and the **signature image** with a preview, fill the one **bank account** (account holder, bank, account number, IFSC, branch, UPI id) and the **invoice settings** (terms and conditions, footer, print GSTIN). A Super Admin inside an entered company sees the same screen. Open it from the company menu.
+After this plan the Owner sees a **Company profile** screen: the company's **address, mobile, email, GSTIN, PAN and tagline** to edit (the name and the state shown, not editable), upload, replace or remove the **logo** and the **signature image** with a preview, fill the one **bank account** (account holder, bank, account number, IFSC, branch, UPI id) and the **invoice settings** (terms and conditions, footer, print GSTIN). A Super Admin inside an entered company sees the same screen. Open it from the company menu.
 
 ## 2. Touches / leaves out
 Touches: `apps/member` (`pages/company/profile`: the screen, the two image pickers with preview and remove, the bank form, the settings form), the service, models and i18n.
@@ -24,7 +24,7 @@ Following the existing member screens and the owner's document pattern: one page
 ## 4. Tasks (at most 8)
 - [ ] 1. Service and models for the identity, the logo and the signature (company#07 endpoints).
 - [ ] 2. Company profile screen: the logo and the signature (upload, replace, remove, preview).
-- [ ] 3. Bank account and invoice settings forms with save and validation.
+- [ ] 3. The profile form (address, mobile, email, GSTIN, PAN, tagline), the bank account form and the invoice settings form, each with save and validation.
 - [ ] 4. Menu entry and roles: the screen for the Owner (and an entered Super Admin); hidden for Staff.
 - [ ] 5. Build and lint; record what was seen.
 
@@ -32,6 +32,7 @@ Following the existing member screens and the owner's document pattern: one page
 | Rule / AC | Task | Verification (input -> observed output) |
 |---|---|---|
 | `R17`, `R18`, `AC18` | 2 | Owner uploads a logo, sees the preview, replaces and removes it; a `.txt` shows the invalid-type error |
+| `R21`, `AC22` | 1, 3 | Owner edits the address, GSTIN and tagline and sees them on reopening; the name and the state are shown read-only; an invalid email shows the server's message |
 | `R19`, `R20`, `AC19`, `AC20` | 1, 3, 4 | Owner saves the bank account and settings and sees them on reopening; a company with nothing set shows empty fields; a Staff login does not see the screen |
 
 ## 6. Not verified

@@ -138,6 +138,10 @@ public class Company : AggregateRoot, IAuditCompanyScope
     /// <summary>R3: changes the master data; the id and the status never change here.</summary>
     public void Edit(CompanyDetails details) => Apply(details);
 
+    /// <summary>R21: the Owner's edit: the address, contact, GSTIN, PAN and tagline go through the same rules as the master data; the name and the state stay.</summary>
+    public void EditProfile(CompanyProfileDetails profile) =>
+        Apply(new CompanyDetails(Name, profile.Address, profile.Mobile, profile.Email, profile.Gstin, profile.Pan, State, profile.Tagline));
+
     /// <summary>R17: stores the logo after checking it is a PNG or JPEG up to 2 MB; replaces any current logo.</summary>
     public void SetLogo(byte[]? content)
     {
