@@ -70,7 +70,7 @@ public sealed class SchoolOrderService(
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
         companyGuard.Require();
-        var order = await FindAsync(id, cancellationToken);
+        var order = await store.FindOrderForRemovalAsync(id, cancellationToken) ?? throw new NotFoundException(SalesMessages.OrderNotFound);
         order.RequireDraft();
         store.Remove(order);
     }

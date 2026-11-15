@@ -54,6 +54,9 @@ public sealed class SalesStore(IUnitOfWork unitOfWork) : ISalesStore
     public Task<SchoolOrder?> FindOrderForManagementAsync(Guid id, CancellationToken cancellationToken = default) =>
         _orders.Table.Include(o => o.Lines).FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
 
+    public Task<SchoolOrder?> FindOrderForRemovalAsync(Guid id, CancellationToken cancellationToken = default) =>
+        _orders.Table.FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
+
     public Task<SchoolOrder?> FindOrderForReadAsync(Guid id, CancellationToken cancellationToken = default) =>
         _orders.TableNoTracking.Include(o => o.Lines).FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
 
