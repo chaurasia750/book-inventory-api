@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using BookInventory.BuildingBlocks.Domain.Exceptions;
 using BookInventory.Domain.Iam;
+using BookInventory.Domain.Core;
 
 namespace BookInventory.Domain.School;
 
@@ -26,21 +27,12 @@ internal static partial class SchoolRules
         return trimmed.Length <= maxLength ? trimmed : throw new ValidationFailureException(SchoolMessages.InvalidField);
     }
 
-    public static string? Mobile(string? value)
-    {
-        var normalized = IdentityNormalizer.NormalizeMobile(value);
-        if (normalized is null)
-            return null;
-        return IdentityNormalizer.IsValidMobile(normalized) ? normalized : throw new ValidationFailureException(SchoolMessages.InvalidMobile);
-    }
+    public static string? Mobile(string? value) => ContactRules.Mobile(value, SchoolMessages.InvalidMobile);
 
-    public static string? Email(string? value)
-    {
-        var normalized = IdentityNormalizer.NormalizeEmail(value);
-        if (normalized is null)
-            return null;
-        return IdentityNormalizer.IsValidEmail(normalized) ? normalized : throw new ValidationFailureException(SchoolMessages.InvalidEmail);
-    }
+    public static string? Email(string? value) => ContactRules.Email(value, SchoolMessages.InvalidEmail);
+
+    /// <summary>R21: 15 characters in the GST shape, stored in upper case; empty is none.</summary>
+    public static string? Gstin(string? value) => ContactRules.Gstin(value, SchoolMessages.InvalidGstin);
 
     /// <summary>R7: zero or more, two decimals (an amount with more decimals is refused, never rounded silently).</summary>
     public static decimal OpeningBalance(decimal amount)

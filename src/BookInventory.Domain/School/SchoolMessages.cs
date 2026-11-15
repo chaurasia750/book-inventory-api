@@ -13,6 +13,7 @@ public static class SchoolMessages
     public const string InvalidState = "school.invalid_state";
     public const string InvalidMobile = "school.invalid_mobile";
     public const string InvalidEmail = "school.invalid_email";
+    public const string InvalidGstin = "school.invalid_gstin";
     public const string InvalidOpeningBalance = "school.invalid_opening_balance";
     public const string InvalidClassName = "school.invalid_class_name";
     public const string DuplicateClass = "school.duplicate_class";

@@ -130,7 +130,7 @@ public class School : CompanyOwnedRoot
         ContactPerson = SchoolRules.Optional(details.ContactPerson, 200);
         Mobile = SchoolRules.Mobile(details.Mobile);
         Email = SchoolRules.Email(details.Email);
-        Gstin = SchoolRules.Optional(details.Gstin, 15)?.ToUpperInvariant();
+        Gstin = SchoolRules.Gstin(details.Gstin);
         State = IndianState.Require(details.State);
         SessionType = details.SessionType;
         SaleType = details.SaleType;

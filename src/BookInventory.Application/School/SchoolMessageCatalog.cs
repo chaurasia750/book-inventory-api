@@ -15,6 +15,7 @@ public static class SchoolMessageCatalog
             [SchoolMessages.InvalidState] = "The state is not one of the states the business works in.",
             [SchoolMessages.InvalidMobile] = "The mobile number must have 10 to 15 digits.",
             [SchoolMessages.InvalidEmail] = "The email address is not valid.",
+            [SchoolMessages.InvalidGstin] = "The GSTIN must be 15 characters in the GST format.",
             [SchoolMessages.InvalidOpeningBalance] = "The opening balance must be zero or more, with at most two decimals.",
             [SchoolMessages.InvalidClassName] = "A class name must be 1 to 50 characters.",
             [SchoolMessages.DuplicateClass] = "A class name appears twice in the list.",

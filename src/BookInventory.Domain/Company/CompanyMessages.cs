@@ -20,4 +20,8 @@ public static class CompanyMessages
     public const string SignatureInvalid = "company.signature_invalid";
     public const string ImageNotFound = "company.image_not_found";
     public const string InvalidBank = "company.invalid_bank";
+    public const string InvalidMobile = "company.invalid_mobile";
+    public const string InvalidEmail = "company.invalid_email";
+    public const string InvalidGstin = "company.invalid_gstin";
+    public const string InvalidPan = "company.invalid_pan";
 }
