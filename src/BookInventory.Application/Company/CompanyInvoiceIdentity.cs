@@ -19,6 +19,9 @@ public sealed class CompanyInvoiceIdentity(ICompanyStore store, ICurrentCompany 
         return company is null ? null : ToIdentity(company);
     }
 
+    public async Task<bool> UsesItemDiscountAsync(CancellationToken cancellationToken = default) =>
+        (await CurrentAsync(cancellationToken))?.Invoice.UsesItemDiscount ?? false;
+
     private static CompanyPrintedIdentity ToIdentity(CompanyRoot company) =>
         new(
             company.Name, company.Address, company.Mobile, company.Email, company.Gstin, company.State,

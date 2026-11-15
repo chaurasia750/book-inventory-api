@@ -28,4 +28,7 @@ public interface ICompanyInvoiceIdentity
 {
     /// <summary>The session company's printed identity, or <c>null</c> when the session has no company.</summary>
     Task<CompanyPrintedIdentity?> CurrentAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>R23: whether the session company uses a discount on each line; <c>false</c> when it never set it or the session has no company.</summary>
+    Task<bool> UsesItemDiscountAsync(CancellationToken cancellationToken = default);
 }

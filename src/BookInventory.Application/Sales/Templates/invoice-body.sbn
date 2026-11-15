@@ -64,15 +64,15 @@
   <thead><tr>
     <th class="c" style="width:22px">#</th><th>Item</th><th style="width:58px">Code</th><th style="width:38px">HSN</th>
     <th class="r" style="width:54px">MRP</th><th class="r" style="width:54px">Rate</th><th class="r" style="width:34px">Qty</th>
-    <th class="r" style="width:54px">Discount</th><th class="r" style="width:68px">Amount</th>
+    {{ if show_discount }}<th class="r" style="width:54px">Discount</th>{{ end }}<th class="r" style="width:68px">Amount</th>
   </tr></thead>
   <tbody>
   {{ for g in groups }}
-    {{ if show_bands }}<tr class="group"><td colspan="9">{{ g.class_name }} · {{ g.count }} books</td></tr>{{ end }}
+    {{ if show_bands }}<tr class="group"><td colspan="{{ band_span }}">{{ g.class_name }} · {{ g.count }} books</td></tr>{{ end }}
     {{ for l in g.lines }}
-    <tr><td class="c">{{ l.no }}</td><td>{{ l.name }}</td><td class="code">{{ l.code }}</td><td>{{ l.hsn }}</td><td class="r">{{ l.mrp }}</td><td class="r">{{ l.rate }}</td><td class="r">{{ l.qty }}</td><td class="r">{{ l.discount }}</td><td class="r">{{ l.amount }}</td></tr>
+    <tr><td class="c">{{ l.no }}</td><td>{{ l.name }}</td><td class="code">{{ l.code }}</td><td>{{ l.hsn }}</td><td class="r">{{ l.mrp }}</td><td class="r">{{ l.rate }}</td><td class="r">{{ l.qty }}</td>{{ if show_discount }}<td class="r">{{ l.discount }}</td>{{ end }}<td class="r">{{ l.amount }}</td></tr>
     {{ end }}
-    {{ if show_bands }}<tr class="group-total"><td colspan="8" class="r">{{ g.class_name }} subtotal</td><td class="r">{{ g.subtotal }}</td></tr>{{ end }}
+    {{ if show_bands }}<tr class="group-total"><td colspan="{{ subtotal_span }}" class="r">{{ g.class_name }} subtotal</td><td class="r">{{ g.subtotal }}</td></tr>{{ end }}
   {{ end }}
   </tbody>
 </table>

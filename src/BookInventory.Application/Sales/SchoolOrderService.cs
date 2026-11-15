@@ -43,7 +43,8 @@ public sealed class SchoolOrderService(
         var today = calendar.Today();
         var orderDate = request.OrderDate ?? order.OrderDate;
         var header = await composer.HeaderAsync(request, orderDate, cancellationToken);
-        var lines = await composer.LinesAsync(new OrderLinesRequest(request.SchoolId!.Value, orderDate, request.Lines ?? []), cancellationToken);
+        var lines = await composer.LinesAsync(
+            new OrderLinesRequest(request.SchoolId!.Value, orderDate, request.Lines ?? [], DiscountsOf(order)), cancellationToken);
 
         var newNumber = header.Session == order.Session
             ? null
@@ -57,9 +58,14 @@ public sealed class SchoolOrderService(
         // R20, R34: what the request leaves out stays as the order has it (it is not reset to the school's defaults).
         var kept = request with { IsGstApplied = request.IsGstApplied ?? order.IsGstApplied, PaymentType = request.PaymentType ?? order.PaymentType };
         var header = await composer.HeaderAsync(kept, order.OrderDate, cancellationToken);
-        var lines = await composer.LinesAsync(new OrderLinesRequest(order.SchoolId, order.OrderDate, request.Lines ?? []), cancellationToken);
+        var lines = await composer.LinesAsync(
+            new OrderLinesRequest(order.SchoolId, order.OrderDate, request.Lines ?? [], DiscountsOf(order)), cancellationToken);
         order.Amend(header, lines);
     }
+
+    /// <summary>R36: the item discount each live line of the order has now, by line id.</summary>
+    private static Dictionary<Guid, Discount> DiscountsOf(SchoolOrder order) =>
+        order.Lines.ToDictionary(l => l.Id, l => new Discount(l.ItemDiscountKind, l.ItemDiscountValue));
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
