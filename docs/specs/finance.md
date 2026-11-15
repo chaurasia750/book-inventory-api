@@ -67,7 +67,7 @@ The posting capability of R5 is not an endpoint. Errors are `ProblemDetails` wit
 
 ## 6. User interface
 
-Written in the UI plan; summary: in the company workspace (`member` app) the Owner gets a "Ledger" menu in its own group with "Outstanding" (schools and vendors tabs) and, from a school's or vendor's panel and from the outstanding rows, that party's statement with its filters, the opening row, the running balance and the totals. Each state shows loading, empty, error with retry and success.
+Written in the UI plan; summary: in the company workspace (`member` app) the Owner finds "School ledger" inside the "Schools" menu and "Vendor ledger" inside the "Vendors" menu (owner's request, 2026-11-15: no separate Ledger menu), each the outstanding list of its parties; from a row, and from a school's or vendor's panel, that party's statement with its filters, the opening row, the running balance and the totals. Each state shows loading, empty, error with retry and success.
 
 ## 7. Events
 

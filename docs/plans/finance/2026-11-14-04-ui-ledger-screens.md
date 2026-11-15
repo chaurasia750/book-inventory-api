@@ -43,3 +43,5 @@ Done and observed: commit on `feature/finance-ui` (ledger model and `LedgerServi
 
 ## 7. Risks and notes
 Written without a browser; expect small visual fixes after the owner's first look.
+
+Changed on 2026-11-15 at the owner's request: no separate "Ledger" menu and no tabs; "School ledger" is an entry of the "Schools" menu (Owner only; Staff keep a plain "Schools" entry) and "Vendor ledger" of the "Vendors" menu; the page title names the party kind.
