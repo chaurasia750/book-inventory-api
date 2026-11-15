@@ -95,3 +95,5 @@ Kinds: **NV** not verified · **GAP** known gap · **DEC** decision the owner ha
 | B85 | sales | DEC | Until sales#09 lands, sales#07 prints `CREDIT MEMO` for a GST-off invoice (no payment type yet); sales#09 makes it `CASH MEMO` or `CREDIT MEMO` | sales#07 | closed by sales#09 |
 | B86 | sales | NV | sales#07: the IGST (other state) summary and a header without a logo or with a long name were not printed; Edge as the browser and an amount in words with paise were not exercised | sales#07 | open |
 | B87 | sales | GAP | The Print and Download PDF actions and the rate-wise summary on the invoice screen are sales#08 (AC24); until then the screen still shows the per-line GST columns | sales#07 | open |
+| B88 | school | NV | school#08 screens not seen in a browser: the Payment select in the school form and the profile | school#08 | open |
+| B89 | sales | NV | sales#10 and sales#08 screens not seen in a browser: the Payment select in the order editor (and its lock), the invoice title, the rate-wise GST summary, the amount in words, Download PDF and Print (the pop-up for Print), both layouts | sales#08 | open |
