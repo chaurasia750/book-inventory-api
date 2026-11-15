@@ -1,10 +1,10 @@
 # Spec: company - Companies and their accounts
 
 - **Module:** `company` (PostgreSQL schema `company`)
-- **Status:** R1-R14 Approved by the owner on 2026-11-14 (AC1-AC15, D1-D10 with them); R15 and AC16 Approved by abhishek in chat on 2026-11-14; R16 and AC17 Approved by abhishek on 2026-11-15 (for the sales spec)
-- **Last updated:** 2026-11-14 (R10: `companies/current` answers `company: null`, not 404, when there is none); 2026-11-15 (for the sales spec)
-- **Source docs:** [BRD §3 Users aur Roles, §4.1 Company (FR-CMP-01, FR-CMP-05), §7 (NFR-07, NFR-08, NFR-11), §8 Data Model](../bussiness/BRD-Book-Inventory-Phase1.md); the owner's requests and answers of 2026-11-14 (each company has its own account and logs in; the company creates its staff logins; one Super Admin manages the companies)
-- **Plans:** [company#06](../plans/company/2026-11-15-06-company-tax-profile.md) (Done, R16, AC17), [company#05](../plans/company/2026-11-14-05-company-url-slug.md) (Done, R15, AC16), [company#01](../plans/company/2026-11-14-01-company-master-and-owner-account.md) (Done), [company#02](../plans/company/2026-11-14-02-ui-company-management-screens.md) (In progress), [company#03](../plans/company/2026-11-14-03-super-admin-enters-a-company.md) (Done), [company#04](../plans/company/2026-11-14-04-ui-company-picker.md) (In progress); in `iam`: [iam#01](../plans/iam/2026-11-14-01-company-linked-accounts.md) (Done), [iam#02](../plans/iam/2026-11-14-02-ui-company-account-login.md) (In progress), [iam#03](../plans/iam/2026-11-14-03-owner-manages-staff-accounts.md) (Done), [iam#04](../plans/iam/2026-11-14-04-ui-owner-staff-screens.md) (In progress)
+- **Status:** R1-R14 Approved by the owner on 2026-11-14 (AC1-AC15, D1-D10 with them); R15 and AC16 Approved by abhishek in chat on 2026-11-14; R16 and AC17 Approved by abhishek on 2026-11-15 (for the sales spec); R17-R20 and AC18-AC20 (the invoice identity: logo, signature, bank account, invoice settings and the capability to read them) Approved by abhishek on 2026-11-15 (Q17 and Q18 with the recommended answers).
+- **Last updated:** 2026-11-14 (R10: `companies/current` answers `company: null`, not 404, when there is none); 2026-11-15 (for the sales spec and the invoice PDF: R17-R20)
+- **Source docs:** [BRD §3 Users aur Roles, §4.1 Company (FR-CMP-01 to FR-CMP-03, FR-CMP-05), §6 Documents, §7 (NFR-07, NFR-08, NFR-11), §8 Data Model](../bussiness/BRD-Book-Inventory-Phase1.md); the owner's requests and answers of 2026-11-14 (each company has its own account and logs in; the company creates its staff logins; one Super Admin manages the companies); the owner's instructions of 2026-11-15 (every company has its own account number and account details, a logo, its full name and address)
+- **Plans:** [company#08](../plans/company/2026-11-15-08-ui-company-invoice-identity.md) (Draft, R17-R20, AC18-AC20), [company#07](../plans/company/2026-11-15-07-company-invoice-identity.md) (Draft, R17-R20, AC18-AC20), [company#06](../plans/company/2026-11-15-06-company-tax-profile.md) (Done, R16, AC17), [company#05](../plans/company/2026-11-14-05-company-url-slug.md) (Done, R15, AC16), [company#01](../plans/company/2026-11-14-01-company-master-and-owner-account.md) (Done), [company#02](../plans/company/2026-11-14-02-ui-company-management-screens.md) (In progress), [company#03](../plans/company/2026-11-14-03-super-admin-enters-a-company.md) (Done), [company#04](../plans/company/2026-11-14-04-ui-company-picker.md) (In progress); in `iam`: [iam#01](../plans/iam/2026-11-14-01-company-linked-accounts.md) (Done), [iam#02](../plans/iam/2026-11-14-02-ui-company-account-login.md) (In progress), [iam#03](../plans/iam/2026-11-14-03-owner-manages-staff-accounts.md) (Done), [iam#04](../plans/iam/2026-11-14-04-ui-owner-staff-screens.md) (In progress)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -16,7 +16,9 @@ Feature **Company accounts** (R1-R14): a Super Admin creates a company together 
 
 Accounts, logins, passwords and sessions stay in `iam` ([specs/iam.md](iam.md) R59-R69); this module never stores a password or a session.
 
-Out of scope for this feature (later features of this module, Q11): logo upload, the company's bank account and UPI id (FR-CMP-02), invoice settings (FR-CMP-03), number series (FR-CMP-04). Out of scope for ever in Phase 1: one login working for two companies (D3).
+Feature **Company invoice identity** (R17-R20): the **logo** and **signature image**, the one **bank account** and the **invoice settings** (terms, footer, whether the GSTIN prints) that the company's documents carry, and the capability other modules read them through (FR-CMP-02, FR-CMP-03). Approved with the invoice PDF feature (sales R28) on 2026-11-15.
+
+Out of scope for this feature (a later feature of this module, Q11): number series (FR-CMP-04). Out of scope for ever in Phase 1: one login working for two companies (D3).
 
 ## 2. Concepts and glossary
 
@@ -58,10 +60,17 @@ stateDiagram-v2
 **Reading the company's tax profile from other modules**
 - **R16** Other modules (the sales module first, for GST) read the state and GSTIN of the session's company through a company capability, never by joining its tables; it changes nothing. Proposed by the assistant on 2026-11-15 for the sales spec; Approved by abhishek on 2026-11-15.
 
+**Company invoice identity** (Approved by abhishek, 2026-11-15)
+- **R17** A company has **one logo image** (FR-CMP-01), printed in the header of every document it issues. It is uploaded, replaced or removed by the company's Owner (or a Super Admin); a `PNG` or `JPEG` up to 2 MB is accepted, anything else answers `400 company.logo_invalid`. A company with no logo prints none and stays valid (Q18).
+- **R18** A company has **one signature image** (FR-CMP-03), printed at the bottom of its documents above the signatory line. Same upload rules and limits as R17 (`400 company.signature_invalid`); removing it leaves the line empty.
+- **R19** A company has **exactly one bank account** (FR-CMP-02): account holder name, bank name, account number, IFSC, branch and UPI id, all optional at first but filled before an invoice prints them. It is edited by the Owner (or a Super Admin) and printed at the bottom of the invoice (sales R30).
+- **R20** A company has **invoice settings** (FR-CMP-03): the **terms and conditions** (free multi-line text, up to 4000 characters), a **footer** line, and whether the **GSTIN prints** on its documents. Other modules (the sales module first, for the invoice PDF) read the logo, the signature, the bank account and these settings through a company capability, never by joining its tables (the same shape as R16). A company with nothing set returns empty values, never an error.
+
 ## 4. Data
 
 Schema `company`:
 - `company` (aggregate root): `id` (UUID v7), `name`, `name_normalized` (unique), `address`, `mobile`, `email`, `gstin`, `pan`, `state`, `tagline`, `status` (`ACTIVE`/`INACTIVE`), `status_reason`, `status_changed_at`, plus the standard audit and concurrency columns.
+- `company` also carries the invoice identity (R17-R20): `logo` (`bytea`), `logo_content_type`, `signature` (`bytea`), `signature_content_type`, `bank_account_holder`, `bank_name`, `bank_account_number`, `bank_ifsc`, `bank_branch`, `upi_id`, `invoice_terms`, `invoice_footer`, `print_gstin` (`boolean`, default true). The two images are stored in the database so one backup covers them and no file share is needed (Q18).
 - `company_status_history` (child of `company`, insert-only, R8): `company_id`, `from_status`, `to_status`, `reason`, `changed_by`, `changed_at`.
 
 - `company_entry` (insert-only, R12/R13): `company_id`, `user_id`, `action` (`ENTERED`/`LEFT`), `at`, plus the standard audit columns.
@@ -83,6 +92,14 @@ Dates and the financial year (April-March, BRD BR-SES-01) are not used by this f
 | `POST companies/{id}/enter` | `SUPER_ADMIN` | R13 -> `200` `{company, accessToken, accessTokenExpiresAt}`: the company now entered and the access token that carries it (the access cookie is refreshed too); `409 company.not_active` when the company is inactive; `404` for an unknown id |
 | `POST companies/leave` | `SUPER_ADMIN` | R13 -> `200` `{company: null, accessToken, ...}`; harmless when nothing is entered |
 | `GET companies/current` | any caller with a company context | `{ company }`: name, status, state of the company of the session (R10); `company` is `null` when there is none (a Super Admin who has not entered one) |
+| `GET companies/current/invoice-identity` | any caller with a company context | `{logoUrl, signatureUrl, bank: {accountHolder, bankName, accountNumber, ifsc, branch, upiId}, invoice: {terms, footer, printGstin}}` of the session's company (R20); empty values, not an error, when nothing is set |
+| `PUT companies/{id}/invoice-identity` | Owner of that company or `SUPER_ADMIN` | `{bank: {...}, invoice: {terms, footer, printGstin}}` (R19, R20); `403` for a Staff caller; `404` for another company's id (R6) |
+| `POST companies/{id}/logo` | Owner of that company or `SUPER_ADMIN` | multipart image (R17); `400 company.logo_invalid`; replaces the current logo |
+| `DELETE companies/{id}/logo` | Owner of that company or `SUPER_ADMIN` | removes the logo (R17); `204` |
+| `GET companies/{id}/logo` | any caller with a company context | the image bytes with the stored content type; `404` when there is none |
+| `POST companies/{id}/signature` | Owner of that company or `SUPER_ADMIN` | multipart image (R18); `400 company.signature_invalid`; replaces the current signature |
+| `DELETE companies/{id}/signature` | Owner of that company or `SUPER_ADMIN` | removes the signature (R18); `204` |
+| `GET companies/{id}/signature` | any caller with a company context | the image bytes with the stored content type; `404` when there is none |
 
 Errors are `ProblemDetails` with a message code from the module's catalogue (platform rules). Validation failures are `400`.
 
@@ -91,6 +108,7 @@ Errors are `ProblemDetails` with a message code from the module's catalogue (pla
 Written in the UI plans; summary:
 - **Super Admin console** (`admin` app): company list, create company (form + one-time panel with user id and temporary password), company detail with status history and accounts, edit, deactivate and reactivate with reason, and a company picker at the top to enter and leave a company (Q13).
 - **Company workspace** (`member` app, Q13): after login the company's name is shown at the top (R10). The Owner also sees a "Staff" screen (iam#04). Business screens arrive with later modules.
+- **Invoice identity** (company#08): the Owner sees a "Company profile" screen with the logo, the signature image, the one bank account and the invoice settings (terms, footer, print GSTIN) (R17-R20). A Super Admin editing an entered company sees the same screen.
 
 ## 7. Events
 
@@ -119,6 +137,9 @@ Raised by the `Company` aggregate (past tense, ids and values only): `CompanyCre
 - **AC15** Every enter and every leave that changed something appears in `company.company_entry` with the Super Admin's real id and the company id; a leave when nothing was entered adds nothing (R12, R13, D10).
 - **AC16** Creating a company named `Admin` or `!!` answers `400` `company.slug_unavailable`; creating `Slug Check Co` and then `SLUG-check  co` answers `201` then `409` `company.name_taken`; `GET companies/current` of an entered `Slug Check Co` returns `slug` `slug-check-co` (R15).
 - **AC17** The capability returns the session company's state and GSTIN (R16).
+- **AC18** The Owner uploads a PNG logo: `201`/`200`, `GET companies/current/invoice-identity` returns its `logoUrl` and `GET companies/{id}/logo` returns the bytes with `image/png`; uploading a `.txt` answers `400 company.logo_invalid`; `DELETE .../logo` answers `204` and the read afterwards returns an empty `logoUrl` (R17).
+- **AC19** The Owner sets the bank account and the invoice settings: `PUT companies/{id}/invoice-identity` answers `200` and `GET companies/current/invoice-identity` returns them; a Staff caller gets `403`; the Owner of company A calling `PUT companies/{B}/invoice-identity` gets `404` (R19, R20, R6).
+- **AC20** For a company with no logo, signature, bank account or settings the read answers `200` with empty values and `printGstin` true, never `404` or `500` (R20).
 
 ## 10. Decisions
 
@@ -137,7 +158,13 @@ Decisions marked "owner" were given by the owner on 2026-11-14; the others were 
 | D9 | Q5-Q13 of the first draft were answered "recommended" by the owner: the base-project roles stay untouched until their own retirement plan; the Super Admin rule R2 of `iam` stays as it is; only the company name is required at creation; the name is editable; deactivation blocks all logins; logo, bank, invoice settings and number series are later features; Super Admin only edits master data; `admin` is the Super Admin console and company accounts use the `member` app. |
 | D10 | The `core` audit trail does not exist yet, so the Super Admin's enter and leave are recorded in the insert-only table `company.company_entry` until it does; they can be moved there later. (proposed by the assistant, built in company#03, to be confirmed by the owner) |
 | D10 | The owner confirmed the recommended answers to Q14, Q15 and Q16 on 2026-11-14: Staff may create a School Order and a Counter Sale (school counter and Dukaan direct, with the payment taken on that sale) and nothing else, and D5 replaces the wider Staff column of BRD §3 (the BRD is to be updated); user ids are the company name in lowercase letters and digits for the Owner and `<owner id>.<short name>` for Staff, a taken id answers `409`, and a forgotten password is reset to a new temporary password by the Super Admin (Owner) or the Owner (Staff); a Super Admin can enter only `ACTIVE` companies. |
+| D11 | The **invoice identity** (logo, signature, one bank account, invoice settings) is edited by the company's **Owner** and by a Super Admin inside the company, never by Staff: it is business identity, not a business operation (R14). (proposed by the assistant for the invoice PDF) |
+| D12 | A company keeps exactly **one** logo, **one** signature and **one** bank account, not a list: Phase 1 prints one account and one signature on every document (FR-CMP-02/03). (proposed by the assistant for the invoice PDF) |
 
 ## 11. Open questions
 
 None. Q11 and Q14-Q16 were answered "recommended" by the owner on 2026-11-14 (D9, D10); the rules above follow those answers.
+
+Open questions of the invoice identity (answered by abhishek on 2026-11-15 with the recommended answers):
+- **Q17** Who edits the invoice identity (logo, signature, bank account, settings)? Answered: the company's **Owner** and a Super Admin inside the company (D11), because the Owner is the one who knows the bank account; alternative: only the Super Admin.
+- **Q18** Where the logo and signature images are stored? Answered: in the **database** (`bytea` on the company row), so one backup covers them and no file share is needed, served through `GET .../logo` and `.../signature`; alternative: on disk under a configured folder.

@@ -1,10 +1,10 @@
 # Spec: sales - School orders and invoices
 
 - **Module:** `sales` (PostgreSQL schema `sales`)
-- **Status:** R19-R27 and AC11-AC18 Approved by abhishek in chat on 2026-11-15 (the wholesale order questions answered one by one, all with the recommended answers); R1-R18 Approved by abhishek in chat on 2026-11-15 (Q1-Q14 answered one by one: Q1 per-session order numbers and Q3 a counter per company as the owner said, the rest with the recommended answers; D1-D3 with them)
-- **Last updated:** 2026-11-15
-- **Source docs:** [BRD §2, §4.10 School Order and Invoice (FR-ORD-01 to FR-ORD-15), §5.1 BR-SES, §5.2 BR-PRC, §5.3 BR-DIS, §5.4 BR-GST, §5.5 the stock movement table, §5.6 BR-LED, §6 Documents, §8 Data Model (SalesOrder, Invoice) and design decisions 3 and 4, §9 Q-01, Q-02, Q-05](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P24, U14; [specs/school.md](school.md) R5, R16, R18, R19; [specs/item.md](item.md) R16; [specs/price.md](price.md) R4, R18; [specs/stock.md](stock.md) R11, R20; [specs/finance.md](finance.md) R5; [specs/company.md](company.md) R16
-- **Plans:** [sales#05](../plans/sales/2026-11-15-05-wholesale-orders.md) (Done), [sales#06](../plans/sales/2026-11-15-06-ui-wholesale-orders.md) (In progress), [sales#01](../plans/sales/2026-11-15-01-school-orders.md) (Done), [sales#02](../plans/sales/2026-11-15-02-ui-school-orders.md) (In progress), [sales#03](../plans/sales/2026-11-15-03-invoices.md) (Done), [sales#04](../plans/sales/2026-11-15-04-ui-invoices.md) (In progress); what it needs from other modules: [school#05](../plans/school/2026-11-15-05-session-of-a-date.md) (Done), [school#06](../plans/school/2026-11-15-06-ui-session-cut-offs.md), [price#05](../plans/price/2026-11-15-05-price-directory.md), [stock#05](../plans/stock/2026-11-15-05-stock-quantities.md), [company#06](../plans/company/2026-11-15-06-company-tax-profile.md) (all Approved)
+- **Status:** R19-R27 and AC11-AC18 Approved by abhishek in chat on 2026-11-15 (the wholesale order questions answered one by one, all with the recommended answers); R1-R18 Approved by abhishek in chat on 2026-11-15 (Q1-Q14 answered one by one: Q1 per-session order numbers and Q3 a counter per company as the owner said, the rest with the recommended answers; D1-D3 with them); R28-R33 and AC19-AC24 (the invoice PDF) Approved by abhishek on 2026-11-15 (the owner's instructions of 2026-11-15: Chromium, a PDF template, GST as a total and not per book, terms and conditions, the header with the GSTIN and a Cash/Credit Memo "GST Exempted" title, one bank account per company, the logo, the full name and address, A4 with no wasted white space across many pages, the bank details at the bottom, and a drawn invoice format; Q15-Q20 with the recommended answers).
+- **Last updated:** 2026-11-15 (the invoice PDF: R28-R33)
+- **Source docs:** [BRD §2, §4.10 School Order and Invoice (FR-ORD-01 to FR-ORD-15), §5.1 BR-SES, §5.2 BR-PRC, §5.3 BR-DIS, §5.4 BR-GST, §5.5 the stock movement table, §5.6 BR-LED, §6 Documents, §8 Data Model (SalesOrder, Invoice) and design decisions 3 and 4, §9 Q-01, Q-02, Q-05](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P25, U14; [specs/school.md](school.md) R5, R16, R18, R19; [specs/item.md](item.md) R16; [specs/price.md](price.md) R4, R18; [specs/stock.md](stock.md) R11, R20; [specs/finance.md](finance.md) R5; [specs/company.md](company.md) R16-R20
+- **Plans:** [sales#07](../plans/sales/2026-11-15-07-invoice-pdf.md) (Draft, R28-R33, AC19-AC24), [sales#08](../plans/sales/2026-11-15-08-ui-invoice-pdf.md) (Draft, R33), [sales#05](../plans/sales/2026-11-15-05-wholesale-orders.md) (Done), [sales#06](../plans/sales/2026-11-15-06-ui-wholesale-orders.md) (In progress), [sales#01](../plans/sales/2026-11-15-01-school-orders.md) (Done), [sales#02](../plans/sales/2026-11-15-02-ui-school-orders.md) (In progress), [sales#03](../plans/sales/2026-11-15-03-invoices.md) (Done), [sales#04](../plans/sales/2026-11-15-04-ui-invoices.md) (In progress); what it needs from other modules: [school#05](../plans/school/2026-11-15-05-session-of-a-date.md) (Done), [school#06](../plans/school/2026-11-15-06-ui-session-cut-offs.md), [price#05](../plans/price/2026-11-15-05-price-directory.md), [stock#05](../plans/stock/2026-11-15-05-stock-quantities.md), [company#06](../plans/company/2026-11-15-06-company-tax-profile.md) (all Approved)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -14,7 +14,9 @@
 
 Feature **School order and invoice** (R1-R18). Later features of this module: counter sale (§4.11), school returns (§4.12), invoice from samples (§4.13).
 
-Out of scope for this feature: the invoice PDF and print layout (FR-ORD-10, FR-ORD-15, §6: Q12); adding lines from the class book list (FR-ORD-02, the Planning module); payments and their allocation to invoices (the Payment module); attachments on documents (owner's note, backlog); the Super Admin's screens in the `admin` app.
+Feature **Invoice PDF** (R28-R33, Draft): the printed A4 tax invoice of an issued invoice — the company's identity in the header, the lines, a rate-wise GST summary (the GST on the total, never a per-book column), the totals in words, the bank details, the terms and conditions and the signature, across as many pages as the lines need with the header repeated on each.
+
+Out of scope for this feature: the invoice PDF and print layout of the **other** documents (counter receipt, credit note, ...: their own modules later); adding lines from the class book list (FR-ORD-02, the Planning module); payments and their allocation to invoices (the Payment module); attachments on documents (owner's note, backlog); the Super Admin's screens in the `admin` app.
 
 ## 2. Concepts and glossary
 
@@ -63,13 +65,23 @@ Out of scope for this feature: the invoice PDF and print layout (FR-ORD-10, FR-O
 - **R26** **Invoice layout** (owner, 2026-11-15: "group kar ke dikha sakte hai ya kewal book ka list, both option"): an invoice line keeps the class of its order line. The same invoice is shown and printed in one of two layouts, without changing its data, numbers or totals: **by class** (lines grouped under each class with a class subtotal; lines without a class under "General") or **book list** (no classes; lines of the same item, price version, rate and item discount are shown as one line with the summed quantity and amounts; lines that differ in any of these stay separate). Each school has a default layout kept by this module (initially book list), set by the Owner from the school's profile; the invoice screen opens in the school's default and can be switched there and then.
 - **R27** **Easy new order**: New order asks only for the school (search by name or code); the date is today, the session and GST come from the school (R2, R7) and can be changed; the first screen offers the three ways to add books side by side (class sets R22, bulk add R23, scan or search R24), and the order can be saved as a draft at any time.
 
+**Invoice PDF** (Approved by abhishek, 2026-11-15)
+- **R28** An issued invoice can be handed to the user as a **PDF** (FR-ORD-10, §6): the document is built as **HTML + CSS** from a template that lives in this module and rendered by the platform's shared renderer (platform P25, a headless Chromium). It is rendered **on demand** from the invoice and its snapshot (R13) and is **never stored**; a cancelled invoice prints too, marked `CANCELLED` (Q18).
+- **R29** The PDF follows the invoice's **layout** (R26): by class with class subtotals, or book list; the layout chosen on the invoice screen is the one printed, and the totals are identical in both.
+- **R30** **Page**: A4 portrait, as many pages as the lines need, and **no wasted white space** — lines pack several to a page (a 300-line school invoice must not run to hundreds of half-empty pages). The company header (logo, full name, address, GSTIN when R20 allows, phone, email) repeats on **every** page, and a footer on every page carries the document number, the bank details (R33) and `Page x of y` (FR-ORD-15).
+- **R31** **Title and header**: the title is **TAX INVOICE** when the invoice has GST applied and **CASH/CREDIT MEMO** with a `GST Exempted` note when it does not (BR-GST-06) (Q16). Under it: the invoice number, the invoice date, the order number and session, and the school's name, code, address, state and GSTIN (from the snapshot, R13).
+- **R32** **Lines and GST**: the lines show item code, name, HSN, class (when the order line carried one), quantity, rate, discount and amount. There is **no per-line GST column** (the owner: "GST total ka hota hai, per book nahi"); the GST is shown once as a **rate-wise summary** — for each HSN/rate, the taxable value and CGST + SGST (or IGST) and the tax — followed by subtotal, total discount, taxable value, total tax, round-off, **grand total** and the **amount in words** (Indian numbering, rupees and paise). The computation is unchanged (R7 computes each line at its item's rate; the summary only adds those up) (Q15).
+- **R33** **Bottom**: the invoice prints the company's **bank account** (R19: account holder, bank, account number, IFSC, branch, UPI id), the **terms and conditions** and the footer line (R20), and the **signature image** (R18) above a signatory line for the company (FR-CMP-02/03, §6). The invoice **screen** shows the same rate-wise GST summary, totals and amount in words as the PDF, so the detail on screen and the print never disagree, and offers **Print** and **Download PDF** (sales#08).
+
 ## 4. Data
 
 Schema `sales` (all company-owned, platform P18):
 - `school_order` (aggregate root): `number`, `school_id`, `order_date`, `session`, `is_gst_applied`, `total_discount_type` (`NONE`, `PERCENT`, `AMOUNT`), `total_discount_value`, `remark`, `status` (`DRAFT`, `CONFIRMED`, `CLOSED`), `close_reason`, the computed totals (subtotal, total discount, taxable, GST, round-off, grand total), audit and concurrency columns. Unique `(company_id, number)`.
 - `school_order_line` (child): `item_id`, `price_version_id`, item code, name, HSN and GST rate, price version name, `mrp_amount`, `rate_amount`, `quantity`, `item_discount_type`, `item_discount_value`, the computed amounts, `invoiced_quantity`.
-- `invoice` (aggregate root): `number`, `financial_year`, `invoice_date`, `school_order_id`, school snapshot (id, code, name, state, GSTIN), company state, `session`, `is_gst_applied`, the discounts, every total, `status` (`ISSUED`, `CANCELLED`), `cancel_reason`, `cancelled_at`, audit and concurrency columns. Unique `(company_id, number)`.
+- `invoice` (aggregate root): `number`, `financial_year`, `invoice_date`, `school_order_id`, school snapshot (id, code, name, state, GSTIN), company state, **company snapshot** (name, address, GSTIN and the printed bank account, terms and footer as they were when it was made, R13/R33; the logo and signature are read live from the company, R17/R18), `session`, `is_gst_applied`, the discounts, every total, `status` (`ISSUED`, `CANCELLED`), `cancel_reason`, `cancelled_at`, audit and concurrency columns. Unique `(company_id, number)`.
 - `invoice_line` (child): the order line id, every copied value of R8 and its computed amounts (gross, item discount, line amount, total discount share, taxable, CGST, SGST, IGST).
+
+No new table for the invoice PDF: it is rendered on demand from the invoice and its snapshot (R28).
 
 ## 5. API contract (`/api/v1`)
 
@@ -87,6 +99,7 @@ All routes are company-scoped by the session; the company is never a request fie
 | `POST school-orders/{id}/invoices` | `OWNER`, `STAFF`, `SUPER_ADMIN` (entered) | `{invoiceDate?, lines: [{orderLineId, quantity}]}` -> `201` with the invoice and the items at or below zero (R8-R11) |
 | `POST invoices/{id}/cancel` | `OWNER`, `SUPER_ADMIN` (entered) | `{reason}` R12 |
 | `GET invoices`, `GET invoices/{id}` | `OWNER`, `STAFF`, `SUPER_ADMIN` (entered) | R15 |
+| `GET invoices/{id}/pdf` | `OWNER`, `STAFF`, `SUPER_ADMIN` (entered) | the invoice as a PDF (R28-R33); `?layout=class\|booklist` overrides the school's default (R26); `404` for another company's invoice; a cancelled invoice prints marked `CANCELLED` |
 
 Errors are `ProblemDetails` with a message code from the module's catalogue.
 
@@ -94,13 +107,61 @@ Errors are `ProblemDetails` with a message code from the module's catalogue.
 
 Written in the UI plans; summary (platform U14, owner's document pattern): the school's profile gets the tabs **Orders** and **Invoices**; "New order" opens the order editor as a full-width page (an order holds 100-200 lines, Q11) with barcode and search entry, the price version per line, discounts, the GST toggle, live totals and the yellow stock warning; a confirmed order shows "Make invoice" (quantities per line, remaining by default). An invoice opens with a header showing its money story (ordered, invoiced, cancelled) and its lines, discounts, GST, round-off and grand total; the Owner cancels it with a reason. Required fields carry a red `*`; each state shows loading, empty, error with retry and success.
 
+**Invoice screen and PDF** (sales#08): the invoice detail shows the GST as the **rate-wise summary** of R32 (never a per-line GST column), the totals and the amount in words, exactly as the PDF, with **Print** and **Download PDF** actions.
+
+**The drawn A4 invoice** (the owner's instruction of 2026-11-15; `Page x of y` and the header repeat on every page, the block below the lines appears once at the end):
+
+```text
++-----------------------------------------------------------------------------------------------+
+| [LOGO]  CHILDREN BOOK CENTER                                     TAX INVOICE  (GST applied)     |
+|         12, Station Road, Civil Lines, Kanpur, U.P. - 208001          -- or --                |
+|         Ph: 0512-2233445 | cbc@example.com                    CASH / CREDIT MEMO              |
+|         GSTIN: 09ABCDE1234F1Z5   State: Uttar Pradesh (09)      GST Exempted                   |
++-----------------------------------------------------------------------------------------------+
+| Invoice No.: INV/2026-27/0001                          Invoice Date: 15-11-2026               |
+| Order No.:   ORD/2026-27/0042                          Session: 2026-27                       |
+| Bill To:     ST. MARY'S CONVENT SCHOOL                                                         |
+|              Code: SCH-0007   Address: 5 Mall Road, Kanpur   State: UP (09)                    |
+|              GSTIN: 09ZZZZZ9999Z9Z9                                                            |
++----+------------+----------------------------+-------+------+--------+-------+-----------------+
+| S. | Item code  | Description                | Class | Qty  | Rate   | Disc% | Amount          |
++----+------------+----------------------------+-------+------+--------+-------+-----------------+
+|  1 | BOK-0451   | Mathematics - 8            |   8   |  40  | 250.00 |  5%   |  9,500.00       |
+|  2 | BOK-0452   | Science - 8                |   8   |  40  | 260.00 |  --   | 10,400.00       |
+|  3 | BOK-0453   | Atlas                      |   5   |  38  | 120.00 |  --   |  4,560.00       |
+|  ... (as many lines as the invoice holds; several to a page, no blank half pages)              |
++----+------------+----------------------------+-------+------+--------+-------+-----------------+
+| GST Summary (rate-wise; NOT per line)                                                          |
+|   HSN     Rate      Taxable Value          CGST        SGST        IGST        Total Tax         |
+|   4901     0%         19,350.00               -           -           -             -           |
+|   4901    12%          3,420.00          205.20      205.20           -         410.40          |
+|   Total                                                                            410.40      |
++-----------------------------------------------------------------------------------------------+
+|  Subtotal ............................................... 22,770.00                            |
+|  Total Discount (2%) .....................................    455.40                            |
+|  Taxable Value ........................................... 22,314.60                            |
+|  Total Tax (CGST 205.20 + SGST 205.20) ...................    410.40                            |
+|  Round Off ...............................................     +0.00                            |
+|  GRAND TOTAL ............................................. 22,725.00                            |
+|  Amount in words: Rupees Twenty-Two Thousand Seven Hundred Twenty-Five Only                     |
++-----------------------------------------------------------------------------------------------+
+|  Bank: HDFC Bank  |  A/c Name: Children Book Center  |  A/c No: 5010xxxxxxxx1234                 |
+|  IFSC: HDFC0000123  |  Branch: Civil Lines, Kanpur  |  UPI: cbc@hdfcbank                       |
+|  Terms & Conditions: 1. Goods once sold will not be taken back.  2. ...  3. ...                 |
++-----------------------------------------------------------------------------------------------+
+|  For CHILDREN BOOK CENTER                                   [ SIGNATURE IMAGE ]                 |
+|                                                             Authorised Signatory                |
+|  Page 1 of 3                                                        INV/2026-27/0001            |
++-----------------------------------------------------------------------------------------------+
+```
+
 ## 7. Events
 
 Raised by the aggregates (past tense, ids and values only): `SchoolOrderConfirmed`, `SchoolOrderClosed`, `InvoiceIssued` (invoice id, school, grand total), `InvoiceCancelled`. Reactions: none in this feature (the postings are made in the same use case through the capabilities, R11, R12).
 
 ## 8. Dependencies
 
-`sales` depends on `school` (directory R16, session R18), `item` (directory R16), `price` (directory R18), `stock` (posting R11, quantities R20), `finance` (posting R5), `company` (tax profile R16), and the platform (P18-P24). Payment and returns will depend on `sales` by the invoice id.
+`sales` depends on `school` (directory R16, session R18), `item` (directory R16), `price` (directory R18), `stock` (posting R11, quantities R20), `finance` (posting R5), `company` (tax profile R16 and invoice identity R17-R20), and the platform (P18-P25). Payment and returns will depend on `sales` by the invoice id.
 
 ## 9. Acceptance criteria
 
@@ -122,6 +183,12 @@ Raised by the aggregates (past tense, ids and values only): `SchoolOrderConfirme
 - **AC16** A refused save names the line (item code and class) it is about (R25).
 - **AC17** An invoice of Class 4 dictionary 40 and Class 5 dictionary 38 (same version, rate and discount) and Class 5 atlas 38: by class shows Class 4 (dictionary 40) and Class 5 (dictionary 38, atlas 38) with subtotals; book list shows dictionary 78 and atlas 38; both layouts give the same grand total; a school whose default is by class opens in by class; Staff cannot change the default (`403`) (R26).
 - **AC18** New order with only a school chosen saves a draft with today's date, the school's session and GST choice (R27).
+- **AC19** `GET invoices/{id}/pdf` of an issued invoice answers `200` with `application/pdf`; the bytes start with `%PDF` and open as a valid A4 document; a cancelled invoice prints with the `CANCELLED` mark; anonymous is `401`; the Owner of B gets `404` for A's invoice (R28, R29, R18).
+- **AC20** A 300-line invoice renders compactly to a few pages, not one line per page; the company header, the bank details and `Page x of y` appear on every page, and the last page carries the totals and the amount in words (R30).
+- **AC21** With GST applied the title is `TAX INVOICE`; with GST off it is `CASH/CREDIT MEMO` with the `GST Exempted` note and no CGST/SGST/IGST amounts in the PDF (R31, BR-GST-06).
+- **AC22** The PDF has no per-line GST column; its rate-wise summary lists one row per rate with the taxable value and the tax, and the tax total equals the invoice's total tax (R32).
+- **AC23** The PDF's bottom carries the company's bank account, terms and conditions and signature image; a company with no signature prints an empty signatory line and still answers `200` (R33, R20).
+- **AC24** The invoice screen shows the same rate-wise GST summary, totals and amount in words as the PDF, and its Print and Download PDF actions produce the same document (R33).
 
 ## 10. Decisions
 
@@ -132,10 +199,12 @@ Raised by the aggregates (past tense, ids and values only): `SchoolOrderConfirme
 | D3 | Making and cancelling an invoice post stock and ledger through their capabilities in the same use case and transaction (stock R11, finance R5), not through events, because the invoice must fail as a whole when a posting fails. (proposed by the assistant) |
 | D5 | Owner, 2026-11-15: invoice layout by class or book list; book list merges the same item, version, rate and discount into one line; a per-school default plus a switch on the invoice screen. The layout is a view only: one invoice, one number, one total. |
 | D4 | Owner, 2026-11-15: wholesale order entry: an Orders parent menu, confirmed orders editable above what is invoiced, class on each line, class sets from the planning module's class book lists, bulk add. Platform U14 is changed for orders and invoices accordingly. |
+| D6 | The invoice PDF is built as **HTML + CSS** from a template kept in this module and rendered by the platform's shared **headless-Chromium** renderer (P25); it is rendered **on demand** and never stored. Answers Q12. (proposed by the assistant for the owner's instructions of 2026-11-15) |
+| D7 | Owner, 2026-11-15: the printed and on-screen GST is a **rate-wise summary on the total**, never a per-line (per book) column; the computation is unchanged (R7 still computes each line at its item's rate, the summary adds them up). The invoice's `company snapshot` (name, address, GSTIN, bank account, terms, footer) is fixed when the invoice is made so a reprint never changes (R13, R33). Answers Q15, Q16, Q17. (owner's instruction "GST total ka hota hai, per book nahi", with the recommended answers) |
 
 ## 11. Open questions
 
-None. Q1-Q14 were answered by the owner one by one on 2026-11-15; the rules above follow the answers. The list keeps the questions with the answer taken.
+None open from Q1-Q14 (all answered by the owner on 2026-11-15; the list below keeps the questions with the answer taken). The invoice PDF (Draft, 2026-11-15) adds Q15-Q20.
 
 - **Q1** Order number. Answered by the owner: per session, `ORD/2027-28/0001`, restarting at 0001 every session, each company its own counter; orders for the next session start before its financial year (R2).
 - **Q2** Order and invoice. Recommended: draft -> confirmed order; invoices are made from it for the quantities delivered now (partial delivery, Q-02); the order closes when all is invoiced (R6, R8). Alternative: confirming the order makes one invoice of everything at once.
@@ -148,6 +217,15 @@ None. Q1-Q14 were answered by the owner one by one on 2026-11-15; the rules abov
 - **Q9** Session of an order. Recommended: filled from the school and the order date (school R18); the user may pick only the session before or after it (R2).
 - **Q10** Rupee discounts on a partial invoice. Recommended: shared by quantity (item) or by the invoice's share of the subtotal (total); the last invoice takes what is left (R8). Alternative: discounts are typed again on each invoice.
 - **Q11** Screens and roles. Recommended: orders and invoices are tabs of the school profile; the order editor is a full-width page (100-200 lines); Staff create, confirm and invoice; only the Owner closes orders and cancels invoices (R14, R15).
-- **Q12** Invoice PDF (FR-ORD-10, FR-ORD-15, §6). Recommended: a later feature for all documents together, after a PDF package is approved; meanwhile the invoice screen. Alternative: now, with this feature.
+- **Q12** Invoice PDF (FR-ORD-10, FR-ORD-15, §6). Answered by the owner's instructions of 2026-11-15: build it now, as HTML + CSS rendered by a headless Chromium (platform P25), on demand and never stored; the format is the drawn A4 invoice of §6 (D6, D7).
 - **Q13** An item with no price version. Recommended: it cannot be added to an order (R3).
 - **Q14** Closing an order early. Recommended: the Owner closes a confirmed order with a reason when the rest will not be delivered (R6).
+
+Open questions of the invoice PDF (answered by abhishek on 2026-11-15 with the recommended answers; the answers are D6/D7):
+
+- **Q15** GST on the invoice: shown as a per-line column or as a rate-wise total? Answered: **rate-wise total, no per-line column** (the owner's instruction); the computation stays R7 (per line at the item's rate). Alternative: also change the computation to a single total rate. (R32, D7)
+- **Q16** The title when GST is off (BR-GST-06): answered **CASH/CREDIT MEMO** with a `GST Exempted` note, and **TAX INVOICE** when GST is applied; alternative: always `TAX INVOICE`. (R31)
+- **Q17** A reprint after the company changes its bank account or GSTIN: answered the invoice **snapshots the company's printed identity** (name, address, GSTIN, bank account, terms, footer) when it is made, so a reprint never changes; the logo and signature stay live (cosmetic). Alternative: always the company's current identity. (R13, R33, D7)
+- **Q18** PDF stored or on demand: answered **on demand, never stored** (no file storage, no stale files, a cancelled invoice reprints with its mark); alternative: stored once at issue. (R28, D6)
+- **Q19** The template: answered **Scriban** (already in the solution) over an HTML + CSS template kept in this module, the CSS printing the repeated header/footer and `Page x of y` through the renderer's options; alternative: build the HTML in C#. (R28, P25)
+- **Q20** UPI QR (§6 says "bank details aur UPI QR"): answered the bank details and the **UPI id as text** in Phase 1, the scannable QR a later small addition; alternative: generate the UPI QR now. (R33)

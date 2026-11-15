@@ -1,9 +1,9 @@
 # Spec: platform - Shared conventions and BuildingBlocks
 
 - **Module:** `platform` (cross-cutting; code in `library/BuildingBlocks`)
-- **Status:** carried over from the base project (HautInHousing); describes the code as it is. P18-P22 and PAC13-PAC17 (company-owned data) are Approved by abhishek on 2026-11-14, not built yet.
+- **Status:** carried over from the base project (HautInHousing); describes the code as it is. P18-P22 and PAC13-PAC17 (company-owned data) are Approved by abhishek on 2026-11-14, not built yet. P25 and PAC20 (HTML to PDF) are Approved by abhishek on 2026-11-15.
 - **Source:** the Book Inventory business documents, see [docs index](../README.md) (none of the rules below were derived from them yet).
-- **Plans:** [platform#08](../plans/platform/2026-11-14-08-handler-writes-saved.md) (Done, P24, PAC19), [platform#07](../plans/platform/2026-11-14-07-company-code-series.md) (Done, P23, PAC18), [platform#05](../plans/platform/2026-11-14-05-ui-company-address.md) (In progress, U12, UAC8), [platform#06](../plans/platform/2026-11-14-06-ui-member-mobile.md) (In progress, U13, UAC9), [platform#04](../plans/platform/2026-11-14-04-ui-sign-in-frame.md) (In progress, U11, UAC7), [platform#03](../plans/platform/2026-11-14-03-ui-list-and-detail.md) (In progress, U10, UAC6), [platform#02](../plans/platform/2026-11-14-02-ui-app-shell-theme.md) (In progress, U9, UAC5), [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Done, company-owned data P18-P22)
+- **Plans:** [platform#09](../plans/platform/2026-11-15-09-html-to-pdf.md) (Draft, P25, PAC20), [platform#08](../plans/platform/2026-11-14-08-handler-writes-saved.md) (Done, P24, PAC19), [platform#07](../plans/platform/2026-11-14-07-company-code-series.md) (Done, P23, PAC18), [platform#05](../plans/platform/2026-11-14-05-ui-company-address.md) (In progress, U12, UAC8), [platform#06](../plans/platform/2026-11-14-06-ui-member-mobile.md) (In progress, U13, UAC9), [platform#04](../plans/platform/2026-11-14-04-ui-sign-in-frame.md) (In progress, U11, UAC7), [platform#03](../plans/platform/2026-11-14-03-ui-list-and-detail.md) (In progress, U10, UAC6), [platform#02](../plans/platform/2026-11-14-02-ui-app-shell-theme.md) (In progress, U9, UAC5), [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Done, company-owned data P18-P22)
 
 > Every module builds on these rules. They exist so that `iam`, `mlm`, `finance`, `realty` and `core` look and behave the same, and so that a second project can reuse the library unchanged.
 
@@ -72,6 +72,9 @@ Defines the data, API and configuration conventions that BuildingBlocks enforces
 **Writes of domain event handlers**
 - **P24** What a domain event handler writes (a new row, a changed row, its own events) is saved in the **same transaction** as the change that raised the event: after the events of a save are dispatched, any change they left is saved again and its events dispatched in turn, at most five rounds (more means a loop of events and is refused as a bug, `500`). A handler that fails rolls the whole request back. Added on 2026-11-14 for the finance spec (opening balances, finance R6); Approved by abhishek on 2026-11-14 (chat: "Platform fix: handler ka kaam bhi usi transaction mein save").
 
+**Documents (PDF)**
+- **P25** A module that must hand a document to the user as a **PDF** builds the document as **HTML + CSS** and asks one shared capability to render it: a port `IHtmlToPdfRenderer` (`RenderAsync(html, pageOptions, cancellationToken)` -> PDF bytes) in BuildingBlocks, implemented with a **headless Chromium** - the Chromium-based browser already on the machine (Chrome, else Edge), chosen by configuration, because this environment has no Docker (CLAUDE.project.md). The port is generic and knows no business document: page size (A4 by default), orientation, margins, a **repeating header and footer on every page**, **page numbers** (`Page x of y`), a **scale** and whether the browser's own header/footer is suppressed are options, not module code. The document's HTML template and its CSS live in the module that owns the document, never in the library (CLAUDE.project.md "Layout"); the same HTML is what the UI may show as a print preview. A missing or failing renderer raises one domain exception with the code `document.render_failed` (`500`), never a half-written file. Proposed by the assistant on 2026-11-15 for the invoice PDF (sales R28); Approved by abhishek on 2026-11-15.
+
 ## 4. Data
 
 Shared columns as in P2/P3/P4. No tables of its own.
@@ -109,10 +112,13 @@ None.
 - **PAC17** Two companies can each hold a row with the same value of a per-company unique field, and one company cannot hold it twice (P22); the audit entry of a company-owned row names its company (P21).
 - **PAC18** Two companies each get `X-0001` from the same prefix; ten parallel requests for one company get ten different numbers; the school codes of existing schools do not change when school is moved onto the series (P23).
 - **PAC19** A handler that adds a row on an event is saved with the change that raised it (one commit); a handler that throws leaves neither the change nor its row; an event chain longer than five rounds is refused (P24).
+- **PAC20** The renderer turns a sample HTML with a repeating header, a footer carrying `Page x of y` and a long table into a valid PDF of the asked page size; a 300-row table rendered compactly takes fewer pages than the same document with wide margins (no wasted space); a missing Chromium raises `document.render_failed`, not a corrupt or empty file (P25).
 
 ## 9. Open questions
 
 - **PQ1** Reference tables with `int` identity (ranks, rules per ERD §0.3) are deferred until `mlm` needs them; they will get their own small plan.
+- **PQ2** Where the Chromium for P25 comes from. Answered by abhishek on 2026-11-15 with the recommended answer: the Chromium-based browser already installed on the machine (Chrome, else Edge), its path an optional setting (`Documents:Pdf:BrowserPath`) so nothing is downloaded; alternative: a package that ships its own Chromium (a large download, a second copy to keep patched).
+- **PQ3** How the renderer talks to Chromium (P25). Answered by abhishek on 2026-11-15 with the recommended answer: **PuppeteerSharp** with `ExecutablePath` pointed at the installed browser (no download), because it gives `Page.printToPDF` with a repeating header/footer, `Page x of y` and A4 margins without hand-written protocol code; alternative: a minimal CDP client over `System.Net.WebSockets.ClientWebSocket` (no new package, more code to maintain). Either way the port hides the choice from the modules.
 
 ## 10. UI conventions (book-inventory-ui)
 
