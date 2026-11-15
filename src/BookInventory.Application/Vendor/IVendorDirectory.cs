@@ -1,7 +1,7 @@
 namespace BookInventory.Application.Vendor;
 
-/// <summary>R15: what another module may know about a vendor: its id, code, name and whether it can be chosen for a new document.</summary>
-public sealed record VendorReference(Guid Id, string Code, string Name, bool IsActive);
+/// <summary>R15: what another module may know about a vendor: its id, code, name, whether it can be chosen for a new document, and its state and GSTIN (for the printed ledger statement, finance R18).</summary>
+public sealed record VendorReference(Guid Id, string Code, string Name, bool IsActive, string? State = null, string? Gstin = null);
 
 /// <summary>
 /// R15: the capability other modules (the item master first) use to read vendors, never by joining the vendor tables. It

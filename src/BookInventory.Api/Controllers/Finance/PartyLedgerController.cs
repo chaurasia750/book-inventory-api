@@ -10,7 +10,7 @@ namespace BookInventory.Api.Controllers.Finance;
 /// have no access; nothing posts through these routes (postings come only from the documents, R5).
 /// </summary>
 [Authorize(Roles = Readers)]
-public sealed class PartyLedgerController(LedgerStatementService statements) : ApiControllerBase
+public sealed class PartyLedgerController(LedgerStatementService statements, LedgerPdfService pdfs) : ApiControllerBase
 {
     private const string Readers = "OWNER,SUPER_ADMIN";
 
@@ -23,4 +23,20 @@ public sealed class PartyLedgerController(LedgerStatementService statements) : A
     [HttpGet("vendors/{vendorId:guid}/ledger")]
     public async Task<IActionResult> Vendor(Guid vendorId, [FromQuery] LedgerStatementQuery query, CancellationToken cancellationToken) =>
         Ok(await statements.VendorStatementAsync(vendorId, query, cancellationToken));
+
+    /// <summary>R18: a school statement as an A4 PDF, rendered on demand and never stored.</summary>
+    [HttpGet("schools/{schoolId:guid}/ledger/pdf")]
+    public async Task<IActionResult> SchoolPdf(Guid schoolId, [FromQuery] LedgerStatementQuery query, CancellationToken cancellationToken) =>
+        Download(await pdfs.SchoolAsync(schoolId, query, cancellationToken));
+
+    /// <summary>R18: a vendor statement as an A4 PDF.</summary>
+    [HttpGet("vendors/{vendorId:guid}/ledger/pdf")]
+    public async Task<IActionResult> VendorPdf(Guid vendorId, [FromQuery] LedgerStatementQuery query, CancellationToken cancellationToken) =>
+        Download(await pdfs.VendorAsync(vendorId, query, cancellationToken));
+
+    private FileContentResult Download(LedgerPdf pdf)
+    {
+        Response.Headers.ContentDisposition = $"inline; filename=\"{pdf.FileName}\"";
+        return File(pdf.Content, "application/pdf");
+    }
 }

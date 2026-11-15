@@ -4,10 +4,10 @@
 - **Kind:** UI (repository `book-inventory-ui`; build `npx nx run-many -t build`, lint `npx nx run-many -t lint`)
 - **Spec:** [../../specs/finance.md](../../specs/finance.md) - rules covered: R18 (the screen side); AC10
 - **Owner:** abhishek
-- **Status:** Draft
+- **Status:** Approved
 - **Depends on:** `finance#07`
 - **UI plan:** this is itself a UI plan
-- **Approved by / on:** -
+- **Approved by / on:** abhishek / 2026-11-16 (chat: "next pending plan kro")
 - **Created:** 2026-11-16
 
 ## 1. In one minute
