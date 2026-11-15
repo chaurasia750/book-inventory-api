@@ -56,8 +56,8 @@ public class Receipt : CompanyOwnedRoot
     /// <summary>R10: the amount of the cheques that bounced.</summary>
     public decimal BouncedAmount => Modes.Where(m => m.ChequeStatus == ChequeStatus.Bounced).Sum(m => m.Amount);
 
-    /// <summary>R6, R11: the part of the receipt applied to no invoice (not counting what bounced).</summary>
-    public decimal AdvanceAmount => TotalAmount - AllocatedAmount - BouncedAmount;
+    /// <summary>R6, R11, R14: the part of the receipt applied to no invoice (not counting what bounced); a cancelled receipt has none.</summary>
+    public decimal AdvanceAmount => Status == ReceiptStatus.Cancelled ? 0m : TotalAmount - AllocatedAmount - BouncedAmount;
 
     /// <summary>R8: the prefix of the receipt numbers of a financial year (<c>RCP/2026-27/</c>).</summary>
     public static string NumberSeries(string financialYear) => $"RCP/{financialYear}/";
