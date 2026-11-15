@@ -4,7 +4,7 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/customer.md](../../specs/customer.md) - rules covered: R1-R14; AC1-AC10
 - **Owner:** abhishek
-- **Status:** In progress (code done 2026-11-16; waiting for the API runs of section 5, which need the dev sign-in)
+- **Status:** Done (2026-11-16)
 - **Depends on:** `platform#07` (Done), `school#03` (Approved)
 - **UI plan:** customer#02
 - **Approved by / on:** abhishek / 2026-11-14 (chat: Q1-Q11 of the customer spec answered one by one, all with the recommended answers)
@@ -28,7 +28,7 @@ It follows the vendor master closely: `Customer` derives from `CompanyOwnedRoot`
 - [x] 4. Query service: the list (search, filters, sort, paging, the school's name through the directory) and one customer; the suggestion (R8, R11).
 - [x] 5. `CustomersController` with the roles of R9 and the API table.
 - [x] 6. Message catalogue and registration; build at 0 warnings, 0 errors; size limits; `docs/Code_Map.md`.
-- [ ] 7. Verify every row of section 5 on the real local database and record the result.
+- [x] 7. Verify every row of section 5 on the real local database and record the result.
 
 ## 5. Spec coverage
 | Rule / AC | Task | Verification (input -> observed output) |
@@ -46,8 +46,19 @@ It follows the vendor master closely: `Customer` derives from `CompanyOwnedRoot`
 | `R13`, `R14` | 1, 2 | DDL shows `numeric(18,2)` for both amounts; no document copies exist yet (nothing to check beyond the column types) |
 
 ## 6. Not verified
-Observed so far (2026-11-16): `dotnet build book-inventory.slnx` 0 warnings, 0 errors. Migration `20261115225916_Customer_Master` generated (additive: schema `customer`, table `customer.customer`, no foreign keys; DDL shows `numeric(18,2)` for both amounts, unique `(company_id, code)` and `(company_id, mobile)` live rows) and applied to the local `book_inventory` only. A scratch run on the aggregate (no database) gave: valid customer `CUS-0001` ACTIVE, opening 0, no limit (AC1 values); 1-character name, missing mobile, 8-digit mobile, opening -1, limit 0 and -5, three-decimal amounts, a class without a school each `ValidationFailureException` with the module code (AC2, AC3 domain part); `+91 98765 00001` stores `9876500001`; deactivate twice / activate when active `ConflictException` (AC8).
-NOT verified: every row that needs the running API and a sign-in (AC1 company stamping and numbering, AC2 `409` on the same mobile, AC3 school and class through the directory, AC4, AC5, AC6, AC7, AC9, AC10). No sign-in password for the dev database was available to the assistant.
+Observed (2026-11-16, scratch API on the real `book_inventory`, fake data; Owner of ABC, Owner and Staff of Children, Super Admin):
+- AC1: Owner A creates -> 201 `CUS-0001` ACTIVE, opening 0, limit none; the second `CUS-0002`; Staff of company B's first `CUS-0001`; `code: HACK-1` in the body ignored.
+- AC2: name `R` -> 400 `customer.invalid_name`; no mobile -> 400; 8-digit mobile -> 400 `customer.invalid_mobile`; opening -1 -> 400 `invalid_opening_balance`; limit 0 and -5 -> 400 `invalid_credit_limit`; 1.234 and 5.123 -> 400; `+91 xxxxx xxxxx` of an existing mobile -> 409 `customer.mobile_taken`.
+- AC3: school with ` 5TH ` -> 201, stored `5th` with the school's name; class without school, unknown class -> 400 `invalid_class`; company B's school -> 400 `invalid_school`.
+- AC4: B's list shares no id with A; B opening A's customer and an unknown id -> 404 `customer.not_found`, identical bodies (ignoring trace id); `companyId` in the query changes nothing.
+- AC5: suggest by name and by the first six digits of a mobile finds the customer; 1 character -> 200 empty; an inactive customer is not suggested.
+- AC6: Staff list, suggest, create 201, get 200; edit, deactivate, activate 403; anonymous 401.
+- AC7: Super Admin without a company: list 200, create 403 `core.company_required`; after entering ABC (new access token) create 201.
+- AC8: deactivate 204, again 409 `already_inactive`, found under the inactive filter; activate 204, again 409 `already_active`, suggested again.
+- AC9: page size 500 -> 200; search by tag and by code; `orderBy=Evil DESC` -> 200; `Name DESC` sorts.
+- AC10: the audit log of company A holds `Customer` rows (CREATED, UPDATED) with the actor.
+- R13/R14: the generated DDL has `numeric(18,2)` for both amounts.
+NOT verified: the SQL check that each row's `company_id` is the entering company (seen only through the isolation in AC4), parallel creations getting different numbers, and the credit-limit upper bounds.
 
 ## 7. Risks and notes
 The migration is additive; rollback: drop schema `customer`. If the owner answers Q3 with "allow the same mobile", the unique index on the mobile becomes a plain index before the plan starts.
