@@ -16,6 +16,7 @@ public static class SalesMessages
     public const string InvalidPriceVersion = "sales.invalid_price_version";
     public const string InvalidQuantity = "sales.invalid_quantity";
     public const string InvalidDiscount = "sales.invalid_discount";
+    public const string ItemDiscountDisabled = "sales.item_discount_disabled";
     public const string DiscountTooLarge = "sales.discount_too_large";
     public const string TooManyLines = "sales.too_many_lines";
     public const string InvalidDate = "sales.invalid_date";

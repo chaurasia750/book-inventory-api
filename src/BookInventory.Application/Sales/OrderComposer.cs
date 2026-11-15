@@ -17,7 +17,8 @@ namespace BookInventory.Application.Sales;
 /// </summary>
 [AutoRegister(ServiceLifetime.Scoped)]
 public sealed class OrderComposer(
-    ISchoolDirectory schools, ISchoolSessions sessions, ICompanyTaxProfile company, IItemDirectory items, IPriceDirectory prices)
+    ISchoolDirectory schools, ISchoolSessions sessions, ICompanyTaxProfile company, IItemDirectory items, IPriceDirectory prices,
+    ICompanyInvoiceIdentity identity)
 {
     public async Task<OrderHeader> HeaderAsync(SaveSchoolOrderRequest request, DateOnly orderDate, CancellationToken cancellationToken)
     {
@@ -65,6 +66,7 @@ public sealed class OrderComposer(
         var itemIds = lines.Select(l => l.ItemId!.Value).Distinct().ToList();
         var references = await items.SaleReferencesAsync(itemIds, cancellationToken);
         var versions = await prices.VersionsOfItemsAsync(itemIds, request.OrderDate, cancellationToken);
+        var usesItemDiscount = await identity.UsesItemDiscountAsync(cancellationToken);
         var made = new List<OrderLineInput>();
         var leftOut = new List<LeftOutLine>();
         foreach (var line in lines)
@@ -72,7 +74,7 @@ public sealed class OrderComposer(
             var className = ClassKey(line.ClassName) is { } key ? classes[key] : null;
             try
             {
-                made.Add(LineOf(line, className, references, versions));
+                made.Add(Allowed(LineOf(line, className, references, versions), usesItemDiscount, CurrentDiscountOf(request, line)));
             }
             catch (ValidationFailureException refusal) when (!strict)
             {
@@ -95,6 +97,17 @@ public sealed class OrderComposer(
 
         return resolved;
     }
+
+    /// <summary>R36: the line when its item discount is allowed, else the refusal.</summary>
+    private static OrderLineInput Allowed(OrderLineInput input, bool usesItemDiscount, Discount? current)
+    {
+        ItemDiscountRule.Require(usesItemDiscount, input, current);
+        return input;
+    }
+
+    /// <summary>R36: the item discount the line has now on its order (none for a new line).</summary>
+    private static Discount? CurrentDiscountOf(OrderLinesRequest request, SchoolOrderLineRequest line) =>
+        line.LineId is { } id && request.CurrentDiscounts is { } current ? current.GetValueOrDefault(id) : null;
 
     private static string? ClassKey(string? name) => SchoolClass.KeyOf(name);
 

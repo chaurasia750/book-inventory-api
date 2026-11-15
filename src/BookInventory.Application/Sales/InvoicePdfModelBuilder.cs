@@ -9,7 +9,7 @@ namespace BookInventory.Application.Sales;
 /// Spec sales R30-R33: turns a printable invoice into the model the invoice templates fill: every value is already formatted
 /// (Indian grouping, dates) and HTML-encoded, so the templates only place text and never format or escape. The bank account, terms
 /// and header texts come from the company snapshot kept on the invoice (R13, D7); the logo and signature are the company's live
-/// images.
+/// images. The discount column is in the document exactly when the company's live item-wise discount setting is on (R36).
 /// </summary>
 public static class InvoicePdfModelBuilder
 {
@@ -32,6 +32,9 @@ public static class InvoicePdfModelBuilder
             ["school"] = School(d),
             ["payment"] = d.PaymentType == PaymentType.Cash ? "Cash" : "Credit",
             ["show_bands"] = d.Layout == InvoiceLayout.ByClass,
+            ["show_discount"] = live?.Invoice.UsesItemDiscount == true,
+            ["band_span"] = live?.Invoice.UsesItemDiscount == true ? 9 : 8,
+            ["subtotal_span"] = live?.Invoice.UsesItemDiscount == true ? 8 : 7,
             ["groups"] = d.Groups.Select(g => Group(g, ref number)).ToList(),
             ["line_count"] = d.Groups.Sum(g => g.Lines.Count),
             ["total_quantity"] = d.Lines.Sum(l => l.Quantity),

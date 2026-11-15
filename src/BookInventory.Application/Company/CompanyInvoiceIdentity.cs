@@ -19,6 +19,9 @@ public sealed class CompanyInvoiceIdentity(ICompanyStore store, ICurrentCompany 
         return company is null ? null : ToIdentity(company);
     }
 
+    public async Task<bool> UsesItemDiscountAsync(CancellationToken cancellationToken = default) =>
+        (await CurrentAsync(cancellationToken))?.Invoice.UsesItemDiscount ?? false;
+
     private static CompanyPrintedIdentity ToIdentity(CompanyRoot company) =>
         new(
             company.Name, company.Address, company.Mobile, company.Email, company.Gstin, company.State,
@@ -27,5 +30,5 @@ public sealed class CompanyInvoiceIdentity(ICompanyStore store, ICurrentCompany 
             new CompanyBankDetails(
                 company.BankAccountHolder, company.BankName, company.BankAccountNumber, company.BankIfsc,
                 company.BankBranch, company.UpiId),
-            new CompanyInvoiceSettings(company.InvoiceTerms, company.InvoiceFooter, company.PrintGstin));
+            new CompanyInvoiceSettings(company.InvoiceTerms, company.InvoiceFooter, company.PrintGstin, company.UsesItemDiscount));
 }

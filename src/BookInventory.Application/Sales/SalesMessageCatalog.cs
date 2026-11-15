@@ -17,6 +17,7 @@ public static class SalesMessageCatalog
             [SalesMessages.NoPrice] = "This item has no price yet; add a price version first.",
             [SalesMessages.InvalidPriceVersion] = "The price version does not belong to this item.",
             [SalesMessages.InvalidQuantity] = "A quantity is a whole number from 1 to 100000.",
+            [SalesMessages.ItemDiscountDisabled] = "Your company does not use a discount on each line. Use the total discount, or switch on item-wise discount in the Company profile.",
             [SalesMessages.InvalidDiscount] = "A discount is a percentage from 0 to 100 or an amount of at least zero, with at most two decimals.",
             [SalesMessages.DiscountTooLarge] = "A rupee discount cannot be more than the amount it is taken from.",
             [SalesMessages.TooManyLines] = "An order has at most 500 lines.",

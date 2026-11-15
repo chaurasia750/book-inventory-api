@@ -4,10 +4,10 @@
 - **Kind:** UI (repository `book-inventory-ui`; build `npx nx run-many -t build`, lint `npx nx run-many -t lint`)
 - **Spec:** [../../specs/sales.md](../../specs/sales.md) - rules covered: R36 (the screen side); AC28, AC29
 - **Owner:** abhishek
-- **Status:** Draft
+- **Status:** Approved
 - **Depends on:** `sales#12`, `company#12`
 - **UI plan:** this is itself a UI plan
-- **Approved by / on:** -
+- **Approved by / on:** abhishek / 2026-11-15 (chat: "yes approve hai"; Q20, Q21 answered with the recommended answers)
 - **Created:** 2026-11-15
 
 ## 1. In one minute
