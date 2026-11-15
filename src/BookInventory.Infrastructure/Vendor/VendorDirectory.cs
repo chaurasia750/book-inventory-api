@@ -25,7 +25,7 @@ public sealed class VendorDirectory(IUnitOfWork unitOfWork) : IVendorDirectory
 
         return await _vendors.TableNoTracking
             .Where(v => ids.Contains(v.Id))
-            .Select(v => new VendorReference(v.Id, v.Code, v.Name, v.Status == Domain.Vendor.VendorStatus.Active))
+            .Select(v => new VendorReference(v.Id, v.Code, v.Name, v.Status == Domain.Vendor.VendorStatus.Active, v.State, v.Gstin))
             .ToDictionaryAsync(v => v.Id, cancellationToken);
     }
 
@@ -48,7 +48,7 @@ public sealed class VendorDirectory(IUnitOfWork unitOfWork) : IVendorDirectory
 
         var found = await _vendors.TableNoTracking
             .Where(v => keys.Contains(v.NameNormalized))
-            .Select(v => new { v.NameNormalized, Reference = new VendorReference(v.Id, v.Code, v.Name, v.Status == Domain.Vendor.VendorStatus.Active) })
+            .Select(v => new { v.NameNormalized, Reference = new VendorReference(v.Id, v.Code, v.Name, v.Status == Domain.Vendor.VendorStatus.Active, v.State, v.Gstin) })
             .ToListAsync(cancellationToken);
         return found.GroupBy(v => v.NameNormalized).ToDictionary(g => g.Key, g => g.First().Reference);
     }

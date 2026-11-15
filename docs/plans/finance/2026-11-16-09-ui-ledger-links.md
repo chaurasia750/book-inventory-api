@@ -4,10 +4,10 @@
 - **Kind:** UI (repository `book-inventory-ui`; build `npx nx run-many -t build`, lint `npx nx run-many -t lint`)
 - **Spec:** [../../specs/finance.md](../../specs/finance.md) - rules covered: R19; AC12
 - **Owner:** abhishek
-- **Status:** Draft
+- **Status:** In progress (code done 2026-11-16; waiting for the owner's look in the browser)
 - **Depends on:** `payment#02` (Done, the receipt in the address), `sales#02` (Done, the order and invoice screens)
 - **UI plan:** this is itself a UI plan (the feature has no backend change: the rows already carry the document id)
-- **Approved by / on:** -
+- **Approved by / on:** abhishek / 2026-11-16 (chat: "next pending plan kro")
 - **Created:** 2026-11-16
 
 ## 1. In one minute
@@ -21,10 +21,10 @@ Leaves out: the Orders and Invoices lists, the vendor ledger (no vendor document
 A school invoice row links to `/invoices/<document id>` and a payment receipt row to `/schools/<school id>/payments/<document id>`; the order number in the invoice row's detail and the receipt number of a cheque row are found by their number through the existing searchable lists (`school-orders?search=`, `receipts?search=`) when clicked, and shown as plain text when nothing matches; the opening row has no link.
 
 ## 4. Tasks (at most 8)
-- [ ] 1. Link rules for the row types (invoice, receipt, cheque result, opening balance).
-- [ ] 2. Lookup by number for an order and for a receipt, with the not-found case.
-- [ ] 3. The links in the statement table (keyboard and mouse).
-- [ ] 4. i18n; build and lint; record what was seen.
+- [x] 1. Link rules for the row types (invoice, receipt, cheque result, opening balance).
+- [x] 2. Lookup by number for an order and for a receipt, with the not-found case.
+- [x] 3. The links in the statement table (keyboard and mouse).
+- [x] 4. i18n; build and lint; record what was seen.
 
 ## 5. Spec coverage
 | Rule / AC | Task | Verification (input -> observed output) |
@@ -32,7 +32,7 @@ A school invoice row links to `/invoices/<document id>` and a payment receipt ro
 | `R19`, `AC12` | 1-3 | a school with an invoice and a payment: the invoice number, its order number and the receipt number each open their screen; the opening balance row has no link |
 
 ## 6. Not verified
-To be filled when the plan is closed.
+Observed so far (2026-11-16): the member app builds; lint shows nothing in the changed files. Against the real API (Children Book Center, school SCH-0095): an invoice row has `documentType SCHOOL_INVOICE` with its invoice id (`GET invoices/{documentId}` 200) and the detail `ORD/2026-27/0029`, which `school-orders?search=...&schoolId=...` finds by exact number; a receipt row has `PAYMENT_RECEIPT` with the receipt id (`GET receipts/{documentId}` 200). The cheque rows are linked by the receipt number at the start of their detail (`RCP/...: cheque ... cleared`), found through `receipts?search=`. NOT verified: any click in a browser, a cheque cleared or bounced row (none exists in the data), and the plain-text fallback for a number that finds nothing.
 
 ## 7. Risks and notes
 The order and cheque-row links need one extra request when clicked. Seen through headless Chrome only.
