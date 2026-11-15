@@ -9,6 +9,7 @@
 
 	<ItemGroup>
 		<EmbeddedResource Include="Sales\Templates\*.sbn" />
+		<EmbeddedResource Include="Payment\Templates\*.sbn" />
 	</ItemGroup>
 
 </Project>

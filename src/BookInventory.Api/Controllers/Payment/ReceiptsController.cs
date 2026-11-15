@@ -10,7 +10,7 @@ namespace BookInventory.Api.Controllers.Payment;
 /// (Staff get 403). The same <c>clientRequestId</c> answers <c>200</c> with the receipt already recorded instead of a second one (R9).
 /// </summary>
 [Route("receipts")]
-public sealed class ReceiptsController(ReceiptService receipts, ReceiptQueryService queries) : ApiControllerBase
+public sealed class ReceiptsController(ReceiptService receipts, ReceiptQueryService queries, ReceiptPdfService pdfs) : ApiControllerBase
 {
     private const string Owners = "OWNER,SUPER_ADMIN";
 
@@ -30,4 +30,13 @@ public sealed class ReceiptsController(ReceiptService receipts, ReceiptQueryServ
 
     [HttpGet("{id:guid}"), Authorize(Roles = Owners)]
     public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken) => Ok(await queries.GetAsync(id, cancellationToken));
+
+    /// <summary>R17: the receipt as an A5 PDF, rendered on demand and never stored.</summary>
+    [HttpGet("{id:guid}/pdf"), Authorize(Roles = Owners)]
+    public async Task<IActionResult> Pdf(Guid id, CancellationToken cancellationToken)
+    {
+        var pdf = await pdfs.RenderAsync(id, cancellationToken);
+        Response.Headers.ContentDisposition = $"inline; filename=\"{pdf.FileName}\"";
+        return File(pdf.Content, "application/pdf");
+    }
 }
