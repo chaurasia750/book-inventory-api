@@ -1714,6 +1714,124 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                     b.ToTable("item_barcode", "item");
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Planning.ClassBookList", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ClassName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("class_name");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("school_id");
+
+                    b.Property<string>("Session")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("session");
+
+                    b.Property<int?>("StudentEstimate")
+                        .HasColumnType("integer")
+                        .HasColumnName("student_estimate");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id")
+                        .HasName("pk_class_book_list");
+
+                    b.HasIndex("CompanyId", "SchoolId", "Session", "ClassName")
+                        .IsUnique()
+                        .HasDatabaseName("ix_class_book_list_company_id_school_id_session_class_name")
+                        .HasFilter("is_deleted = false");
+
+                    b.ToTable("class_book_list", "planning");
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Planning.ClassBookListLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ClassBookListId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("class_book_list_id");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("ItemCode")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("item_code");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("item_id");
+
+                    b.Property<string>("ItemName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("item_name");
+
+                    b.Property<int>("QuantityPerStudent")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity_per_student");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.HasKey("Id")
+                        .HasName("pk_class_book_list_line");
+
+                    b.HasIndex("ClassBookListId", "SortOrder")
+                        .HasDatabaseName("ix_class_book_list_line_class_book_list_id_sort_order");
+
+                    b.ToTable("class_book_list_line", "planning");
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Price.PriceVersion", b =>
                 {
                     b.Property<Guid>("Id")
@@ -3139,6 +3257,16 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_item_barcode_item_item_id");
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Planning.ClassBookListLine", b =>
+                {
+                    b.HasOne("BookInventory.Domain.Planning.ClassBookList", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("ClassBookListId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_class_book_list_line_class_book_list_class_book_list_id");
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Sales.InvoiceLine", b =>
                 {
                     b.HasOne("BookInventory.Domain.Sales.Invoice", null)
@@ -3197,6 +3325,11 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("BookInventory.Domain.Item.Item", b =>
                 {
                     b.Navigation("Barcodes");
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Planning.ClassBookList", b =>
+                {
+                    b.Navigation("Lines");
                 });
 
             modelBuilder.Entity("BookInventory.Domain.Sales.Invoice", b =>
