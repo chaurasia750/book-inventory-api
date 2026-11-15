@@ -4,7 +4,7 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/sales.md](../../specs/sales.md) - rules covered: R38-R41, R48; AC31-AC34
 - **Owner:** abhishek
-- **Status:** In progress (code done 2026-11-16; the student rows R40/R41 are verified together with sales#17, which creates students)
+- **Status:** Done (2026-11-16)
 - **Depends on:** none (school directory R16, session R18 and the company code series exist)
 - **UI plan:** sales#16
 - **Approved by / on:** abhishek / 2026-11-16 (chat: "all plan approve hai, ek hi branch pe")
@@ -28,7 +28,7 @@ Schema change: yes (two new tables in the existing schema `sales`, additive); no
 - [x] 4. Student find-or-create and the suggestion query (R40, R41).
 - [x] 5. `CountersController` and `StudentsController` with the roles of R48 and the API table; catalogue and registration.
 - [x] 6. Build at 0 warnings, 0 errors; size limits; `docs/Code_Map.md`.
-- [ ] 7. Verify every row of section 5 on the real local database and record the result.
+- [x] 7. Verify every row of section 5 on the real local database and record the result.
 
 ## 5. Spec coverage
 | Rule / AC | Task | Verification (input -> observed output) |
@@ -43,7 +43,8 @@ Observed (2026-11-16, scratch API on the real `book_inventory`; migration `20261
 - AC31: Owner opens a counter for an active `BOTH` school with start 2027-04-01 -> 201, session `2027-28`, ACTIVE; a second counter for the same school and session -> 201; an active `SCHOOL_ORDER` school -> 400 `sales.counter.school_not_counter`; end before start -> 400 `invalid_dates`; session `2040-41` -> 400 `invalid_session`; a 1-character name -> 400 `invalid_name`; Staff -> 403.
 - AC32: close 204, again 409 `already_closed`; open 204, again 409 `already_open`; edit of name and end date 204 and read back; Staff close 403, Staff list 200; company B opening A's counter 404 `counter.not_found`; anonymous 401; list: page size 500 -> 200, search by name and by school code, status filter, unknown sort ignored.
 - R41 (empty data): `students/suggest` with 1 character -> 200 empty, with 2 characters -> 200 `[]`, unknown or another company's school -> 404, no school -> 400.
-NOT verified here: the closed-counter refusal of a bill and the locked school after a bill (they need the bill, sales#17), and the student rows AC33 and the suggestion with data (students exist only through a bill, sales#17).
+Student rows closed together with sales#17 (2026-11-16, same scratch API): the bill creates and reuses students. `Ravi Kumar` class `Nursery` is created by the first bill; `  ravi   KUMAR ` in upper case with the same class reuses it (same id) and a section `B` given later is stored on it while the first bill still shows no section; the same name in class `LKG` is a second student; `students/suggest?text=ravi kum` lists both with their class, with `className` only one; a bill refused for a payment mismatch created no student; a locked school: a counter with a bill answers 409 `sales.counter.school_fixed` when its school changes, a rename keeping the school is 204; a closed counter answers 409 `sales.counter.closed` for a bill.
+NOT verified: a school of company B suggested to company A with data (only the 404 for an unknown school was seen).
 
 ## 7. Risks and notes
 The migration is additive (two tables in the existing schema `sales`); rollback: drop the two tables. The student find-or-create is called by the bill (sales#17); here it is checked through a scratch call only.

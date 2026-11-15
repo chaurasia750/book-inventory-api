@@ -22,4 +22,12 @@ public static class CounterMessages
     public const string InvalidStudentField = "sales.student.invalid_field";
     public const string InvalidStudentClass = "sales.student.invalid_class";
     public const string InvalidStudentMobile = "sales.student.invalid_mobile";
+
+    public const string BillNotFound = "sales.counter_bill.not_found";
+    public const string InvalidBillDate = "sales.counter_bill.invalid_date";
+    public const string BillTooManyLines = "sales.counter_bill.too_many_lines";
+    public const string BillNoLines = "sales.counter_bill.no_lines";
+    public const string InvalidPayment = "sales.counter_bill.invalid_payment";
+    public const string PaymentMismatch = "sales.counter_bill.payment_mismatch";
+    public const string BillAlreadyCancelled = "sales.counter_bill.already_cancelled";
 }
