@@ -4,7 +4,7 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/sales.md](../../specs/sales.md) - rules covered: R38-R41, R48; AC31-AC34
 - **Owner:** abhishek
-- **Status:** Approved
+- **Status:** In progress (code done 2026-11-16; the student rows R40/R41 are verified together with sales#17, which creates students)
 - **Depends on:** none (school directory R16, session R18 and the company code series exist)
 - **UI plan:** sales#16
 - **Approved by / on:** abhishek / 2026-11-16 (chat: "all plan approve hai, ek hi branch pe")
@@ -22,12 +22,12 @@ Counter and Student derive from `CompanyOwnedRoot` like the other masters. The c
 Schema change: yes (two new tables in the existing schema `sales`, additive); no other schema-changing sales plan is open.
 
 ## 4. Tasks (at most 8)
-- [ ] 1. Domain: `Counter` (create, edit, close, open; school change locked once billed through a flag the bill sets later) and `Student` (create, update optional values, identity key) with message codes (R38-R40).
-- [ ] 2. Persistence: configurations (indexes, the unique student identity on live rows), migration `Sales_CounterAndStudent`; show the SQL and the target `book_inventory` before applying.
-- [ ] 3. Counter use cases: add, edit, close, open, with the school checks and the session (R38, R39).
-- [ ] 4. Student find-or-create and the suggestion query (R40, R41).
-- [ ] 5. `CountersController` and `StudentsController` with the roles of R48 and the API table; catalogue and registration.
-- [ ] 6. Build at 0 warnings, 0 errors; size limits; `docs/Code_Map.md`.
+- [x] 1. Domain: `Counter` (create, edit, close, open; school change locked once billed through a flag the bill sets later) and `Student` (create, update optional values, identity key) with message codes (R38-R40).
+- [x] 2. Persistence: configurations (indexes, the unique student identity on live rows), migration `Sales_CounterAndStudent`; show the SQL and the target `book_inventory` before applying.
+- [x] 3. Counter use cases: add, edit, close, open, with the school checks and the session (R38, R39).
+- [x] 4. Student find-or-create and the suggestion query (R40, R41).
+- [x] 5. `CountersController` and `StudentsController` with the roles of R48 and the API table; catalogue and registration.
+- [x] 6. Build at 0 warnings, 0 errors; size limits; `docs/Code_Map.md`.
 - [ ] 7. Verify every row of section 5 on the real local database and record the result.
 
 ## 5. Spec coverage
@@ -39,7 +39,11 @@ Schema change: yes (two new tables in the existing schema `sales`, additive); no
 | `R41`, `R48`, `AC34` | 4, 5 | suggest `rav` for school S: only S's students, at most 20, class filter works, 1 character empty, company B sees none |
 
 ## 6. Not verified
-To be filled when the plan is closed.
+Observed (2026-11-16, scratch API on the real `book_inventory`; migration `20261115234945_Sales_CounterAndStudent` applied to it, additive: tables `sales.counter` and `sales.student`, no foreign keys, the unique student identity `(company_id, school_id, name_normalized, class_name)` on live rows):
+- AC31: Owner opens a counter for an active `BOTH` school with start 2027-04-01 -> 201, session `2027-28`, ACTIVE; a second counter for the same school and session -> 201; an active `SCHOOL_ORDER` school -> 400 `sales.counter.school_not_counter`; end before start -> 400 `invalid_dates`; session `2040-41` -> 400 `invalid_session`; a 1-character name -> 400 `invalid_name`; Staff -> 403.
+- AC32: close 204, again 409 `already_closed`; open 204, again 409 `already_open`; edit of name and end date 204 and read back; Staff close 403, Staff list 200; company B opening A's counter 404 `counter.not_found`; anonymous 401; list: page size 500 -> 200, search by name and by school code, status filter, unknown sort ignored.
+- R41 (empty data): `students/suggest` with 1 character -> 200 empty, with 2 characters -> 200 `[]`, unknown or another company's school -> 404, no school -> 400.
+NOT verified here: the closed-counter refusal of a bill and the locked school after a bill (they need the bill, sales#17), and the student rows AC33 and the suggestion with data (students exist only through a bill, sales#17).
 
 ## 7. Risks and notes
 The migration is additive (two tables in the existing schema `sales`); rollback: drop the two tables. The student find-or-create is called by the bill (sales#17); here it is checked through a scratch call only.

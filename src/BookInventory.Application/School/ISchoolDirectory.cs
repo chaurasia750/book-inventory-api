@@ -1,9 +1,10 @@
 using BookInventory.Domain.Core;
+using BookInventory.Domain.School;
 
 namespace BookInventory.Application.School;
 
-/// <summary>R16: what another module may know about a school: its id, code, name and whether it can be chosen for a new document.</summary>
-public sealed record SchoolReference(Guid Id, string Code, string Name, bool IsActive, string? State = null, bool IsGstDefault = false, string? Gstin = null, string? Address = null, PaymentType PaymentType = PaymentType.Credit);
+/// <summary>R16: what another module may know about a school: its id, code, name, whether it can be chosen for a new document, and what it sells (order, counter or both, school R4).</summary>
+public sealed record SchoolReference(Guid Id, string Code, string Name, bool IsActive, string? State = null, bool IsGstDefault = false, string? Gstin = null, string? Address = null, PaymentType PaymentType = PaymentType.Credit, SaleType SaleType = SaleType.Both);
 
 /// <summary>
 /// R16: the capability other modules (the ledger and the customer master) use to read schools, never by joining the school
@@ -17,6 +18,12 @@ public interface ISchoolDirectory
 
     /// <summary>The references of the given schools, by id; an id that is not found is left out.</summary>
     Task<IReadOnlyDictionary<Guid, SchoolReference>> ReferencesAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken = default);
+
+    /// <summary>The ids of the company's schools whose name or code contains the text, at most <see cref="MaxMatches"/> (for the counter search, sales R49).</summary>
+    Task<IReadOnlyList<Guid>> IdsMatchingAsync(string text, CancellationToken cancellationToken = default);
+
+    /// <summary>The cap of <see cref="IdsMatchingAsync"/>.</summary>
+    const int MaxMatches = 200;
 
     /// <summary>The school's own class name that equals <paramref name="text"/> ignoring case and extra spaces (R6), or <c>null</c>.</summary>
     Task<string?> ClassOfAsync(Guid schoolId, string? text, CancellationToken cancellationToken = default);
