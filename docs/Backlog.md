@@ -103,3 +103,5 @@ Kinds: **NV** not verified · **GAP** known gap · **DEC** decision the owner ha
 | B93 | item | NV | item#06 screen not clicked through in a browser: upload from the dialog, success counts, the table of wrong rows, Staff without the Import button, narrow screen | item#06 | open |
 | B94 | sales | DEBT | Deleting a draft order that has lines answers 500 (EF "association severed" in `SchoolOrderService.DeleteAsync` -> `store.Remove`); a draft without lines deletes fine; spec R6 says a draft can be deleted | sales#12 | open |
 | B95 | sales | DEBT | `ICompanyInvoiceIdentity.UsesItemDiscountAsync` loads the whole company row (with logo and signature) on every order save; a lighter read of the flag would be cheaper | sales#12 | open |
+| B96 | company | NV | company#13 Company profile switch (Item-wise discount) not clicked through in a browser: save and reload | company#13 | open |
+| B97 | sales | NV | sales#13 not seen: a document with a line discount while the setting is off (column stays, cells read-only), the print and the narrow screen | sales#13 | open |
