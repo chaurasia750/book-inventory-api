@@ -1,10 +1,10 @@
 # Spec: school - School master
 
 - **Module:** `school` (PostgreSQL schema `school`)
-- **Status:** R1-R15 Approved by the owner on 2026-11-14 (AC1-AC11, D1-D7 with them); R16 and AC12 Approved by abhishek on 2026-11-14 (for the customer spec, its decision D4); R17 and AC13 Approved by abhishek on 2026-11-14 (for the finance spec, its decision D4)
-- **Last updated:** 2026-11-14 (R16, AC12 added for the customer master; R17, AC13 for the ledger)
+- **Status:** R1-R15 Approved by the owner on 2026-11-14 (AC1-AC11, D1-D7 with them); R16 and AC12 Approved by abhishek on 2026-11-14 (for the customer spec, its decision D4); R17 and AC13 Approved by abhishek on 2026-11-14 (for the finance spec, its decision D4); R18, R19, AC14, AC15 and D8 Approved by abhishek on 2026-11-15 (for the sales spec)
+- **Last updated:** 2026-11-14 (R16, AC12 added for the customer master; R17, AC13 for the ledger); 2026-11-15 (for the sales spec)
 - **Source docs:** [BRD §1.2, §3, §4.2 School Master (FR-SCH-01 to FR-SCH-08), §5.1 BR-SES, §5.4 BR-GST, §7.1, §8 Data Model (School, SchoolClass)](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P22; [specs/company.md](company.md)
-- **Plans:** [school#04](../plans/school/2026-11-14-04-opening-balance-event.md) (Done, R17, AC13), [school#03](../plans/school/2026-11-14-03-school-directory.md) (Done, R16, AC12), [school#01](../plans/school/2026-11-14-01-school-master.md) (Done), [school#02](../plans/school/2026-11-14-02-ui-school-screens.md) (In progress); the platform mechanism it needs: [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Done)
+- **Plans:** [school#05](../plans/school/2026-11-15-05-session-of-a-date.md) (Approved, R18, R19), [school#06](../plans/school/2026-11-15-06-ui-session-cut-offs.md) (Approved, UI), [school#04](../plans/school/2026-11-14-04-opening-balance-event.md) (Done, R17, AC13), [school#03](../plans/school/2026-11-14-03-school-directory.md) (Done, R16, AC12), [school#01](../plans/school/2026-11-14-01-school-master.md) (Done), [school#02](../plans/school/2026-11-14-02-ui-school-screens.md) (In progress); the platform mechanism it needs: [platform#01](../plans/platform/2026-11-14-01-company-owned-data.md) (Done)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -50,6 +50,10 @@ Out of scope for this feature: Excel import of schools (FR-SCH-07, NFR-12: its o
 
 **Telling the ledger about the opening balance**
 - **R17** When a school is created with an opening balance above zero, or its opening balance is changed (R7), the school raises the event `SchoolOpeningBalanceChanged` with the school's id, the old amount and the new amount; nothing else changes the school. The ledger reacts to it ([specs/finance.md](finance.md) R6), so the school never writes the ledger. An edit that keeps the same amount raises nothing. Proposed by the assistant on 2026-11-14 for the finance spec (decision D4 there); Approved by abhishek on 2026-11-14.
+
+**Session of a date** (BR-SES; the derivation and cut-offs school D3/D7 left for the first order feature)
+- **R18** The **session** of a school on a date (BR-SES-01, BR-SES-03 to BR-SES-05): for an `APR_MAR` school, a date from the Apr-Mar cut-off (default 1 February) to 31 March belongs to the session starting that April, any other date to the session of its April-March year, written `2027-28`; for a `JAN_DEC` school, a date from the Jan-Dec cut-off (default 15 November) to 31 December belongs to the next calendar year's session, any other date to its own year, written `2027`. Examples: Apr-Mar, 01-Feb-2027 to 31-Mar-2027 -> `2027-28`, 01-Apr-2027 to 31-Jan-2028 -> `2027-28`; Jan-Dec, 15-Nov-2026 to 31-Dec-2026 -> `2027`, 01-Jan-2027 to 14-Nov-2027 -> `2027`. Other modules read it through the school capability (with the session before and after it, for the choice of sales R2), never computing it themselves.
+- **R19** The two **cut-offs** are company settings (BRD Q-05): the day and month from which an Apr-Mar date and a Jan-Dec date belong to the next session; defaults 1 February and 15 November; the Owner (and an entered Super Admin) changes them, each a valid day of its month (29 February is refused); Staff read them. A change applies to sessions computed after it; documents keep the session they were given.
 
 ## 4. Data
 
@@ -104,6 +108,8 @@ Raised by the `School` aggregate (past tense, ids and values only): `SchoolCreat
 - **AC11** Mobile `+91 98765 00001`, `0 98765 00001` and `9876500001` are stored as `9876500001`; an invalid email is `400` (R13).
 - **AC12** The directory capability, called for the Owner of A, finds A's school (id, name, active) and returns nothing for B's school id; the names of two ids come back; the text ` 5TH ` matches the school's class and comes back as `5th`, as the school writes it, and an unknown class matches nothing (R16).
 - **AC13** Creating a school with opening balance 5000.00 raises one `SchoolOpeningBalanceChanged` (0 -> 5000.00); editing it to 4500.00 raises one (5000.00 -> 4500.00); an edit that keeps 4500.00 and a school created with 0 raise none (R17).
+- **AC14** With the default cut-offs: an Apr-Mar school -> 2027-01-31 `2026-27`, 2027-02-01 `2027-28`, 2027-03-31 `2027-28`, 2027-04-01 `2027-28`; a Jan-Dec school -> 2026-11-14 `2026`, 2026-11-15 `2027`, 2026-12-31 `2027`, 2027-01-01 `2027`; the capability also gives the session before and after (R18).
+- **AC15** The Owner moves the Apr-Mar cut-off to 1 March: 2027-02-15 is now `2026-27`; 29 February and 31 April are `400`; Staff changing it is `403`; B's settings are untouched (R19).
 
 ## 10. Decisions
 
@@ -118,6 +124,7 @@ Proposed by the assistant on the owner's request of 2026-11-14 and approved with
 | D5 | The school code is generated by the system as `SCH-0001`, `SCH-0002`, ... from a counter of the company, never typed or changed (Q3, owner; the prefix is fixed for now). |
 | D6 | The business runs only in Bihar for now, so the state list holds only Bihar and a new school starts as Bihar; the CGST/SGST against IGST logic (BR-GST-05) and further states come when a second state is needed (Q4, owner). |
 | D7 | Answered "recommended" by the owner on 2026-11-14: the session derivation and the cut-offs come with the first order feature (Q1); the default class list is Nursery, LKG, UKG, 1st to 12th (Q2); the opening balance is zero or more, positive means the school owes the company (Q5); the sale type of a new school is `BOTH` (Q6); a school is never deleted, only deactivated (Q7); Staff only read active schools (Q8); Excel import is a later feature that needs an Excel library approved (Q9); mobile and email are checked like in `iam` (Q10); the Super Admin's school screens in `admin` come later (Q11). |
+| D8 | The session derivation and its cut-offs live in the school module (it owns the session type): one capability for every document module (sales R2), so the rule exists once. Cut-offs are per company with the BRD defaults. (proposed by the assistant on 2026-11-15 for the sales spec) |
 
 ## 11. Open questions
 

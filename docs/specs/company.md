@@ -1,10 +1,10 @@
 # Spec: company - Companies and their accounts
 
 - **Module:** `company` (PostgreSQL schema `company`)
-- **Status:** R1-R14 Approved by the owner on 2026-11-14 (AC1-AC15, D1-D10 with them); R15 and AC16 Approved by abhishek in chat on 2026-11-14
-- **Last updated:** 2026-11-14 (R10: `companies/current` answers `company: null`, not 404, when there is none)
+- **Status:** R1-R14 Approved by the owner on 2026-11-14 (AC1-AC15, D1-D10 with them); R15 and AC16 Approved by abhishek in chat on 2026-11-14; R16 and AC17 Approved by abhishek on 2026-11-15 (for the sales spec)
+- **Last updated:** 2026-11-14 (R10: `companies/current` answers `company: null`, not 404, when there is none); 2026-11-15 (for the sales spec)
 - **Source docs:** [BRD §3 Users aur Roles, §4.1 Company (FR-CMP-01, FR-CMP-05), §7 (NFR-07, NFR-08, NFR-11), §8 Data Model](../bussiness/BRD-Book-Inventory-Phase1.md); the owner's requests and answers of 2026-11-14 (each company has its own account and logs in; the company creates its staff logins; one Super Admin manages the companies)
-- **Plans:** [company#05](../plans/company/2026-11-14-05-company-url-slug.md) (Done, R15, AC16), [company#01](../plans/company/2026-11-14-01-company-master-and-owner-account.md) (Done), [company#02](../plans/company/2026-11-14-02-ui-company-management-screens.md) (In progress), [company#03](../plans/company/2026-11-14-03-super-admin-enters-a-company.md) (Done), [company#04](../plans/company/2026-11-14-04-ui-company-picker.md) (In progress); in `iam`: [iam#01](../plans/iam/2026-11-14-01-company-linked-accounts.md) (Done), [iam#02](../plans/iam/2026-11-14-02-ui-company-account-login.md) (In progress), [iam#03](../plans/iam/2026-11-14-03-owner-manages-staff-accounts.md) (Done), [iam#04](../plans/iam/2026-11-14-04-ui-owner-staff-screens.md) (In progress)
+- **Plans:** [company#06](../plans/company/2026-11-15-06-company-tax-profile.md) (Approved, R16, AC17), [company#05](../plans/company/2026-11-14-05-company-url-slug.md) (Done, R15, AC16), [company#01](../plans/company/2026-11-14-01-company-master-and-owner-account.md) (Done), [company#02](../plans/company/2026-11-14-02-ui-company-management-screens.md) (In progress), [company#03](../plans/company/2026-11-14-03-super-admin-enters-a-company.md) (Done), [company#04](../plans/company/2026-11-14-04-ui-company-picker.md) (In progress); in `iam`: [iam#01](../plans/iam/2026-11-14-01-company-linked-accounts.md) (Done), [iam#02](../plans/iam/2026-11-14-02-ui-company-account-login.md) (In progress), [iam#03](../plans/iam/2026-11-14-03-owner-manages-staff-accounts.md) (Done), [iam#04](../plans/iam/2026-11-14-04-ui-owner-staff-screens.md) (In progress)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -54,6 +54,9 @@ stateDiagram-v2
 - **R13** A Super Admin can **enter** an `ACTIVE` company to see and work with its data (owner decision 2026-11-14, D6; Q16). The choice is kept on the server with the session; `leave` clears it; with nothing entered the Super Admin has no company data. Entering and leaving are recorded (R12, D10): who, which company, when. Nobody else can enter a company.
 - **R14** The Owner creates and manages the Staff accounts of their own company (iam R65-R67). A Staff account may only create orders and sell to customers; it can do nothing else (D5, iam R68). Which endpoints those are is named by the business modules when they are built (Q14).
 - **R15** A company has a **URL segment (slug)** derived from its name, nothing stored: lower case letters and digits, every other run of characters becomes one hyphen, none at the ends (`ABC Book Center` -> `abc-book-center`). The company's screens live under `/<slug>/...` (platform U12). A name whose slug is empty or one of the application's own first URL segments (`admin`, `login`, `auth`, `error`, `welcome`, `api`, `assets`, `unauthorized`) is refused with `400` `company.slug_unavailable`; a name whose slug another company already has is refused with `409` `company.name_taken` (R3 now compares slugs). A rename changes the slug; the old address stops working. `GET companies/current` returns the slug (R10). Approved by abhishek in chat 2026-11-14 (shape `/<slug>/...`, derived from the name, wrong slug redirects to the user's own company).
+
+**Reading the company's tax profile from other modules**
+- **R16** Other modules (the sales module first, for GST) read the state and GSTIN of the session's company through a company capability, never by joining its tables; it changes nothing. Proposed by the assistant on 2026-11-15 for the sales spec; Approved by abhishek on 2026-11-15.
 
 ## 4. Data
 
@@ -115,6 +118,7 @@ Raised by the `Company` aggregate (past tense, ids and values only): `CompanyCre
 - **AC14** An Owner or Staff calling `POST companies/{id}/enter` gets `403`; entering an inactive company answers `409` (R13).
 - **AC15** Every enter and every leave that changed something appears in `company.company_entry` with the Super Admin's real id and the company id; a leave when nothing was entered adds nothing (R12, R13, D10).
 - **AC16** Creating a company named `Admin` or `!!` answers `400` `company.slug_unavailable`; creating `Slug Check Co` and then `SLUG-check  co` answers `201` then `409` `company.name_taken`; `GET companies/current` of an entered `Slug Check Co` returns `slug` `slug-check-co` (R15).
+- **AC17** The capability returns the session company's state and GSTIN (R16).
 
 ## 10. Decisions
 
