@@ -97,6 +97,9 @@ public class Company : AggregateRoot, IAuditCompanyScope
     /// <summary>R20: whether the GSTIN prints on the company's documents; true by default.</summary>
     public bool PrintGstin { get; private set; } = true;
 
+    /// <summary>R23: whether the company's orders and invoices may carry a discount per line; off by default.</summary>
+    public bool UsesItemDiscount { get; private set; }
+
     public CompanyStatus Status { get; private set; }
 
     /// <summary>Why the company was last deactivated, or the note of a reactivation. Null when there is none.</summary>
@@ -185,6 +188,7 @@ public class Company : AggregateRoot, IAuditCompanyScope
         InvoiceTerms = CompanyRules.Optional(details.Invoice.Terms, TermsMaxLength);
         InvoiceFooter = CompanyRules.Optional(details.Invoice.Footer, FooterMaxLength);
         PrintGstin = details.Invoice.PrintGstin;
+        UsesItemDiscount = details.Invoice.UsesItemDiscount;
     }
 
     /// <summary>R7/R8: switches the company off. A reason is required; the timeline gets one row.</summary>

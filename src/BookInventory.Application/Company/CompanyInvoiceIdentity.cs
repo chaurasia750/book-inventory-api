@@ -27,5 +27,5 @@ public sealed class CompanyInvoiceIdentity(ICompanyStore store, ICurrentCompany 
             new CompanyBankDetails(
                 company.BankAccountHolder, company.BankName, company.BankAccountNumber, company.BankIfsc,
                 company.BankBranch, company.UpiId),
-            new CompanyInvoiceSettings(company.InvoiceTerms, company.InvoiceFooter, company.PrintGstin));
+            new CompanyInvoiceSettings(company.InvoiceTerms, company.InvoiceFooter, company.PrintGstin, company.UsesItemDiscount));
 }

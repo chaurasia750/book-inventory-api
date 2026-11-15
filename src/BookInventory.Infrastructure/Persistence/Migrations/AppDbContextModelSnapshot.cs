@@ -181,6 +181,10 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("upi_id");
 
+                    b.Property<bool>("UsesItemDiscount")
+                        .HasColumnType("boolean")
+                        .HasColumnName("uses_item_discount");
+
                     b.HasKey("Id")
                         .HasName("pk_company");
 

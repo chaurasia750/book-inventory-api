@@ -56,7 +56,7 @@ public sealed class CompanyQueryService(ICompanyStore store, IUserDirectory user
             new CompanyBankDetails(
                 company.BankAccountHolder, company.BankName, company.BankAccountNumber, company.BankIfsc,
                 company.BankBranch, company.UpiId),
-            new CompanyInvoiceSettings(company.InvoiceTerms, company.InvoiceFooter, company.PrintGstin));
+            new CompanyInvoiceSettings(company.InvoiceTerms, company.InvoiceFooter, company.PrintGstin, company.UsesItemDiscount));
     }
 
     /// <summary>
