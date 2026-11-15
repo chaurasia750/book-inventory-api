@@ -4,7 +4,7 @@
 - **Kind:** UI (repository `book-inventory-ui`; build `npx nx run-many -t build`, lint `npx nx run-many -t lint`)
 - **Spec:** [../../specs/customer.md](../../specs/customer.md) - rules covered: R2-R9, R11 (the screen side); AC1-AC3, AC5, AC6, AC8, AC9
 - **Owner:** abhishek
-- **Status:** Approved
+- **Status:** In progress (code done 2026-11-16; waiting for the owner's look in the browser)
 - **Depends on:** `customer#01`
 - **UI plan:** this is itself a UI plan
 - **Approved by / on:** abhishek / 2026-11-14 (chat: Q1-Q11 of the customer spec answered one by one, all with the recommended answers)
@@ -21,12 +21,12 @@ Leaves out: the bill screen, the customer ledger and payments, the Super Admin's
 It follows the vendor and school screens (platform U10 list and detail, the form in the panel, required fields with a red `*`). The school field is a select of the company's active schools; the class select appears after a school is chosen and lists that school's classes. The opening balance and credit limit are amount inputs with two decimals. Staff see "Add customer" but no Edit, Activate or Deactivate. The picker calls `customers/suggest` after 300 ms of typing (at least 2 characters). Each state shows loading, empty, error with retry and success; all texts come from the catalogue.
 
 ## 4. Tasks (at most 8)
-- [ ] 1. Models and `CustomerService` for the endpoints.
-- [ ] 2. Customer list: search, status and school filters, sort, paging, compact rows when the panel is open, states (R11).
-- [ ] 3. Detail panel: values, status, Owner's activate and deactivate (R5, R9).
-- [ ] 4. Form in the panel (add and edit): name, mobile, address, school and class, opening balance, credit limit; red `*` on required fields; API messages (R2-R7).
-- [ ] 5. Customer picker (suggest, choose, "add new" opening the form) for the later bill (R8).
-- [ ] 6. Routes, role guards (Owner edits, Staff create and read), the "Customers" menu item, i18n keys.
+- [x] 1. Models and `CustomerService` for the endpoints.
+- [x] 2. Customer list: search, status and school filters, sort, paging, compact rows when the panel is open, states (R11).
+- [x] 3. Detail panel: values, status, Owner's activate and deactivate (R5, R9).
+- [x] 4. Form in the panel (add and edit): name, mobile, address, school and class, opening balance, credit limit; red `*` on required fields; API messages (R2-R7).
+- [x] 5. Customer picker (suggest, choose, "add new" opening the form) for the later bill (R8).
+- [x] 6. Routes, role guards (Owner edits, Staff create and read), the "Customers" menu item, i18n keys.
 - [ ] 7. `npx nx run-many -t build` and `-t lint`: 0 new findings against the base; verify every row of section 5 against the running API and record what was seen.
 
 ## 5. Spec coverage
@@ -40,9 +40,8 @@ It follows the vendor and school screens (platform U10 list and detail, the form
 | `R11`, `AC9` | 2 | Search, filters, sort and paging change the list |
 
 ## 6. Not verified
-To be filled when the plan is closed (no browser tool for the assistant: the owner looks at the screens).
+Observed so far (2026-11-16): `npx nx run-many -t build` succeeds for the three apps; lint shows no finding in a file of this plan (the findings that remain are in files this plan does not touch, for example the static import of the layout library in `member-layout.ts`). Not seen in a browser and not run against the API: every row of section 5 is NOT verified.
 
 ## 7. Risks and notes
 Written without a browser; expect small visual fixes after the owner's first look. The picker has no user until the Counter Sale bill screen; it is shown on its own in the list's "Add" flow only if the owner wants it there.
 
-**Parked (owner, 2026-11-14):** "eske last me karenge" - approved, but built only after the important transaction modules (purchase, invoice, payment, ledger and the rest). Do not start it before then.

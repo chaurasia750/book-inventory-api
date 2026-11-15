@@ -1,10 +1,10 @@
 # Spec: customer - Customer master
 
 - **Module:** `customer` (PostgreSQL schema `customer`)
-- **Status:** R1-R14 Approved by abhishek in chat on 2026-11-14 (Q1-Q11 answered one by one, all with the recommended answers; D1-D4 with them); parked by the owner on 2026-11-14: built last, after the important transaction modules
+- **Status:** R1-R14 Approved by abhishek in chat on 2026-11-14 (Q1-Q11 answered one by one, all with the recommended answers; D1-D4 with them); park lifted 2026-11-16 (all pending plans approved to build)
 - **Last updated:** 2026-11-14
 - **Source docs:** [BRD §1.3 (module 19), §3, §4.3A Customer Master (FR-CUS-01 to FR-CUS-05), §4.11 Direct Sale (FR-CNT-14 to FR-CNT-21), §4.14 PAY-C, §4.15 FR-LED-10/11, §5.6 BR-LED-03, §7.1, §8 Data Model (Customer), §9 Q-13 to Q-16](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P23; [specs/company.md](company.md); [specs/school.md](school.md) R16; [specs/vendor.md](vendor.md) (the neighbouring master it follows)
-- **Plans:** [customer#01](../plans/customer/2026-11-14-01-customer-master.md) (Approved), [customer#02](../plans/customer/2026-11-14-02-ui-customer-screens.md) (Approved); the capability it needs from school: [school#03](../plans/school/2026-11-14-03-school-directory.md) (Done)
+- **Plans:** [customer#01](../plans/customer/2026-11-14-01-customer-master.md) (In progress), [customer#02](../plans/customer/2026-11-14-02-ui-customer-screens.md) (In progress); the capability it needs from school: [school#03](../plans/school/2026-11-14-03-school-directory.md) (Done)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
