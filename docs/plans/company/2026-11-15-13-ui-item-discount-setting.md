@@ -4,7 +4,8 @@
 - **Kind:** UI (repository `book-inventory-ui`; build `npx nx run-many -t build`, lint `npx nx run-many -t lint`)
 - **Spec:** [../../specs/company.md](../../specs/company.md) - rules covered: R23; AC25
 - **Owner:** abhishek
-- **Status:** Approved
+- **Status:** Done (2026-11-15)
+- **Base branch:** feature/sales-12 (UI repository branch feature/company-13)
 - **Depends on:** `company#12`
 - **UI plan:** this is itself a UI plan
 - **Approved by / on:** abhishek / 2026-11-15 (chat: "yes approve hai"; Q20, Q21 answered with the recommended answers)
@@ -21,17 +22,20 @@ Leaves out: the order and invoice screens (sales#13).
 One more checkbox beside "Print GSTIN" in the invoice settings form, saved with the same button and the same call; success and error states are those of the form.
 
 ## 4. Tasks (at most 8)
-- [ ] 1. Model and service field `usesItemDiscount`.
-- [ ] 2. The switch and its help text in the invoice settings tab; i18n.
-- [ ] 3. Build and lint; record what was seen.
+- [x] 1. Model and service field `usesItemDiscount`.
+- [x] 2. The switch and its help text in the invoice settings tab; i18n.
+- [x] 3. Build and lint; record what was seen.
 
 ## 5. Spec coverage
 | Rule / AC | Task | Verification (input -> observed output) |
 |---|---|---|
-| `R23`, `AC25` | 1-2 | Owner opens Company profile, switches Item-wise discount on, saves, reloads: still on; off again; Staff has no Company profile |
+| `R23`, `AC25` | 1-2 | Owner opens Company profile, switches Item-wise discount on, saves, reloads: still on; off again; Staff has no Company profile**Observed:** the model, the checkbox "Item-wise discount" with its help text in the invoice settings and the save call carrying `usesItemDiscount` are built; UI build of 3 apps passes, lint shows only the 3 known findings. The same setting read and written through `PUT companies/{id}/invoice-identity` was proven in company#12.  |
 
 ## 6. Not verified
 To be filled when the plan is closed.
 
 ## 7. Risks and notes
-Written without a full browser session.
+Seen only through headless Chrome measurements (headers and labels), not clicked through.
+
+## Not verified
+The Company profile screen itself (the switch, saving, reload) was not opened in a browser: owner to check (backlog).
