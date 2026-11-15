@@ -1,4 +1,5 @@
 using BookInventory.Application.Sales;
+using BookInventory.Application.School;
 using BookInventory.BuildingBlocks.Configuration.Controller;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ namespace BookInventory.Api.Controllers.Sales;
 /// only the Owner and an entered Super Admin close one. The company is never a request field.
 /// </summary>
 [Route("school-orders")]
-public sealed class SchoolOrdersController(SchoolOrderService orders, SchoolOrderQueryService queries) : ApiControllerBase
+public sealed class SchoolOrdersController(SchoolOrderService orders, SchoolOrderQueryService queries, ISchoolSessions sessions) : ApiControllerBase
 {
     private const string Sellers = "OWNER,STAFF,SUPER_ADMIN";
     private const string Owners = "OWNER,SUPER_ADMIN";
@@ -18,6 +19,11 @@ public sealed class SchoolOrdersController(SchoolOrderService orders, SchoolOrde
     [HttpGet, Authorize(Roles = Sellers)]
     public async Task<IActionResult> List([FromQuery] SchoolOrderQuery query, CancellationToken cancellationToken) =>
         Ok(await queries.ListAsync(query, cancellationToken));
+
+    /// <summary>R2 (school R18): the school's session on a date and the sessions before and after it, for the order screen's choice.</summary>
+    [HttpGet("session-choice"), Authorize(Roles = Sellers)]
+    public async Task<IActionResult> SessionChoice([FromQuery] Guid schoolId, [FromQuery] DateOnly date, CancellationToken cancellationToken) =>
+        await sessions.SessionOfAsync(schoolId, date, cancellationToken) is { } choice ? Ok(choice) : NotFound();
 
     [HttpGet("{id:guid}"), Authorize(Roles = Sellers)]
     public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken) => Ok(await queries.GetAsync(id, cancellationToken));

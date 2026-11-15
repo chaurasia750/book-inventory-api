@@ -4,7 +4,7 @@
 - **Status:** R1-R18 Approved by abhishek in chat on 2026-11-15 (Q1-Q14 answered one by one: Q1 per-session order numbers and Q3 a counter per company as the owner said, the rest with the recommended answers; D1-D3 with them)
 - **Last updated:** 2026-11-15
 - **Source docs:** [BRD §2, §4.10 School Order and Invoice (FR-ORD-01 to FR-ORD-15), §5.1 BR-SES, §5.2 BR-PRC, §5.3 BR-DIS, §5.4 BR-GST, §5.5 the stock movement table, §5.6 BR-LED, §6 Documents, §8 Data Model (SalesOrder, Invoice) and design decisions 3 and 4, §9 Q-01, Q-02, Q-05](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P24, U14; [specs/school.md](school.md) R5, R16, R18, R19; [specs/item.md](item.md) R16; [specs/price.md](price.md) R4, R18; [specs/stock.md](stock.md) R11, R20; [specs/finance.md](finance.md) R5; [specs/company.md](company.md) R16
-- **Plans:** [sales#01](../plans/sales/2026-11-15-01-school-orders.md) (Done), [sales#02](../plans/sales/2026-11-15-02-ui-school-orders.md) (Approved), [sales#03](../plans/sales/2026-11-15-03-invoices.md) (Done), [sales#04](../plans/sales/2026-11-15-04-ui-invoices.md) (Approved); what it needs from other modules: [school#05](../plans/school/2026-11-15-05-session-of-a-date.md) (Done), [school#06](../plans/school/2026-11-15-06-ui-session-cut-offs.md), [price#05](../plans/price/2026-11-15-05-price-directory.md), [stock#05](../plans/stock/2026-11-15-05-stock-quantities.md), [company#06](../plans/company/2026-11-15-06-company-tax-profile.md) (all Approved)
+- **Plans:** [sales#01](../plans/sales/2026-11-15-01-school-orders.md) (Done), [sales#02](../plans/sales/2026-11-15-02-ui-school-orders.md) (In progress), [sales#03](../plans/sales/2026-11-15-03-invoices.md) (Done), [sales#04](../plans/sales/2026-11-15-04-ui-invoices.md) (In progress); what it needs from other modules: [school#05](../plans/school/2026-11-15-05-session-of-a-date.md) (Done), [school#06](../plans/school/2026-11-15-06-ui-session-cut-offs.md), [price#05](../plans/price/2026-11-15-05-price-directory.md), [stock#05](../plans/stock/2026-11-15-05-stock-quantities.md), [company#06](../plans/company/2026-11-15-06-company-tax-profile.md) (all Approved)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -71,6 +71,7 @@ All routes are company-scoped by the session; the company is never a request fie
 | `DELETE school-orders/{id}` | same | a draft only (soft delete); `409` otherwise |
 | `POST school-orders/{id}/confirm` | same | R6 |
 | `POST school-orders/{id}/close` | `OWNER`, `SUPER_ADMIN` (entered) | `{reason}` R6 |
+| `GET school-orders/session-choice?schoolId=&date=` | `OWNER`, `STAFF`, `SUPER_ADMIN` (entered) | the school's session on a date and the ones before and after it (school R18), for the order screen's choice (R2) |
 | `GET school-orders`, `GET school-orders/{id}` | `OWNER`, `STAFF`, `SUPER_ADMIN` (entered) | R15; the detail has the lines with remaining quantities, the stock warning of R5 and the order's invoices |
 | `POST school-orders/{id}/invoices` | `OWNER`, `STAFF`, `SUPER_ADMIN` (entered) | `{invoiceDate?, lines: [{orderLineId, quantity}]}` -> `201` with the invoice and the items at or below zero (R8-R11) |
 | `POST invoices/{id}/cancel` | `OWNER`, `SUPER_ADMIN` (entered) | `{reason}` R12 |

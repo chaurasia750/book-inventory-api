@@ -4,11 +4,12 @@
 - **Kind:** UI (repository `book-inventory-ui`; build `npx nx run-many -t build`, lint `npx nx run-many -t lint`)
 - **Spec:** [../../specs/school.md](../../specs/school.md) - rules covered: R19 (the screen side); AC15
 - **Owner:** abhishek
-- **Status:** Approved
+- **Status:** In progress (code done; waiting for the owner's look in the browser)
 - **Depends on:** `school#05`
 - **UI plan:** this is itself a UI plan
 - **Approved by / on:** abhishek / 2026-11-15 (chat: sales Q1-Q14 answered one by one)
 - **Created:** 2026-11-15
+- **Base branch:** `main` of `book-inventory-ui` (branch `feature/sales-ui`)
 
 ## 1. In one minute
 After this plan the Owner finds "Session cut-offs" under SETTINGS (platform U14): two day-and-month fields with their defaults and an example of what they mean. Open `/<company>/settings/sessions`.
@@ -21,8 +22,8 @@ Leaves out: anything else.
 One card, two pairs of day and month selects, the example sentence, Save; required `*`; states loading, error, success.
 
 ## 4. Tasks (at most 8)
-- [ ] 1. Service and page.
-- [ ] 2. Menu entry and route (Owner).
+- [x] 1. Service and page.
+- [x] 2. Menu entry and route (Owner).
 - [ ] 3. Build and lint; record what was seen.
 
 ## 5. Spec coverage
