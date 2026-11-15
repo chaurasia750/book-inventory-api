@@ -2054,6 +2054,11 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasColumnType("xid")
                         .HasColumnName("xmin");
 
+                    b.Property<string>("SchoolAddress")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("school_address");
+
                     b.Property<string>("SchoolCode")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -2112,6 +2117,96 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                     b.Property<Guid?>("UpdatedBy")
                         .HasColumnType("uuid")
                         .HasColumnName("updated_by");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "CompanySnapshot", "BookInventory.Domain.Sales.Invoice.CompanySnapshot#CompanyInvoiceSnapshot", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("Address")
+                                .HasMaxLength(500)
+                                .HasColumnType("character varying(500)")
+                                .HasColumnName("company_address");
+
+                            b1.Property<string>("BankAccountHolder")
+                                .HasMaxLength(150)
+                                .HasColumnType("character varying(150)")
+                                .HasColumnName("company_bank_account_holder");
+
+                            b1.Property<string>("BankAccountNumber")
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("company_bank_account_number");
+
+                            b1.Property<string>("BankBranch")
+                                .HasMaxLength(150)
+                                .HasColumnType("character varying(150)")
+                                .HasColumnName("company_bank_branch");
+
+                            b1.Property<string>("BankIfsc")
+                                .HasMaxLength(11)
+                                .HasColumnType("character varying(11)")
+                                .HasColumnName("company_bank_ifsc");
+
+                            b1.Property<string>("BankName")
+                                .HasMaxLength(150)
+                                .HasColumnType("character varying(150)")
+                                .HasColumnName("company_bank_name");
+
+                            b1.Property<string>("Email")
+                                .HasMaxLength(254)
+                                .HasColumnType("character varying(254)")
+                                .HasColumnName("company_email");
+
+                            b1.Property<string>("Footer")
+                                .HasMaxLength(200)
+                                .HasColumnType("character varying(200)")
+                                .HasColumnName("company_footer");
+
+                            b1.Property<string>("Gstin")
+                                .HasMaxLength(15)
+                                .HasColumnType("character varying(15)")
+                                .HasColumnName("company_gstin");
+
+                            b1.Property<string>("Mobile")
+                                .HasMaxLength(20)
+                                .HasColumnType("character varying(20)")
+                                .HasColumnName("company_mobile");
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasMaxLength(150)
+                                .HasColumnType("character varying(150)")
+                                .HasColumnName("company_name");
+
+                            b1.Property<string>("Pan")
+                                .HasMaxLength(10)
+                                .HasColumnType("character varying(10)")
+                                .HasColumnName("company_pan");
+
+                            b1.Property<bool>("PrintGstin")
+                                .HasColumnType("boolean")
+                                .HasColumnName("company_print_gstin");
+
+                            b1.Property<string>("State")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)")
+                                .HasColumnName("company_snapshot_state");
+
+                            b1.Property<string>("Tagline")
+                                .HasMaxLength(200)
+                                .HasColumnType("character varying(200)")
+                                .HasColumnName("company_tagline");
+
+                            b1.Property<string>("Terms")
+                                .HasMaxLength(4000)
+                                .HasColumnType("character varying(4000)")
+                                .HasColumnName("company_terms");
+
+                            b1.Property<string>("UpiId")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)")
+                                .HasColumnName("company_upi_id");
+                        });
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Totals", "BookInventory.Domain.Sales.Invoice.Totals#SaleTotals", b1 =>
                         {

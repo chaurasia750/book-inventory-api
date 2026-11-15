@@ -26,7 +26,7 @@ public sealed class SchoolDirectory(IUnitOfWork unitOfWork) : ISchoolDirectory
 
         return await _schools.TableNoTracking
             .Where(s => ids.Contains(s.Id))
-            .Select(s => new SchoolReference(s.Id, s.Code, s.Name, s.Status == SchoolStatus.Active, s.State, s.IsGstDefault, s.Gstin))
+            .Select(s => new SchoolReference(s.Id, s.Code, s.Name, s.Status == SchoolStatus.Active, s.State, s.IsGstDefault, s.Gstin, s.Address))
             .ToDictionaryAsync(s => s.Id, cancellationToken);
     }
 

@@ -21,6 +21,8 @@ public sealed class CompanyInvoiceIdentity(ICompanyStore store, ICurrentCompany 
 
     private static CompanyPrintedIdentity ToIdentity(CompanyRoot company) =>
         new(
+            company.Name, company.Address, company.Mobile, company.Email, company.Gstin, company.State,
+            company.Pan, company.Tagline,
             company.Logo, company.LogoContentType, company.Signature, company.SignatureContentType,
             new CompanyBankDetails(
                 company.BankAccountHolder, company.BankName, company.BankAccountNumber, company.BankIfsc,

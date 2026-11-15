@@ -10,7 +10,7 @@ namespace BookInventory.Api.Controllers.Sales;
 /// Spec sales R8-R15: invoices. The Owner, Staff and an entered Super Admin make an invoice from a confirmed order and read
 /// invoices; only the Owner and an entered Super Admin cancel one.
 /// </summary>
-public sealed class InvoicesController(InvoiceService invoices, InvoiceQueryService queries) : ApiControllerBase
+public sealed class InvoicesController(InvoiceService invoices, InvoiceQueryService queries, InvoicePdfService pdfs) : ApiControllerBase
 {
     private const string Sellers = "OWNER,STAFF,SUPER_ADMIN";
     private const string Owners = "OWNER,SUPER_ADMIN";
@@ -29,6 +29,15 @@ public sealed class InvoicesController(InvoiceService invoices, InvoiceQueryServ
     /// <summary>R13, R26: one invoice; <c>layout</c> shows its lines by class or as a book list (the school default when empty).</summary>
     [HttpGet("invoices/{id:guid}"), Authorize(Roles = Sellers)]
     public async Task<IActionResult> Get(Guid id, [FromQuery] InvoiceLayout? layout, CancellationToken cancellationToken) => Ok(await queries.GetAsync(id, layout, cancellationToken));
+
+    /// <summary>R28-R33: the invoice as an A4 PDF, rendered on demand and never stored; <c>layout</c> overrides the school's default (R26).</summary>
+    [HttpGet("invoices/{id:guid}/pdf"), Authorize(Roles = Sellers)]
+    public async Task<IActionResult> Pdf(Guid id, [FromQuery] InvoiceLayout? layout, CancellationToken cancellationToken)
+    {
+        var pdf = await pdfs.RenderAsync(id, layout, cancellationToken);
+        Response.Headers.ContentDisposition = $"inline; filename=\"{pdf.FileName}\"";
+        return File(pdf.Content, "application/pdf");
+    }
 
     /// <summary>R12: the Owner cancels with a reason; stock and ledger are reversed.</summary>
     [HttpPost("invoices/{id:guid}/cancel"), Authorize(Roles = Owners)]

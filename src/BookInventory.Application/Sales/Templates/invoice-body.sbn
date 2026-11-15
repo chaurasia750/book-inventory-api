@@ -1,0 +1,110 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  /* Spec sales R30-R33: the A4 invoice body. The company header and the footer are the page margins (invoice-header.sbn, invoice-footer.sbn). */
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; font-size: 9px; line-height: 1.25; color: #141414; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-variant-numeric: tabular-nums; }
+  .caps { text-transform: uppercase; letter-spacing: .06em; font-size: 7.5px; color: #4a4a4a; font-weight: 600; }
+  .party { display: flex; border: 1px solid #1f1f1f; margin-bottom: 6px; break-inside: avoid; }
+  .party > div { flex: 1; padding: 5px 7px; } .party > div + div { border-left: 1px solid #1f1f1f; } .party > div:first-child { flex: 1.4; }
+  .party p { margin: 0; } .party .who { font-size: 11px; font-weight: 700; margin-bottom: 1px; }
+  table.lines { width: 100%; border-collapse: collapse; }
+  table.lines thead { display: table-header-group; }
+  table.lines th { background: #f1efe9; border-top: 1px solid #1f1f1f; border-bottom: 1px solid #1f1f1f; padding: 3px 4px; text-align: left; font-size: 7.5px; text-transform: uppercase; letter-spacing: .05em; }
+  table.lines td { padding: 2px 4px; border-bottom: 1px solid #d3d0c7; vertical-align: top; }
+  table.lines tr { break-inside: avoid; }
+  table.lines .r { text-align: right; } table.lines .c { text-align: center; }
+  .code { color: #4a4a4a; font-size: 8px; }
+  tr.group td { background: #f1efe9; font-weight: 700; font-size: 8.5px; padding: 2px 4px; border-bottom: 1px solid #1f1f1f; letter-spacing: .03em; }
+  tr.group-total td { font-weight: 600; background: #faf9f6; border-bottom: 1px solid #1f1f1f; }
+  .closing { break-inside: avoid; margin-top: 8px; }
+  .bottom { display: flex; gap: 8px; align-items: flex-start; }
+  .bottom > .left { flex: 1; } .bottom > .right { width: 225px; }
+  .box { border: 1px solid #1f1f1f; }
+  .gst table { width: 100%; border-collapse: collapse; } .gst th, .gst td { padding: 2px 5px; font-size: 8.5px; }
+  .gst th { background: #f1efe9; text-align: left; border-bottom: 1px solid #1f1f1f; font-size: 7.5px; text-transform: uppercase; letter-spacing: .05em; }
+  .gst td { border-bottom: 1px solid #d3d0c7; } .gst tr:last-child td { border-bottom: 0; font-weight: 600; }
+  .words { border: 1px solid #1f1f1f; padding: 4px 7px; margin-top: 5px; } .words b { font-size: 9.5px; }
+  .totals div { display: flex; justify-content: space-between; padding: 2px 7px; border-bottom: 1px solid #d3d0c7; }
+  .totals div.strong { border-bottom: 0; background: #f1efe9; font-weight: 700; font-size: 11px; padding: 5px 7px; }
+  .foot { display: flex; gap: 10px; margin-top: 8px; border-top: 1px solid #1f1f1f; padding-top: 6px; }
+  .foot > div { flex: 1; } .foot > .sign { flex: 0 0 150px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; min-height: 78px; }
+  .foot h4 { margin: 0 0 2px; font-size: 7.5px; text-transform: uppercase; letter-spacing: .06em; color: #4a4a4a; }
+  .bank dl { display: grid; grid-template-columns: auto 1fr; gap: 1px 7px; margin: 0; } .bank dt { color: #4a4a4a; } .bank dd { margin: 0; font-weight: 600; }
+  .terms ol { margin: 0; padding-left: 12px; font-size: 8px; line-height: 1.3; color: #3a3a3a; }
+  .sign img { max-height: 34px; max-width: 120px; margin: 0 auto; } .sign .for { font-weight: 700; } .sign .line { border-top: 1px solid #1f1f1f; padding-top: 2px; font-size: 8px; color: #4a4a4a; }
+  .note { font-size: 8px; color: #4a4a4a; margin: 4px 0 0; } .center { text-align: center; }
+  .wm { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 5; }
+  .wm span { font-size: 80px; font-weight: 700; color: rgba(180, 30, 30, .14); transform: rotate(-28deg); letter-spacing: .2em; border: 6px solid rgba(180, 30, 30, .14); padding: 4px 28px; border-radius: 12px; }
+</style></head>
+<body>
+{{ if cancelled }}<div class="wm"><span>CANCELLED</span></div>{{ end }}
+
+<div class="party">
+  <div>
+    <p class="caps">Bill to</p>
+    <p class="who">{{ school.name }}</p>
+    {{ if school.address }}<p>{{ school.address }}</p>{{ end }}
+    <p>School code {{ school.code }}{{ if school.state }} · {{ school.state }}{{ end }}</p>
+  </div>
+  <div>
+    <p class="caps">GST</p>
+    {{ if school.gstin }}<p>School GSTIN {{ school.gstin }}</p>{{ end }}
+    {{ if school.state }}<p>Place of supply: {{ school.state }}</p>{{ end }}
+    <p>Tax: {{ school.tax_type }}</p>
+  </div>
+  <div>
+    <p class="caps">Payment</p>
+    <p>{{ payment }}</p>
+    <p>Financial year {{ invoice.year }}</p>
+  </div>
+</div>
+
+<table class="lines">
+  <thead><tr>
+    <th class="c" style="width:22px">#</th><th>Item</th><th style="width:58px">Code</th><th style="width:38px">HSN</th>
+    <th class="r" style="width:54px">MRP</th><th class="r" style="width:54px">Rate</th><th class="r" style="width:34px">Qty</th>
+    <th class="r" style="width:54px">Discount</th><th class="r" style="width:68px">Amount</th>
+  </tr></thead>
+  <tbody>
+  {{ for g in groups }}
+    {{ if show_bands }}<tr class="group"><td colspan="9">{{ g.class_name }} · {{ g.count }} books</td></tr>{{ end }}
+    {{ for l in g.lines }}
+    <tr><td class="c">{{ l.no }}</td><td>{{ l.name }}</td><td class="code">{{ l.code }}</td><td>{{ l.hsn }}</td><td class="r">{{ l.mrp }}</td><td class="r">{{ l.rate }}</td><td class="r">{{ l.qty }}</td><td class="r">{{ l.discount }}</td><td class="r">{{ l.amount }}</td></tr>
+    {{ end }}
+    {{ if show_bands }}<tr class="group-total"><td colspan="8" class="r">{{ g.class_name }} subtotal</td><td class="r">{{ g.subtotal }}</td></tr>{{ end }}
+  {{ end }}
+  </tbody>
+</table>
+
+<div class="closing">
+  <div class="bottom">
+    <div class="left">
+      {{ if has_summary }}
+      <div class="box gst"><table>
+        <thead><tr><th>HSN</th><th>GST rate</th><th class="r">Taxable value</th>{{ if same_state }}<th class="r">CGST</th><th class="r">SGST</th>{{ else }}<th class="r">IGST</th>{{ end }}<th class="r">Total GST</th></tr></thead>
+        <tbody>
+        {{ for r in summary }}<tr><td>{{ r.hsn }}</td><td>{{ r.rate }} %</td><td class="r">{{ r.taxable }}</td>{{ if same_state }}<td class="r">{{ r.cgst }}</td><td class="r">{{ r.sgst }}</td>{{ else }}<td class="r">{{ r.igst }}</td>{{ end }}<td class="r">{{ r.tax }}</td></tr>{{ end }}
+        </tbody>
+      </table></div>
+      {{ end }}
+      <div class="words"><span class="caps">Amount in words</span><br><b>{{ words }}</b></div>
+      <p class="note">{{ line_count }} lines · {{ total_quantity }} books</p>
+    </div>
+    <div class="right box totals">
+      {{ for t in totals }}<div{{ if t.strong }} class="strong"{{ end }}><span>{{ t.label }}</span><span>{{ t.value }}</span></div>{{ end }}
+    </div>
+  </div>
+
+  <div class="foot">
+    {{ if bank.size > 0 }}<div class="bank"><h4>Bank details</h4><dl>{{ for b in bank }}<dt>{{ b.label }}</dt><dd>{{ b.value }}</dd>{{ end }}</dl></div>{{ end }}
+    {{ if terms.size > 0 }}<div class="terms"><h4>Terms and conditions</h4><ol>{{ for t in terms }}<li>{{ t }}</li>{{ end }}</ol></div>{{ end }}
+    <div class="sign">
+      <div class="for">For {{ company.name }}</div>
+      {{ if signature }}<img src="{{ signature }}" alt="">{{ end }}
+      <div class="line">Authorised signatory</div>
+    </div>
+  </div>
+  {{ if footer_line }}<p class="note center">{{ footer_line }}</p>{{ end }}
+</div>
+</body></html>

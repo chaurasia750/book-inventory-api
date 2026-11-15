@@ -34,7 +34,7 @@ public sealed class OrderComposer(
         var tax = await company.CurrentAsync(cancellationToken);
         return new OrderHeader
         {
-            School = new SaleSchool(school.Id, school.Code, school.Name, school.State),
+            School = new SaleSchool(school.Id, school.Code, school.Name, school.State, school.Address),
             OrderDate = orderDate,
             Session = session,
             IsGstApplied = isGst,

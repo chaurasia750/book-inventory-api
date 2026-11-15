@@ -17,5 +17,8 @@ public sealed record InvoiceIssue
 
     public string? CompanyState { get; init; }
 
+    /// <summary>R33, D7: the company's printed identity as it is now, kept on the invoice so a reprint never changes.</summary>
+    public required CompanyInvoiceSnapshot CompanySnapshot { get; init; }
+
     public required OrderDelivery Delivery { get; init; }
 }

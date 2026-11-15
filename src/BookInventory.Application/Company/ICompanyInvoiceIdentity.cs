@@ -2,8 +2,16 @@ using BookInventory.Domain.Company;
 
 namespace BookInventory.Application.Company;
 
-/// <summary>R20: the session company's printed identity - its logo and signature images, its one bank account and its invoice settings.</summary>
+/// <summary>R20: the session company's printed identity - its name, address and contact, its logo and signature images, its one bank account and its invoice settings.</summary>
 public sealed record CompanyPrintedIdentity(
+    string Name,
+    string? Address,
+    string? Mobile,
+    string? Email,
+    string? Gstin,
+    string? State,
+    string? Pan,
+    string? Tagline,
     byte[]? Logo,
     string? LogoContentType,
     byte[]? Signature,
