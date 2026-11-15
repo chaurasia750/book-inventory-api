@@ -19,6 +19,7 @@ public static class SchoolMessageCatalog
             [SchoolMessages.InvalidClassName] = "A class name must be 1 to 50 characters.",
             [SchoolMessages.DuplicateClass] = "A class name appears twice in the list.",
             [SchoolMessages.AlreadyActive] = "The school is already active.",
+            [SchoolMessages.InvalidCutOff] = "An Apr-Mar cut-off is a day from 1 January to 31 March, a Jan-Dec cut-off a day from 1 October to 31 December (29 February is not allowed).",
             [SchoolMessages.AlreadyInactive] = "The school is already inactive."
         };
 }

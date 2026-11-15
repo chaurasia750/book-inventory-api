@@ -14,7 +14,8 @@ public sealed record ItemRow(
     decimal GstRatePercent,
     bool IsStockManaged,
     Domain.Item.ItemStatus Status,
-    DateTime CreatedAt);
+    DateTime CreatedAt,
+    string? HsnCode = null);
 
 /// <summary>R18 of stock: an item whose code (<see cref="IsCode"/>) or one of whose barcodes equals <see cref="Key"/> (upper case).</summary>
 public sealed record ItemKeyMatch(string Key, Guid ItemId, bool IsCode);

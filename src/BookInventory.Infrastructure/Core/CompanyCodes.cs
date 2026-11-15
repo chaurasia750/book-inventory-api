@@ -21,7 +21,13 @@ public sealed class CompanyCodes(IUnitOfWork unitOfWork, ICurrentCompany current
 
     private readonly IRepository<CompanyCodeSeries> _series = unitOfWork.Repository<CompanyCodeSeries>();
 
-    public async Task<string> NextAsync(string prefix, CancellationToken cancellationToken = default)
+    public async Task<string> NextAsync(string prefix, CancellationToken cancellationToken = default) =>
+        (await SeriesAsync(prefix, cancellationToken)).Next();
+
+    public async Task<int> NextNumberAsync(string series, CancellationToken cancellationToken = default) =>
+        (await SeriesAsync(series, cancellationToken)).NextNumber();
+
+    private async Task<CompanyCodeSeries> SeriesAsync(string prefix, CancellationToken cancellationToken)
     {
         var companyId = currentCompany.CompanyId ?? Guid.Empty;
         var normalizedPrefix = prefix.Trim().ToUpperInvariant();
@@ -35,6 +41,6 @@ public sealed class CompanyCodes(IUnitOfWork unitOfWork, ICurrentCompany current
             await _series.AddAsync(series, cancellationToken);
         }
 
-        return series.Next();
+        return series;
     }
 }

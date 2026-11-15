@@ -33,6 +33,9 @@ public sealed class PriceStore(IUnitOfWork unitOfWork) : IPriceStore
             ? []
             : await _versions.TableNoTracking.Where(v => itemIds.Contains(v.ItemId)).ToListAsync(cancellationToken);
 
+    public async Task<IReadOnlyList<PriceVersion>> VersionsByIdAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken = default) =>
+        ids.Count == 0 ? [] : await _versions.TableNoTracking.Where(v => ids.Contains(v.Id)).ToListAsync(cancellationToken);
+
     public async Task<IReadOnlyList<PriceVersion>> FindNamedForManagementAsync(
         IReadOnlyCollection<Guid> itemIds, string normalizedName, CancellationToken cancellationToken = default) =>
         itemIds.Count == 0

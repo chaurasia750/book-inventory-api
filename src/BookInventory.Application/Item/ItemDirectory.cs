@@ -19,6 +19,11 @@ public sealed class ItemDirectory(IItemStore store, IVendorDirectory vendors) : 
     public async Task<IReadOnlyDictionary<Guid, ItemReference>> ReferencesAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken = default) =>
         (await store.RowsAsync(ids, cancellationToken)).ToDictionary(r => r.Id, r => new ItemReference(r.Id, r.Code, r.Name, r.Status == ItemStatus.Active, r.IsStockManaged));
 
+    public async Task<IReadOnlyDictionary<Guid, ItemSaleReference>> SaleReferencesAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken = default) =>
+        (await store.RowsAsync(ids, cancellationToken)).ToDictionary(
+            r => r.Id,
+            r => new ItemSaleReference(new ItemReference(r.Id, r.Code, r.Name, r.Status == ItemStatus.Active, r.IsStockManaged), r.HsnCode, r.GstRatePercent));
+
     public async Task<ItemIdPage> PageAsync(ItemPageRequest request, CancellationToken cancellationToken = default)
     {
         var query = QueryOf(request.Selection) with

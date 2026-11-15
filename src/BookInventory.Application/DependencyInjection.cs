@@ -7,6 +7,7 @@ using BookInventory.Application.Iam;
 using BookInventory.Application.Finance;
 using BookInventory.Application.Item;
 using BookInventory.Application.Price;
+using BookInventory.Application.Sales;
 using BookInventory.Application.Stock;
 using BookInventory.Application.School;
 using BookInventory.Application.Vendor;
@@ -30,6 +31,7 @@ namespace BookInventory.Application
             services.AddMessages(PriceMessageCatalog.Messages); // price message codes
             services.AddMessages(StockMessageCatalog.Messages); // stock message codes
             services.AddMessages(FinanceMessageCatalog.Messages); // finance message codes
+            services.AddMessages(SalesMessageCatalog.Messages); // sales message codes
 
             return services;
         }

@@ -1,10 +1,10 @@
 # Spec: stock - Stock
 
 - **Module:** `stock` (PostgreSQL schema `stock`)
-- **Status:** R1-R19 Approved by abhishek in chat on 2026-11-14 (Q1-Q10 answered one by one; Q9 answered "now", with the Excel package ClosedXML and the import rules R17-R19 answered the same way; D1-D5 with them)
-- **Last updated:** 2026-11-14; 2026-11-15 (menu: one "Items" menu)
+- **Status:** R1-R19 Approved by abhishek in chat on 2026-11-14 (Q1-Q10 answered one by one; Q9 answered "now", with the Excel package ClosedXML and the import rules R17-R19 answered the same way; D1-D5 with them); R20 and AC11 Approved by abhishek on 2026-11-15 (for the sales spec)
+- **Last updated:** 2026-11-14; 2026-11-15 (menu: one "Items" menu); 2026-11-15 (for the sales spec)
 - **Source docs:** [BRD §1.3, §2, §3, §4.6 Stock (FR-STK-01 to FR-STK-10), §4.12 Return (FR-RET-04, FR-RET-11), §4.13 Sample (FR-SMP-01), §5.5 BR-STK and its stock movement table, §8 Data Model (StockLedger) and design decision 2, §10, §11 item 10](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P23; [specs/company.md](company.md); [specs/item.md](item.md)
-- **Plans:** [stock#01](../plans/stock/2026-11-14-01-stock-ledger.md) (Done), [stock#02](../plans/stock/2026-11-14-02-ui-stock-screens.md) (In progress), [stock#03](../plans/stock/2026-11-14-03-excel-opening-stock.md) (Done), [stock#04](../plans/stock/2026-11-14-04-ui-excel-opening-stock.md) (In progress); the capability it needs from item: [item#04](../plans/item/2026-11-14-04-item-directory-stock-flag.md) (Done)
+- **Plans:** [stock#05](../plans/stock/2026-11-15-05-stock-quantities.md) (Done, R20, AC11), [stock#01](../plans/stock/2026-11-14-01-stock-ledger.md) (Done), [stock#02](../plans/stock/2026-11-14-02-ui-stock-screens.md) (In progress), [stock#03](../plans/stock/2026-11-14-03-excel-opening-stock.md) (Done), [stock#04](../plans/stock/2026-11-14-04-ui-excel-opening-stock.md) (In progress); the capability it needs from item: [item#04](../plans/item/2026-11-14-04-item-directory-stock-flag.md) (Done)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -51,6 +51,9 @@ Out of scope for these features: the documents that cause most movements (Purcha
 - **R18** **All or nothing**: every row is checked first by the rules of R2, R4 and R7 (the item exists in the company by code or barcode, it is stock managed, the quantity is valid, the item and stock type has no opening yet, the same item and stock type is not in the file twice). If any row is wrong, **nothing is imported** and the answer is a report of every wrong row with its row number and the reason (a message code); if every row is right, all openings are posted in one transaction and the answer says how many.
 - **R19** An imported opening is the same entry as a typed one (R7): kind `OPENING`, the given date, a note naming the file, who and when. The file itself is not kept.
 
+**Reading quantities from other modules**
+- **R20** Other modules (the sales module first, for its low-stock warning) read the Main, Damaged and Sample quantities of a list of items (at most 500) through a stock capability; an item with no stock card has zero. It answers only for the session's company and changes nothing. Proposed by the assistant on 2026-11-15 for the sales spec; Approved by abhishek on 2026-11-15.
+
 ## 4. Data
 
 Schema `stock`:
@@ -96,6 +99,7 @@ Raised by the `ItemStock` aggregate (past tense, ids and values only): `StockMov
 - **AC8** Entries cannot be changed or deleted through any route; every entry shows who made it and when (R4, R13).
 - **AC9** An Excel file with three right rows (a book by code, a copy by barcode, a book with stock type `DAMAGED`) and the date 2026-04-01 imports 3 openings; the stock list shows them; a second upload of the same file is refused with a report naming all three rows as "opening exists" and imports nothing (R17, R18, R19).
 - **AC10** A file with one right row and rows for an unknown code, a pen, a quantity of 0, a quantity of 2.5 and the same item twice imports nothing and reports exactly those rows with their reasons; a `.csv`, a file above 5 MB and a file of 5001 rows are refused (R17, R18).
+- **AC11** The capability, for the Owner of A, returns the quantities of a book with stock and 0 for a book without a card, and nothing of B's items (R20).
 
 ## 10. Decisions
 

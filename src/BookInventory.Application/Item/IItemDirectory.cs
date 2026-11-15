@@ -8,6 +8,9 @@ namespace BookInventory.Application.Item;
 /// </summary>
 public sealed record ItemReference(Guid Id, string Code, string Name, bool IsActive, bool IsStockManaged);
 
+/// <summary>R16 (for the sales module): what a sales line keeps of an item: its reference, HSN code and GST rate.</summary>
+public sealed record ItemSaleReference(ItemReference Item, string? HsnCode, decimal GstRatePercent);
+
 /// <summary>
 /// R16/R17: which items a caller means: any mix of vendor, category and class (ignoring case), optionally only active ones and
 /// optionally only stock-managed (<c>true</c>) or not stock-managed (<c>false</c>) ones; empty means all.
@@ -48,6 +51,9 @@ public interface IItemDirectory
     /// by the upper-case text; a code wins over a barcode of another item. A text that matches nothing is left out.
     /// </summary>
     Task<IReadOnlyDictionary<string, ItemReference>> FindByCodeOrBarcodeAsync(IReadOnlyCollection<string> keys, CancellationToken cancellationToken = default);
+
+    /// <summary>R16 (for the sales module): the sale values of the given items; an id that is not found is left out.</summary>
+    Task<IReadOnlyDictionary<Guid, ItemSaleReference>> SaleReferencesAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken = default);
 
     /// <summary>Every item id of the selection, at most <see cref="MaxBulkItems"/>.</summary>
     Task<IReadOnlyList<Guid>> AllIdsAsync(ItemSelection selection, CancellationToken cancellationToken = default);
