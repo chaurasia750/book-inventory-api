@@ -222,10 +222,10 @@ public class Company : AggregateRoot, IAuditCompanyScope
         CompanyRules.RequireSlug(Name);
         NameNormalized = CompanyRules.NormalizeName(Name);
         Address = CompanyRules.Optional(details.Address, 500);
-        Mobile = CompanyRules.Optional(details.Mobile, 20);
-        Email = CompanyRules.Optional(details.Email, 254);
-        Gstin = CompanyRules.Optional(details.Gstin, 15)?.ToUpperInvariant();
-        Pan = CompanyRules.Optional(details.Pan, 10)?.ToUpperInvariant();
+        Mobile = ContactRules.Mobile(details.Mobile, CompanyMessages.InvalidMobile);
+        Email = ContactRules.Email(details.Email, CompanyMessages.InvalidEmail);
+        Gstin = ContactRules.Gstin(details.Gstin, CompanyMessages.InvalidGstin);
+        Pan = ContactRules.Pan(details.Pan, CompanyMessages.InvalidPan);
         State = CompanyRules.Optional(details.State, 100);
         Tagline = CompanyRules.Optional(details.Tagline, 200);
     }

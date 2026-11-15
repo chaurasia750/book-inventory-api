@@ -30,30 +30,12 @@ internal static partial class VendorRules
         return trimmed.Length <= maxLength ? trimmed : throw new ValidationFailureException(VendorMessages.InvalidField);
     }
 
-    public static string? Mobile(string? value)
-    {
-        var normalized = IdentityNormalizer.NormalizeMobile(value);
-        if (normalized is null)
-            return null;
-        return IdentityNormalizer.IsValidMobile(normalized) ? normalized : throw new ValidationFailureException(VendorMessages.InvalidMobile);
-    }
+    public static string? Mobile(string? value) => ContactRules.Mobile(value, VendorMessages.InvalidMobile);
 
-    public static string? Email(string? value)
-    {
-        var normalized = IdentityNormalizer.NormalizeEmail(value);
-        if (normalized is null)
-            return null;
-        return IdentityNormalizer.IsValidEmail(normalized) ? normalized : throw new ValidationFailureException(VendorMessages.InvalidEmail);
-    }
+    public static string? Email(string? value) => ContactRules.Email(value, VendorMessages.InvalidEmail);
 
     /// <summary>R3: 15 characters in the GST shape, stored in upper case; empty is none.</summary>
-    public static string? Gstin(string? value)
-    {
-        var trimmed = value?.Trim().ToUpperInvariant();
-        if (string.IsNullOrEmpty(trimmed))
-            return null;
-        return GstinShape().IsMatch(trimmed) ? trimmed : throw new ValidationFailureException(VendorMessages.InvalidGstin);
-    }
+    public static string? Gstin(string? value) => ContactRules.Gstin(value, VendorMessages.InvalidGstin);
 
     /// <summary>R6: zero or more, two decimals (an amount with more decimals is refused, never rounded silently).</summary>
     public static decimal OpeningBalance(decimal amount)
@@ -72,8 +54,6 @@ internal static partial class VendorRules
     [GeneratedRegex(@"\s+")]
     private static partial Regex SpaceRun();
 
-    [GeneratedRegex(@"^\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]$")]
-    private static partial Regex GstinShape();
 
 
 }
