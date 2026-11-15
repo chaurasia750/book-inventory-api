@@ -21,6 +21,9 @@ public interface IVendorDirectory
     /// <summary>The ids of the company's vendors whose name or code contains the text, at most <see cref="MaxMatches"/>.</summary>
     Task<IReadOnlyList<Guid>> IdsMatchingAsync(string text, CancellationToken cancellationToken = default);
 
+    /// <summary>R20 of item: the vendors of the company by name, ignoring case and extra spaces; the key is the lower-case name, an unknown name is left out.</summary>
+    Task<IReadOnlyDictionary<string, VendorReference>> FindByNamesAsync(IReadOnlyCollection<string> names, CancellationToken cancellationToken = default);
+
     /// <summary>The cap of <see cref="IdsMatchingAsync"/>.</summary>
     const int MaxMatches = 200;
 }

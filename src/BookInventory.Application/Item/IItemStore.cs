@@ -31,6 +31,9 @@ public interface IItemStore
     /// <summary>The item about to be changed: tracked, with its barcodes. <c>null</c> for an unknown id or another company's.</summary>
     Task<ItemRoot?> FindForManagementAsync(Guid id, CancellationToken cancellationToken = default);
 
+    /// <summary>R22: the given items about to be changed: tracked, with their barcodes; an id that is not found is left out.</summary>
+    Task<IReadOnlyList<ItemRoot>> FindManyForManagementAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken = default);
+
     /// <summary>The item for reading: not tracked, with its barcodes.</summary>
     Task<ItemRoot?> FindForReadAsync(Guid id, CancellationToken cancellationToken = default);
 

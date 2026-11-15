@@ -27,6 +27,9 @@ public sealed class ItemStore(IUnitOfWork unitOfWork) : IItemStore
     public Task<ItemRoot?> FindForManagementAsync(Guid id, CancellationToken cancellationToken = default) =>
         _items.IncludeMultiple(i => i.Barcodes).FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
 
+    public async Task<IReadOnlyList<ItemRoot>> FindManyForManagementAsync(IReadOnlyCollection<Guid> ids, CancellationToken cancellationToken = default) =>
+        ids.Count == 0 ? [] : await _items.IncludeMultiple(i => i.Barcodes).Where(i => ids.Contains(i.Id)).ToListAsync(cancellationToken);
+
     public Task<ItemRoot?> FindForReadAsync(Guid id, CancellationToken cancellationToken = default) =>
         _items.TableNoTracking.Include(i => i.Barcodes).FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
 
