@@ -119,8 +119,7 @@ public sealed record SetCompanyInvoiceIdentityRequest(
     CompanyBankDetails? Bank = null,
     CompanyInvoiceSettings? Invoice = null)
 {
-    public CompanyInvoiceIdentityDetails ToDetails() =>
-        new(Bank ?? new CompanyBankDetails(), Invoice ?? new CompanyInvoiceSettings());
+    public CompanyInvoiceIdentityDetails ToDetails() => new(Bank, Invoice);
 }
 
 /// <summary>

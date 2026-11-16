@@ -173,22 +173,37 @@ public class Company : AggregateRoot, IAuditCompanyScope
         SignatureContentType = null;
     }
 
-    /// <summary>R19/R20: sets the one bank account (checked by the shared <see cref="BankAccount"/> rule) and the invoice settings.</summary>
+    /// <summary>
+    /// R19/R20: sets the one bank account (checked by the shared <see cref="BankAccount"/> rule) and/or the invoice settings.
+    /// Each part is changed only when it was sent, so saving the bank account never touches the terms and the other way round.
+    /// </summary>
     public void SetInvoiceIdentity(CompanyInvoiceIdentityDetails details)
     {
+        if (details.Bank is not null)
+            SetBank(details.Bank);
+        if (details.Invoice is not null)
+            SetInvoiceSettings(details.Invoice);
+    }
+
+    private void SetBank(CompanyBankDetails bank)
+    {
         var account = BankAccount.Validated(
-            new BankAccount(details.Bank.AccountHolder, details.Bank.BankName, details.Bank.Branch, details.Bank.AccountNumber, details.Bank.Ifsc),
+            new BankAccount(bank.AccountHolder, bank.BankName, bank.Branch, bank.AccountNumber, bank.Ifsc),
             CompanyMessages.InvalidBank);
         BankAccountHolder = account?.AccountHolder;
         BankName = account?.BankName;
         BankAccountNumber = account?.AccountNumber;
         BankIfsc = account?.Ifsc;
         BankBranch = account?.Branch;
-        UpiId = CompanyRules.Optional(details.Bank.UpiId, UpiIdMaxLength);
-        InvoiceTerms = CompanyRules.Optional(details.Invoice.Terms, TermsMaxLength);
-        InvoiceFooter = CompanyRules.Optional(details.Invoice.Footer, FooterMaxLength);
-        PrintGstin = details.Invoice.PrintGstin;
-        UsesItemDiscount = details.Invoice.UsesItemDiscount;
+        UpiId = CompanyRules.Optional(bank.UpiId, UpiIdMaxLength);
+    }
+
+    private void SetInvoiceSettings(CompanyInvoiceSettings invoice)
+    {
+        InvoiceTerms = CompanyRules.Optional(invoice.Terms, TermsMaxLength);
+        InvoiceFooter = CompanyRules.Optional(invoice.Footer, FooterMaxLength);
+        PrintGstin = invoice.PrintGstin;
+        UsesItemDiscount = invoice.UsesItemDiscount;
     }
 
     /// <summary>R7/R8: switches the company off. A reason is required; the timeline gets one row.</summary>

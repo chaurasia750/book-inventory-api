@@ -12,5 +12,8 @@ public sealed record CompanyBankDetails(
 /// <summary>R20, R23: the invoice settings of a company: its terms and conditions, a footer line, whether the GSTIN prints and whether a line may carry its own discount (off until the Owner switches it on).</summary>
 public sealed record CompanyInvoiceSettings(string? Terms = null, string? Footer = null, bool PrintGstin = true, bool UsesItemDiscount = false);
 
-/// <summary>R19/R20: the bank account and the invoice settings as they arrive; <see cref="Company"/> validates and normalises them.</summary>
-public sealed record CompanyInvoiceIdentityDetails(CompanyBankDetails Bank, CompanyInvoiceSettings Invoice);
+/// <summary>
+/// R19/R20: the bank account and the invoice settings as they arrive; <see cref="Company"/> validates and normalises them.
+/// A part that is <c>null</c> was not sent and leaves the stored values as they are.
+/// </summary>
+public sealed record CompanyInvoiceIdentityDetails(CompanyBankDetails? Bank, CompanyInvoiceSettings? Invoice);
