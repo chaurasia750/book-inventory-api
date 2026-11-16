@@ -1,10 +1,10 @@
 # Spec: purchase - Vendor returns (and, later, purchases)
 
 - **Module:** `purchase` (PostgreSQL schema `purchase`)
-- **Status:** R1-R13 and AC1-AC10 (the vendor return and its Debit Note PDF) Approved by abhishek in chat on 2026-11-16 (Q1-Q7 answered one by one; D1-D3 with them)
+- **Status:** R1-R13 and AC1-AC10 (the vendor return and its Debit Note PDF) built 2026-11-16, Approved by abhishek in chat on 2026-11-16 (Q1-Q7 answered one by one; D1-D3 with them)
 - **Last updated:** 2026-11-16 (new module, vendor return)
 - **Source docs:** [BRD §2, §3 (who does what), §4.12 B Vendor Return (FR-RET-10 to FR-RET-14), §5.5 the stock movement table, §5.6 BR-LED, §6 Documents (Debit Note), FR-CMP-04, FR-LED-02, §8 Data Model (PurchaseReturn)](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P25; [specs/vendor.md](vendor.md) R15; [specs/item.md](item.md) R16; [specs/price.md](price.md) R19; [specs/stock.md](stock.md) R5, R9, R11; [specs/finance.md](finance.md) R2, R5, R7; [specs/sales.md](sales.md) R7 (the rounding rule), R57-R59 (the credit note this document mirrors)
-- **Plans:** [purchase#01](../plans/purchase/2026-11-16-01-vendor-return.md) (Approved, R1-R10, R12, R13, AC1-AC8, AC10), [purchase#02](../plans/purchase/2026-11-16-02-ui-vendor-return.md) (Approved, UI), [purchase#03](../plans/purchase/2026-11-16-03-debit-note-pdf.md) (Approved, R11, AC9), [purchase#04](../plans/purchase/2026-11-16-04-ui-debit-note-pdf.md) (Approved, UI)
+- **Plans:** [purchase#01](../plans/purchase/2026-11-16-01-vendor-return.md) (Done 2026-11-16, R1-R10, R12, R13, AC1-AC8, AC10), [purchase#02](../plans/purchase/2026-11-16-02-ui-vendor-return.md) (Done 2026-11-16, UI), [purchase#03](../plans/purchase/2026-11-16-03-debit-note-pdf.md) (Done 2026-11-16, R11, AC9), [purchase#04](../plans/purchase/2026-11-16-04-ui-debit-note-pdf.md) (Done 2026-11-16, UI)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -69,7 +69,7 @@ Raised by the aggregate (past tense, ids and values only): `VendorReturnMade` (i
 
 ## 8. Dependencies
 
-`purchase` depends on `vendor` (directory R15), `item` (directory R16), `price` (the purchase-price capability, R19), `stock` (posting R11, quantities R20), `finance` (posting R5), `company` (the printed identity, R17-R20) and the platform (P18-P25). None of them depends on `purchase`.
+`purchase` depends on `sales` only for the one rounding rule of sales R7 (`SaleMoney`) and the company's printed-identity snapshot (`CompanyInvoiceSnapshot`, `InvoiceParties`), on `vendor` (directory R15), `item` (directory R16), `price` (the purchase-price capability, R19), `stock` (posting R11, quantities R20), `finance` (posting R5), `company` (the printed identity, R17-R20) and the platform (P18-P25). None of them depends on `purchase`.
 
 ## 9. Acceptance criteria
 

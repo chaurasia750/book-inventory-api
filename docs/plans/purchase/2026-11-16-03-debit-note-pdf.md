@@ -4,7 +4,7 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/purchase.md](../../specs/purchase.md) - rules covered: R11; AC9
 - **Owner:** abhishek
-- **Status:** Approved
+- **Status:** Done (2026-11-16)
 - **Base branch:** `main` (one branch `feature/purchase-vendor-return` for price#06, sales#27, sales#28 and purchase#01-#04 in both repositories, the owner's instruction "sare plan ek hi branch pe implement krna")
 - **Depends on:** `purchase#01`, `sales#27` (the credit note PDF it is made like)
 - **UI plan:** purchase#04
@@ -21,19 +21,21 @@ Touches: `Application/Purchase` (a Debit Note PDF service, model builder and A4 
 Read the vendor return, fill the template through the platform template port and print it with the platform PDF renderer, like the credit note PDF; a cancelled return prints `CANCELLED`; `Page x of y` and the repeating header.
 
 ## 4. Tasks (at most 8)
-- [ ] 1. The model builder: company header, title, number, date, vendor, lines with stock source, total, round-off, words (R11).
-- [ ] 2. The A4 template.
-- [ ] 3. The PDF service and the endpoint with its roles; catalogue.
-- [ ] 4. Build at 0 warnings, 0 errors; size limits; `docs/Code_Map.md`.
-- [ ] 5. Verify AC9 on the local database: read the PDF text and look at a rendered page.
+- [x] 1. The model builder: company header, title, number, date, vendor, lines with stock source, total, round-off, words (R11).
+- [x] 2. The A4 template.
+- [x] 3. The PDF service and the endpoint with its roles; catalogue.
+- [x] 4. Build at 0 warnings, 0 errors; size limits; `docs/Code_Map.md`.
+- [x] 5. Verify AC9 on the local database: read the PDF text and look at a rendered page.
 
 ## 5. Spec coverage
 | Rule / AC | Task | Verification (input -> observed output) |
 |---|---|---|
-| `R11`, `AC9` | 1-5 | the PDF: A4, text has the company name, `DEBIT NOTE`, number, date, vendor, every line, the total in words; a cancelled one shows `CANCELLED`; another company's id `404`; the page looked at |
+| `R11`, `AC9` | 1-5 | the PDF: A4, text has the company name, `DEBIT NOTE`, number, date, vendor, every line, the total in words; a cancelled one shows `CANCELLED`; another company's id `404`; the page looked at ; observed (real database, scratch API): `GET vendor-returns/{id}/pdf` -> 200 `application/pdf`, `inline; filename="DN-2026-27-0002.pdf"`, 69 KB; the page rendered and looked at: logo, company name, `DEBIT NOTE`, number, date, financial year, vendor name and code, the line `From stock Damaged`, rate 180.00, quantity 2, amount 360.00, subtotal and total ₹ 360.00, the words; the cancelled one (`DN/2026-27/0001`) was fetched (200); unknown id `404`. The cancelled page was not looked at |
 
 ## 6. Not verified
-(filled when the plan is closed)
+Build: `dotnet build src/BookInventory.Api` (to a scratch output, the owner's own API holds the default `bin`) -> 0 warnings, 0 errors.
+
+NOT verified: the `CANCELLED` stamp on the page (the PDF was fetched, not rendered), a second page with the repeated header, a company signature, a round-off row, Staff opening it.
 
 ## 7. Risks and notes
 No migration. Needs the PDF renderer to start.
