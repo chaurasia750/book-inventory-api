@@ -3286,6 +3286,10 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("gst_mode");
 
+                    b.Property<DateOnly?>("InvoiceDate")
+                        .HasColumnType("date")
+                        .HasColumnName("invoice_date");
+
                     b.Property<Guid?>("InvoiceId")
                         .HasColumnType("uuid")
                         .HasColumnName("invoice_id");
@@ -3328,6 +3332,11 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("xid")
                         .HasColumnName("xmin");
+
+                    b.Property<string>("SchoolAddress")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("school_address");
 
                     b.Property<string>("SchoolCode")
                         .IsRequired()

@@ -40,6 +40,7 @@
     <p class="caps">Credit to</p>
     <p class="who">{{ school.name }}</p>
     <p>School code {{ school.code }}{{ if school.state }} · {{ school.state }}{{ end }}</p>
+    {{ if school.address }}<p>{{ school.address }}</p>{{ end }}
     {{ if school.gstin }}<p>School GSTIN {{ school.gstin }}</p>{{ end }}
   </div>
   <div>
@@ -49,7 +50,7 @@
   </div>
   <div>
     <p class="caps">Reference</p>
-    <p>{{ if note.invoice }}Invoice {{ note.invoice }}{{ else }}Return without an invoice{{ end }}</p>
+    <p>{{ if note.invoice }}Invoice {{ note.invoice }}{{ if note.invoice_date }} dated {{ note.invoice_date }}{{ end }}{{ else }}Return without an invoice{{ end }}</p>
     <p>Tax: {{ note.tax_type }}</p>
   </div>
 </div>

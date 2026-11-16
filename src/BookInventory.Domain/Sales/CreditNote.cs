@@ -43,6 +43,9 @@ public class CreditNote : CompanyOwnedRoot
 
     public string? SchoolGstin { get; private set; }
 
+    /// <summary>R72: the school's address when the credit note was made, printed as the recipient's address.</summary>
+    public string? SchoolAddress { get; private set; }
+
     public string? CompanyState { get; private set; }
 
     /// <summary>R59: the company's printed identity when the credit note was made.</summary>
@@ -51,6 +54,9 @@ public class CreditNote : CompanyOwnedRoot
     public Guid? InvoiceId { get; private set; }
 
     public string? InvoiceNumber { get; private set; }
+
+    /// <summary>R72: the date of the invoice the credit note refers to, as it was when the credit note was made; null for a return without an invoice.</summary>
+    public DateOnly? InvoiceDate { get; private set; }
 
     public string Session { get; private set; }
 
@@ -169,10 +175,12 @@ public class CreditNote : CompanyOwnedRoot
             SchoolName = input.School.Name,
             SchoolState = input.School.State,
             SchoolGstin = input.SchoolGstin,
+            SchoolAddress = input.School.Address,
             CompanyState = input.CompanySnapshot.State,
             CompanySnapshot = input.CompanySnapshot,
             InvoiceId = input.Invoice?.Id,
             InvoiceNumber = input.Invoice?.Number,
+            InvoiceDate = input.Invoice?.Date,
             Session = input.Session,
             IsGstApplied = input.IsGstApplied,
             GstMode = input.GstMode,
