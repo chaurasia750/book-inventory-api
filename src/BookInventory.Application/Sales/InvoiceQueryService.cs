@@ -3,6 +3,7 @@ using BookInventory.BuildingBlocks.Domain.Exceptions;
 using BookInventory.BuildingBlocks.Domain.Models;
 using BookInventory.Domain.Sales;
 using Microsoft.Extensions.DependencyInjection;
+using BookInventory.BuildingBlocks.Domain.Documents;
 
 namespace BookInventory.Application.Sales;
 

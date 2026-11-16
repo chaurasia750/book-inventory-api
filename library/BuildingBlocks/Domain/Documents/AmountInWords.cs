@@ -1,9 +1,9 @@
 using System.Text;
 
-namespace BookInventory.Domain.Sales;
+namespace BookInventory.BuildingBlocks.Domain.Documents;
 
 /// <summary>
-/// Spec sales R32: an amount written in words in the Indian numbering system (thousand, lakh, crore) for the printed
+/// An amount written in words in the Indian numbering system (thousand, lakh, crore) for the printed
 /// invoice. Rupees are always written; paise are added only when the amount has them (the grand total never does, but the
 /// same helper serves any money value). Written once, used by the PDF and, later, the invoice screen.
 /// </summary>
@@ -25,7 +25,7 @@ public static class AmountInWords
     /// <summary>R32: e.g. <c>Rupees Twenty-Two Thousand Seven Hundred Twenty-Five Only</c>.</summary>
     public static string Of(decimal amount)
     {
-        var rounded = SaleMoney.Round2(amount);
+        var rounded = Math.Round(amount, 2, MidpointRounding.AwayFromZero);
         var sign = rounded < 0m ? "Minus " : string.Empty;
         var value = Math.Abs(rounded);
         var rupees = decimal.Truncate(value);

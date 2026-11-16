@@ -5,6 +5,7 @@ using BookInventory.Application.Sales;
 using BookInventory.Application.School;
 using BookInventory.Domain.Payment;
 using BookInventory.Domain.Sales;
+using BookInventory.BuildingBlocks.Domain.Documents;
 
 namespace BookInventory.Application.Payment;
 
@@ -28,7 +29,7 @@ public static class ReceiptPdfModelBuilder
             {
                 ["number"] = E(s.Number), ["date"] = InvoiceFormat.Date(s.ReceiptDate), ["total"] = InvoiceFormat.Amount(s.TotalAmount), ["remark"] = E(receipt.Remark)
             },
-            ["school"] = new Dictionary<string, object?> { ["name"] = E(s.SchoolName ?? school?.Name), ["code"] = E(s.SchoolCode ?? school?.Code), ["address"] = E(school?.Address) },
+            ["school"] = new Dictionary<string, object?> { ["name"] = E(s.SchoolName ?? school?.Name), ["address"] = E(school?.Address), ["gstin"] = E(school?.Gstin) },
             ["modes"] = receipt.Modes.Select(Mode).ToList(),
             ["words"] = E(AmountInWords.Of(s.TotalAmount)),
             ["has_allocations"] = receipt.Allocations.Count > 0,

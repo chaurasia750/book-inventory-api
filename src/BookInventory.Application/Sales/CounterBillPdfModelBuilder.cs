@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net;
 using BookInventory.Application.Company;
 using BookInventory.Domain.Sales;
+using BookInventory.BuildingBlocks.Domain.Documents;
 
 namespace BookInventory.Application.Sales;
 
