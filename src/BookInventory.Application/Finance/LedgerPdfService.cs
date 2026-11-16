@@ -22,8 +22,8 @@ public sealed class LedgerPdfService(
 {
     private static readonly TimeZoneInfo Zone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Kolkata");
 
-    /// <summary>A4 portrait; the bottom margin holds the footer (made-at time and page numbers) that repeats on every page.</summary>
-    private static readonly HtmlToPdfOptions Page = new() { MarginTopInches = 0.4m, MarginBottomInches = 0.6m };
+    /// <summary>A4 portrait; the top margin holds the company header (R20) and the bottom margin the footer (made-at time and page numbers), both repeated on every page.</summary>
+    private static readonly HtmlToPdfOptions Page = new() { MarginTopInches = 1.0m, MarginBottomInches = 0.6m, MarginLeftInches = 0.3m, MarginRightInches = 0.3m };
 
     public async Task<LedgerPdf> SchoolAsync(Guid schoolId, LedgerStatementQuery query, CancellationToken cancellationToken)
     {
@@ -44,10 +44,12 @@ public sealed class LedgerPdfService(
     private async Task<LedgerPdf> RenderAsync(LedgerStatement statement, LedgerPdfParty party, LedgerStatementQuery query, CancellationToken cancellationToken)
     {
         var madeAt = TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, Zone).ToString("dd MMM yyyy HH:mm", CultureInfo.InvariantCulture);
-        var model = LedgerPdfModelBuilder.Build(statement, party, LedgerFilterWords.Of(query), await company.CurrentAsync(cancellationToken), madeAt);
+        var heading = new LedgerPdfHeading(LedgerFilterWords.Of(query), LedgerPeriod.Of(query, statement.Rows), madeAt);
+        var model = LedgerPdfModelBuilder.Build(statement, party, heading, await company.CurrentAsync(cancellationToken));
         var body = await templates.RenderAsync(LedgerPdfTemplates.Body, model, cancellationToken);
+        var header = await templates.RenderAsync(LedgerPdfTemplates.Header, model, cancellationToken);
         var footer = await templates.RenderAsync(LedgerPdfTemplates.Footer, model, cancellationToken);
-        var pdf = await renderer.RenderAsync(body, Page with { FooterHtml = footer }, cancellationToken);
+        var pdf = await renderer.RenderAsync(body, Page with { HeaderHtml = header, FooterHtml = footer }, cancellationToken);
         return new LedgerPdf(pdf, party.Code + "-ledger.pdf");
     }
 }

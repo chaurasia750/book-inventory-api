@@ -8,6 +8,8 @@ internal static class LedgerPdfTemplates
 {
     public static string Body { get; } = Read("ledger-body.sbn");
 
+    public static string Header { get; } = Read("ledger-header.sbn");
+
     public static string Footer { get; } = Read("ledger-footer.sbn");
 
     private static string Read(string name)
