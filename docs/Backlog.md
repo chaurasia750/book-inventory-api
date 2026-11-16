@@ -124,7 +124,8 @@ Kinds: **NV** not verified · **GAP** known gap · **DEC** decision the owner ha
 | B114 | finance | NV | finance#08 and finance#09 (Download PDF button, ledger row links) are code-complete but not clicked in a browser; no cheque cleared or bounced row existed to try | finance#08, finance#09 | open |
 | B115 | sales | NV | sales#17: not checked that company B's first counter bill is `CNT/2026-27/0001`, that parallel bills get different numbers, that a Super Admin with no company gets `403 core.company_required`, a bill of more than 200 lines, and the stock card of a non-stock item sold at the counter | sales#17 | open |
 | B116 | sales | NV | sales#21: the counter receipt was read as text only (not seen as a page); a second page, a logo, a signature, the printed GSTIN and the footer line were not tried | sales#21 | open |
-| B117 | sales | NV | sales#16: a school that only sells by order is left out of the counter form - not seen with real data (the company had one `BOTH` school) | sales#16 | open |
-| B118 | sales | NV | sales#18: not seen in a browser: the same name and class reusing the student (AC34), "Add the class book list" with a real list, a refused bill showing the API message (AC37), "This student's bills" | sales#18 | open |
-| B119 | sales | NV | sales#20: the counter select of the day summary was not exercised (only all counters) | sales#20 | open |
-| B120 | sales | NV | sales#22: a failing Print or Download PDF showing its message was not forced | sales#22 | open |
+| B117 | sales | NV | sales#16: a school that only sells by order is left out of the counter form - not seen with real data (the company had one `BOTH` school) | sales#16 | verified by the owner 2026-11-16 |
+| B118 | sales | NV | sales#18: not seen in a browser: the same name and class reusing the student (AC34), "Add the class book list" with a real list, a refused bill showing the API message (AC37), "This student's bills" | sales#18 | verified by the owner 2026-11-16 |
+| B119 | sales | NV | sales#20: the counter select of the day summary was not exercised (only all counters) | sales#20 | verified by the owner 2026-11-16 |
+| B120 | sales | NV | sales#22: a failing Print or Download PDF showing its message was not forced | sales#22 | verified by the owner 2026-11-16 |
+| B121 | sales | GAP | The owner found problems in the invoice, ledger and other Download PDF files while checking the UI plans; the details are not yet written down. To be looked at later | sales#08, finance#08 | open |
