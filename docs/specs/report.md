@@ -1,10 +1,10 @@
 # Spec: report - Dashboard (and, later, reports)
 
 - **Module:** `report` (no database schema: it reads, it stores nothing)
-- **Status:** R1-R13 and AC1-AC9 (the dashboard) Approved by abhishek in chat on 2026-11-16 (module, who sees, session, cheque, cards chosen and Q1-Q4 answered one by one; D1-D6 with them)
+- **Status:** R1-R13 and AC1-AC9 (the dashboard) built 2026-11-16, Approved by abhishek in chat on 2026-11-16 (module, who sees, session, cheque, cards chosen and Q1-Q4 answered one by one; D1-D6 with them)
 - **Last updated:** 2026-11-16 (new module, dashboard)
 - **Source docs:** [BRD §4.16 Reports aur Dashboard (the Dashboard (Home) block), §3 (who sees what), §5.1 BR-SES, §5.6 BR-LED, FR-STK-06, FR-PAY-07](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P22; [specs/sales.md](sales.md) R6, R8, R11, R42, R57, R64; [specs/payment.md](payment.md) R5, R6, R10, R11, R14; [specs/finance.md](finance.md) R7, R11, R13; [specs/stock.md](stock.md) R9, R20; [specs/price.md](price.md) R19; [specs/purchase.md](purchase.md) R7, R8; [specs/school.md](school.md) R18
-- **Plans:** [sales#29](../plans/sales/2026-11-16-29-dashboard-figures.md) (Approved, R7, R8), [payment#11](../plans/payment/2026-11-16-11-dashboard-figures.md) (Approved, R4-R6), [stock#06](../plans/stock/2026-11-16-06-dashboard-figures.md) (Approved, R10), [purchase#05](../plans/purchase/2026-11-16-05-dashboard-figures.md) (Approved, R8), [report#01](../plans/report/2026-11-16-01-dashboard-api.md) (Approved, R1-R3, R9, R12, R13, AC1-AC9), [report#02](../plans/report/2026-11-16-02-ui-dashboard.md) (Approved, UI, R11)
+- **Plans:** [sales#29](../plans/sales/2026-11-16-29-dashboard-figures.md) (Done 2026-11-16, R7, R8), [payment#11](../plans/payment/2026-11-16-11-dashboard-figures.md) (Done 2026-11-16, R4-R6), [stock#06](../plans/stock/2026-11-16-06-dashboard-figures.md) (Done 2026-11-16, R10), [purchase#05](../plans/purchase/2026-11-16-05-dashboard-figures.md) (Done 2026-11-16, R8), [report#01](../plans/report/2026-11-16-01-dashboard-api.md) (Done 2026-11-16, R1-R3, R9, R12, R13, AC1-AC9), [report#02](../plans/report/2026-11-16-02-ui-dashboard.md) (Done 2026-11-16, UI, R11)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
