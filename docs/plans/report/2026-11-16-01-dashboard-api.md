@@ -4,11 +4,11 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/report.md](../../specs/report.md) - rules covered: R1-R3, R9, R12, R13; AC1-AC9
 - **Owner:** abhishek
-- **Status:** Draft
-- **Base branch:** `feature/purchase-vendor-return` (one branch `feature/report-dashboard` for sales#29, payment#11, stock#06, purchase#05, report#01 and report#02 in both repositories, to be confirmed at approval)
+- **Status:** Approved
+- **Base branch:** `feature/purchase-vendor-return` (one branch `feature/report-dashboard` for sales#29, payment#11, stock#06, purchase#05, report#01 and report#02 in both repositories)
 - **Depends on:** `sales#29`, `payment#11`, `stock#06`, `purchase#05`, `price#06` (Done), `finance#03` (Done, the outstanding list)
 - **UI plan:** report#02
-- **Approved by / on:** pending
+- **Approved by / on:** abhishek / 2026-11-16 (chat: Q1-Q4 and the dashboard choices answered one by one; "all approve")
 - **Created:** 2026-11-16
 
 ## 1. In one minute
@@ -45,4 +45,4 @@ The dashboard session value object checks the label and gives its window and sta
 (filled when the plan is closed)
 
 ## 7. Risks and notes
-Money is read, never moved, but every figure is checked against the source screens. Q1-Q4 are answered before approval.
+Money is read, never moved, but every figure is checked against the source screens. Q1-Q4 were answered by abhishek on 2026-11-16.

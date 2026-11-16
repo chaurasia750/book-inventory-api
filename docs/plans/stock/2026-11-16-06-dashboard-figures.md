@@ -4,11 +4,11 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/report.md](../../specs/report.md) - rules covered: R10 (the stock side); AC7
 - **Owner:** abhishek
-- **Status:** Draft
-- **Base branch:** `feature/purchase-vendor-return` (one branch `feature/report-dashboard` for sales#29, payment#11, stock#06, purchase#05, report#01 and report#02 in both repositories, to be confirmed at approval)
+- **Status:** Approved
+- **Base branch:** `feature/purchase-vendor-return` (one branch `feature/report-dashboard` for sales#29, payment#11, stock#06, purchase#05, report#01 and report#02 in both repositories)
 - **Depends on:** `stock#05` (Done, quantities), `price#06` (the purchase price, used by the report module)
 - **UI plan:** none, a read capability for the report module
-- **Approved by / on:** pending
+- **Approved by / on:** abhishek / 2026-11-16 (chat: Q1-Q4 and the dashboard choices answered one by one; "all approve")
 - **Created:** 2026-11-16
 
 ## 1. In one minute

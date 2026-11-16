@@ -4,11 +4,11 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/report.md](../../specs/report.md) - rules covered: R4, R5, R6 (the payment side); AC1, AC2
 - **Owner:** abhishek
-- **Status:** Draft
-- **Base branch:** `feature/purchase-vendor-return` (one branch `feature/report-dashboard` for sales#29, payment#11, stock#06, purchase#05, report#01 and report#02 in both repositories, to be confirmed at approval)
+- **Status:** Approved
+- **Base branch:** `feature/purchase-vendor-return` (one branch `feature/report-dashboard` for sales#29, payment#11, stock#06, purchase#05, report#01 and report#02 in both repositories)
 - **Depends on:** `payment#01` to `payment#10` (Done), `sales#29` is not needed
 - **UI plan:** none, a read capability for the report module
-- **Approved by / on:** pending
+- **Approved by / on:** abhishek / 2026-11-16 (chat: Q1-Q4 and the dashboard choices answered one by one; "all approve")
 - **Created:** 2026-11-16
 
 ## 1. In one minute
@@ -38,4 +38,4 @@ Touches: `Application/Payment` (a figures capability, its answer records) and `I
 (filled when the plan is closed)
 
 ## 7. Risks and notes
-The allocation date question (Q2) must be answered before approval.
+Q2 (the allocation date) was answered by abhishek on 2026-11-16: the day the allocation row was made.
