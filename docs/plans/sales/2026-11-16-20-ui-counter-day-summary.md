@@ -4,7 +4,7 @@
 - **Kind:** UI
 - **Spec:** [../../specs/sales.md](../../specs/sales.md) - rules covered: R50 (the screen side); AC42
 - **Owner:** abhishek
-- **Status:** In progress (code done and verified in headless Chrome; waiting for the owner's look in the browser)
+- **Status:** Done (2026-11-16; the owner asked to close it after the headless-Chrome check)
 - **Base branch:** `main` of `book-inventory-ui` (one branch `feature/sales-school-counter` for sales#15-#22, the owner's instruction "same branch pe")
 - **Depends on:** sales#19
 - **UI plan:** this is itself a UI plan
