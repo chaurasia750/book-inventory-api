@@ -16,6 +16,9 @@ public interface ICounterBillStore
 
     Task<CounterBill?> FindForReadAsync(Guid id, CancellationToken cancellationToken = default);
 
+    /// <summary>R50: the live bills of a date (and of one counter, when given) added up.</summary>
+    Task<CounterDaySummary> DaySummaryAsync(CounterDaySummaryQuery query, CancellationToken cancellationToken = default);
+
     /// <summary>R49: the paged, searchable, filterable list, newest first by default.</summary>
     Task<IPagedList<CounterBill>> SearchAsync(CounterBillSearchQuery query, CancellationToken cancellationToken = default);
 }

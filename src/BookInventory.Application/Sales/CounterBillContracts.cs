@@ -137,3 +137,16 @@ public sealed record CounterBillResponse(
     IReadOnlyList<CounterBillLineResponse> Lines,
     IReadOnlyList<CounterBillPaymentResponse> Payments,
     DateTime CreatedAt);
+
+/// <summary>R50: the day summary query: one date (the business date) and optionally one counter; without a counter the whole company.</summary>
+public sealed record CounterDaySummaryQuery
+{
+    [Required]
+    public DateOnly? Date { get; init; }
+
+    public Guid? CounterId { get; init; }
+}
+
+/// <summary>R50: what was sold on a day by the live bills (cancelled ones are left out): the bills, their total, the Cash and UPI totals, the books and all items.</summary>
+public sealed record CounterDaySummary(
+    DateOnly Date, Guid? CounterId, int BillCount, decimal TotalAmount, decimal CashAmount, decimal UpiAmount, int BookQuantity, int TotalQuantity);

@@ -4,7 +4,7 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/sales.md](../../specs/sales.md) - rules covered: R51; AC43
 - **Owner:** abhishek
-- **Status:** Approved
+- **Status:** Done (2026-11-16)
 - **Depends on:** `sales#17`, `sales#07` (Done, the PDF pipeline)
 - **UI plan:** sales#22
 - **Approved by / on:** abhishek / 2026-11-16 (chat: "all plan approve hai, ek hi branch pe")
@@ -21,11 +21,11 @@ Leaves out: the Print and Download buttons (sales#22), the thermal roll format.
 The service reads the bill (a cancelled one is marked `CANCELLED`), fills one template through the platform template port and renders it with the platform PDF renderer, like `ReceiptPdfService`; the title and the rate-wise GST summary follow R51 and R32 through the same helpers as the invoice (amount in words, Indian grouping).
 
 ## 4. Tasks (at most 8)
-- [ ] 1. The model builder: company header, title, bill, student, lines, totals, GST summary, payments, words (R51).
-- [ ] 2. The A5 template.
-- [ ] 3. The PDF service and the endpoint with its roles; catalogue.
-- [ ] 4. Build at 0 warnings, 0 errors; size limits; `docs/Code_Map.md`.
-- [ ] 5. Verify AC43 on the local database: read the PDF text and a rendered page.
+- [x] 1. The model builder: company header, title, bill, student, lines, totals, GST summary, payments, words (R51).
+- [x] 2. The A5 template.
+- [x] 3. The PDF service and the endpoint with its roles; catalogue.
+- [x] 4. Build at 0 warnings, 0 errors; size limits; `docs/Code_Map.md`.
+- [x] 5. Verify AC43 on the local database: read the PDF text and a rendered page.
 
 ## 5. Spec coverage
 | Rule / AC | Task | Verification (input -> observed output) |
@@ -33,7 +33,8 @@ The service reads the bill (a cancelled one is marked `CANCELLED`), fills one te
 | `R51`, `AC43` | 1-4 | the PDF of a GST-off bill: A5, text has the company name, `CASH MEMO`, `GST Exempted`, the number, date, student and class, every line, the grand total in words, Cash and UPI amounts; a GST bill says `TAX INVOICE` with the GST summary; a cancelled bill says `CANCELLED`; another company 404 |
 
 ## 6. Not verified
-To be filled when the plan is closed.
+Observed (2026-11-16, scratch API on the real `book_inventory`; the PDF text was read back with a small scratch extractor, the page itself was not looked at): `GET counter-bills/{id}/pdf` -> 200 `application/pdf`, `inline; filename="CNT-2026-27-0019.pdf"`. A GST-off bill (Book 123.45 x 2 + Copy 100.00, total discount 5.00, Cash 300 + UPI 42 REF99): the text has `Children Book Center`, `CASH MEMO`, `GST Exempted`, the number, the date `16 Nov 2026`, the student `Pdf Student ...`, `Class Nursery - Section A`, the school and counter and session, both lines with MRP and amount, Subtotal 346.90, Total discount -5.00, Round off 0.10, Grand total 342.00, `Rupees Three Hundred Forty-Two Only`, and the Cash and UPI rows. A GST bill (Copy x 2 at 12 percent): `TAX INVOICE`, no `GST Exempted`, Taxable 200.00, CGST 12.00, SGST 12.00, grand total 224.00 and the HSN 4820 rate summary row 12 % / 200.00 / 12.00 / 12.00 / 24.00. A cancelled bill prints `CANCELLED` and its reason. Staff 200; company B 404; anonymous 401.
+NOT verified: how the page looks (only its text was read), a bill that needs a second page, a company with a logo and a signature, the printed GSTIN and the footer line.
 
 ## 7. Risks and notes
 No migration. Needs the PDF renderer to start (as sales#07).

@@ -31,6 +31,10 @@ public sealed class CounterBillQueryService(ICounterBillStore bills, ICounterSto
         return Detail(bill, counter?.Name);
     }
 
+    /// <summary>R50: the day summary; a read-only figure that locks nothing (Q29).</summary>
+    public Task<CounterDaySummary> DaySummaryAsync(CounterDaySummaryQuery query, CancellationToken cancellationToken) =>
+        bills.DaySummaryAsync(query, cancellationToken);
+
     private static CounterBillSummary Summary(CounterBill b) =>
         new(b.Id, b.Number, b.BillDate, b.CounterId, b.SchoolId, b.SchoolName, b.StudentId, b.StudentName, b.StudentClass, b.Totals.GrandTotal, b.Status, b.CreatedAt);
 

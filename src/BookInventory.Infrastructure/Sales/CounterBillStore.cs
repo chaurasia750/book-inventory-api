@@ -3,6 +3,7 @@ using BookInventory.BuildingBlocks.Application.Attributes;
 using BookInventory.BuildingBlocks.Domain.Models;
 using BookInventory.BuildingBlocks.Persistence.Contracts;
 using BookInventory.BuildingBlocks.Persistence.Extensions;
+using BookInventory.Domain.Item;
 using BookInventory.Domain.Sales;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,6 +42,21 @@ public sealed class CounterBillStore(IUnitOfWork unitOfWork) : ICounterBillStore
             .Where(b => string.IsNullOrEmpty(search) || b.Number.ToLower().Contains(search) || b.StudentName.ToLower().Contains(search))
             .OrderBy(WhitelistedOrder(query.OrderBy))
             .ToPagedListAsync(query.PageIndex < 1 ? 1 : query.PageIndex, query.PageSize, cancellationToken);
+    }
+
+    public async Task<CounterDaySummary> DaySummaryAsync(CounterDaySummaryQuery query, CancellationToken cancellationToken = default)
+    {
+        var (date, counterId) = (query.Date!.Value, query.CounterId);
+        var live = _bills.TableNoTracking
+            .Where(b => b.BillDate == date && b.Status == CounterBillStatus.Active)
+            .Where(b => counterId == null || b.CounterId == counterId);
+        var totals = await live.GroupBy(_ => 1).Select(g => new { Count = g.Count(), Total = g.Sum(b => b.Totals.GrandTotal) }).FirstOrDefaultAsync(cancellationToken);
+        var payments = await live.SelectMany(b => b.Payments).GroupBy(p => p.Mode).Select(g => new { Mode = g.Key, Amount = g.Sum(p => p.Amount) }).ToListAsync(cancellationToken);
+        var lines = await live.SelectMany(b => b.Lines).GroupBy(l => l.Category == ItemCategory.Book).Select(g => new { IsBook = g.Key, Quantity = g.Sum(l => l.Quantity) }).ToListAsync(cancellationToken);
+
+        decimal Paid(CounterPaymentMode mode) => payments.Where(p => p.Mode == mode).Sum(p => p.Amount);
+        var books = lines.Where(l => l.IsBook).Sum(l => l.Quantity);
+        return new CounterDaySummary(date, counterId, totals?.Count ?? 0, totals?.Total ?? 0m, Paid(CounterPaymentMode.Cash), Paid(CounterPaymentMode.Upi), books, lines.Sum(l => l.Quantity));
     }
 
     /// <summary>The platform <c>OrderBy(string)</c> accepts any property, so the column is checked here first; anything else falls back to the default order.</summary>
