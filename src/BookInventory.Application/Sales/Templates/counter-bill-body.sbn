@@ -1,0 +1,89 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  /* Spec sales R51: the A5 school counter receipt: company header, title, bill, student, lines, totals, GST summary, payments, words, signature. */
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; font-size: 9.5px; line-height: 1.3; color: #141414; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-variant-numeric: tabular-nums; position: relative; }
+  .head { display: flex; gap: 8px; align-items: flex-start; border-bottom: 1.2px solid #1f1f1f; padding-bottom: 5px; }
+  .head img { width: 46px; height: 46px; object-fit: contain; }
+  .head .co { flex: 1; } .head .name { font-size: 15px; font-weight: 700; line-height: 1.1; } .muted { color: #4a4a4a; }
+  .title { text-align: center; margin: 8px 0 2px; font-size: 13px; font-weight: 700; letter-spacing: .14em; }
+  .exempt { text-align: center; font-size: 8px; color: #4a4a4a; margin-bottom: 4px; }
+  .meta { display: flex; justify-content: space-between; border: 1px solid #1f1f1f; padding: 4px 7px; margin: 6px 0; }
+  .caps { text-transform: uppercase; letter-spacing: .06em; font-size: 7.5px; color: #4a4a4a; font-weight: 600; }
+  .party { border: 1px solid #1f1f1f; padding: 4px 7px; margin-bottom: 6px; } .party .who { font-size: 11px; font-weight: 700; } .party p { margin: 0; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
+  thead { display: table-header-group; } tr { break-inside: avoid; }
+  th { background: #f1efe9; border-top: 1px solid #1f1f1f; border-bottom: 1px solid #1f1f1f; padding: 3px 4px; text-align: left; font-size: 7.5px; text-transform: uppercase; letter-spacing: .05em; }
+  td { padding: 2.5px 4px; border-bottom: 1px solid #d3d0c7; vertical-align: top; } .r { text-align: right; white-space: nowrap; }
+  .tot td { border-bottom: 0; padding: 1px 4px; }
+  .total { display: flex; justify-content: space-between; background: #f1efe9; font-weight: 700; font-size: 11px; padding: 5px 7px; border: 1px solid #1f1f1f; }
+  .words { border: 1px solid #1f1f1f; border-top: 0; padding: 4px 7px; margin-bottom: 6px; } .words b { font-size: 9.5px; }
+  .gst th, .gst td { font-size: 8px; }
+  .foot { display: flex; gap: 10px; margin-top: 8px; border-top: 1px solid #1f1f1f; padding-top: 6px; break-inside: avoid; }
+  .foot .left { flex: 1; } .foot .sign { width: 130px; text-align: center; } .foot .sign img { max-width: 120px; max-height: 44px; object-fit: contain; }
+  .foot .sign .line { border-top: 1px solid #1f1f1f; margin-top: 2px; padding-top: 2px; font-size: 8px; }
+  .note { font-size: 8px; color: #4a4a4a; }
+  .stamp { position: absolute; top: 38%; left: 8%; width: 84%; text-align: center; transform: rotate(-24deg); font-size: 58px; font-weight: 800; letter-spacing: .12em; color: rgba(190, 30, 30, .22); border: 5px solid rgba(190, 30, 30, .22); padding: 6px 0; pointer-events: none; }
+</style></head>
+<body>
+{{ if cancelled }}<div class="stamp">CANCELLED</div>{{ end }}
+<div class="head">
+  {{ if company.logo }}<img src="{{ company.logo }}" alt="">{{ end }}
+  <div class="co">
+    <div class="name">{{ company.name }}</div>
+    {{ if company.tagline }}<div class="muted">{{ company.tagline }}</div>{{ end }}
+    {{ if company.address }}<div>{{ company.address }}</div>{{ end }}
+    {{ if company.contact }}<div>{{ company.contact }}</div>{{ end }}
+    {{ if company.gstin }}<div>GSTIN <b>{{ company.gstin }}</b></div>{{ end }}
+  </div>
+</div>
+<div class="title">{{ title }}</div>
+{{ if gst_exempt }}<div class="exempt">GST Exempted</div>{{ end }}
+<div class="meta">
+  <div><span class="caps">Bill no.</span><br><b>{{ bill.number }}</b></div>
+  <div style="text-align:right;"><span class="caps">Date</span><br><b>{{ bill.date }}</b></div>
+</div>
+<div class="party">
+  <span class="caps">Student</span>
+  <p class="who">{{ student.name }}</p>
+  <p class="muted">Class {{ student.class }}{{ if student.section }} · Section {{ student.section }}{{ end }}{{ if student.roll }} · Roll {{ student.roll }}{{ end }}</p>
+  <p class="muted">{{ school.name }} ({{ school.code }}){{ if bill.counter }} · {{ bill.counter }}{{ end }} · Session {{ bill.session }}</p>
+</div>
+<table>
+  <thead><tr><th style="width:18px">#</th><th>Item</th><th class="r" style="width:30px">Qty</th><th class="r" style="width:55px">MRP</th><th class="r" style="width:50px">Disc.</th><th class="r" style="width:62px">Amount</th></tr></thead>
+  <tbody>
+  {{ for l in lines }}
+    <tr><td>{{ l.n }}</td><td>{{ l.name }} <span class="muted">{{ l.code }}</span></td><td class="r">{{ l.qty }}</td><td class="r">{{ l.mrp }}</td><td class="r">{{ l.discount }}</td><td class="r">{{ l.amount }}</td></tr>
+  {{ end }}
+  </tbody>
+</table>
+<table class="tot"><tbody>
+  {{ for r in totals }}<tr><td class="r">{{ r.label }}</td><td class="r" style="width:80px">{{ r.value }}</td></tr>{{ end }}
+</tbody></table>
+<div class="total"><span>Grand total</span><span>₹ {{ grand_total }}</span></div>
+<div class="words"><span class="caps">Amount in words</span><br><b>{{ words }}</b></div>
+{{ if has_summary }}
+<table class="gst">
+  <thead><tr><th>HSN</th><th>GST rate</th><th class="r">Taxable</th>{{ if same_state }}<th class="r">CGST</th><th class="r">SGST</th>{{ else }}<th class="r">IGST</th>{{ end }}<th class="r">Total GST</th></tr></thead>
+  <tbody>
+  {{ for r in summary }}<tr><td>{{ r.hsn }}</td><td>{{ r.rate }} %</td><td class="r">{{ r.taxable }}</td>{{ if same_state }}<td class="r">{{ r.cgst }}</td><td class="r">{{ r.sgst }}</td>{{ else }}<td class="r">{{ r.igst }}</td>{{ end }}<td class="r">{{ r.tax }}</td></tr>{{ end }}
+  </tbody>
+</table>
+{{ end }}
+<table>
+  <thead><tr><th>Paid by</th><th>Reference</th><th class="r" style="width:80px">Amount</th></tr></thead>
+  <tbody>
+  {{ for p in payments }}<tr><td>{{ p.mode }}</td><td>{{ p.reference }}</td><td class="r">{{ p.amount }}</td></tr>{{ end }}
+  </tbody>
+</table>
+{{ if remark }}<p class="note"><span class="caps">Remark</span> {{ remark }}</p>{{ end }}
+{{ if cancelled }}<p class="note"><b>Cancelled</b>{{ if cancel_note }}: {{ cancel_note }}{{ end }}</p>{{ end }}
+<div class="foot">
+  <div class="left">{{ if footer_line }}<div class="note">{{ footer_line }}</div>{{ end }}</div>
+  <div class="sign">
+    {{ if signature }}<img src="{{ signature }}" alt="">{{ end }}
+    <div class="line">Authorised signatory</div>
+  </div>
+</div>
+</body></html>

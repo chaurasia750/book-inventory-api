@@ -32,4 +32,17 @@ public static class GstRateSummary
                 g.Sum(l => l.CgstAmount),
                 g.Sum(l => l.SgstAmount),
                 g.Sum(l => l.IgstAmount)))];
+
+    /// <summary>R51: the same rate-wise summary for the lines of a counter bill, by the same grouping.</summary>
+    public static IReadOnlyList<GstRateSummaryRow> Of(IReadOnlyList<CounterBillLine> lines) =>
+        [.. lines
+            .GroupBy(l => (l.HsnCode, l.GstRatePercent))
+            .OrderBy(g => g.Key.GstRatePercent).ThenBy(g => g.Key.HsnCode)
+            .Select(g => new GstRateSummaryRow(
+                g.Key.HsnCode,
+                g.Key.GstRatePercent,
+                g.Sum(l => l.TaxableAmount),
+                g.Sum(l => l.CgstAmount),
+                g.Sum(l => l.SgstAmount),
+                g.Sum(l => l.IgstAmount)))];
 }

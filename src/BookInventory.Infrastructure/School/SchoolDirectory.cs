@@ -26,8 +26,21 @@ public sealed class SchoolDirectory(IUnitOfWork unitOfWork) : ISchoolDirectory
 
         return await _schools.TableNoTracking
             .Where(s => ids.Contains(s.Id))
-            .Select(s => new SchoolReference(s.Id, s.Code, s.Name, s.Status == SchoolStatus.Active, s.State, s.IsGstDefault, s.Gstin, s.Address, s.PaymentType))
+            .Select(s => new SchoolReference(s.Id, s.Code, s.Name, s.Status == SchoolStatus.Active, s.State, s.IsGstDefault, s.Gstin, s.Address, s.PaymentType, s.SaleType))
             .ToDictionaryAsync(s => s.Id, cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<Guid>> IdsMatchingAsync(string text, CancellationToken cancellationToken = default)
+    {
+        var needle = text.Trim().ToLowerInvariant();
+        if (needle.Length == 0)
+            return [];
+
+        return await _schools.TableNoTracking
+            .Where(s => s.Name.ToLower().Contains(needle) || s.Code.ToLower().Contains(needle))
+            .Select(s => s.Id)
+            .Take(ISchoolDirectory.MaxMatches)
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<string?> ClassOfAsync(Guid schoolId, string? text, CancellationToken cancellationToken = default)

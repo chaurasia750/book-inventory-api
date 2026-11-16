@@ -19,8 +19,7 @@ public sealed class InvoiceParties(ISchoolDirectory schools, ICompanyInvoiceIden
     public async Task<(SaleSchool School, string? SchoolGstin, CompanyInvoiceSnapshot Company)> OfAsync(SchoolOrder order, CancellationToken cancellationToken)
     {
         var school = await schools.GetAsync(order.SchoolId, cancellationToken);
-        var identity = await company.CurrentAsync(cancellationToken)
-            ?? throw new ForbiddenException(CoreMessages.CompanyRequired);
+        var identity = await IdentityAsync(cancellationToken);
 
         var sale = new SaleSchool(
             order.SchoolId,
@@ -31,6 +30,13 @@ public sealed class InvoiceParties(ISchoolDirectory schools, ICompanyInvoiceIden
 
         return (sale, school?.Gstin, Snapshot(identity));
     }
+
+    /// <summary>R13: the company's printed identity as it is now, kept on a counter bill like on an invoice (sales R13, R42).</summary>
+    public async Task<CompanyInvoiceSnapshot> CompanySnapshotAsync(CancellationToken cancellationToken) =>
+        Snapshot(await IdentityAsync(cancellationToken));
+
+    private async Task<CompanyPrintedIdentity> IdentityAsync(CancellationToken cancellationToken) =>
+        await company.CurrentAsync(cancellationToken) ?? throw new ForbiddenException(CoreMessages.CompanyRequired);
 
     private static CompanyInvoiceSnapshot Snapshot(CompanyPrintedIdentity identity) =>
         new(

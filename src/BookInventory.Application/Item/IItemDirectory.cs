@@ -8,8 +8,8 @@ namespace BookInventory.Application.Item;
 /// </summary>
 public sealed record ItemReference(Guid Id, string Code, string Name, bool IsActive, bool IsStockManaged);
 
-/// <summary>R16 (for the sales module): what a sales line keeps of an item: its reference, HSN code and GST rate.</summary>
-public sealed record ItemSaleReference(ItemReference Item, string? HsnCode, decimal GstRatePercent);
+/// <summary>R16 (for the sales module): what a sales line keeps of an item: its reference, HSN code, GST rate and category (for the books count of the counter day summary, sales R50).</summary>
+public sealed record ItemSaleReference(ItemReference Item, string? HsnCode, decimal GstRatePercent, ItemCategory Category = ItemCategory.Other);
 
 /// <summary>
 /// R16/R17: which items a caller means: any mix of vendor, category and class (ignoring case), optionally only active ones and
