@@ -3,27 +3,27 @@
 <style>
   /* Spec finance R18, R20-R27: the A4 ledger statement body: the party and the From and To dates, the table (header repeats on every page), totals, the summary, the bank to pay into and the signature. The company header is the page header (ledger-header.sbn). */
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; font-size: 9px; line-height: 1.3; color: #141414; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-variant-numeric: tabular-nums; }
-  .caps { text-transform: uppercase; letter-spacing: .06em; font-size: 7.5px; color: #4a4a4a; font-weight: 600; }
+  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; font-size: 11px; line-height: 1.3; color: #141414; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-variant-numeric: tabular-nums; }
+  .caps { text-transform: uppercase; letter-spacing: .06em; font-size: 9px; color: #4a4a4a; font-weight: 600; }
   .party { margin: 2px 0 8px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-  .party .who { font-size: 12px; font-weight: 700; } .party p { margin: 0; } .muted { color: #4a4a4a; }
-  .dates { text-align: right; white-space: nowrap; } .dates div { margin-bottom: 2px; } .dates b { font-size: 10px; margin-left: 4px; }
+  .party .who { font-size: 14px; font-weight: 700; } .party p { margin: 0; } .muted { color: #4a4a4a; }
+  .dates { text-align: right; white-space: nowrap; } .dates div { margin-bottom: 2px; } .dates b { font-size: 12px; margin-left: 4px; }
   table { width: 100%; border-collapse: collapse; }
   thead { display: table-header-group; } tr { break-inside: avoid; }
-  th { background: #f1efe9; border-top: 1px solid #1f1f1f; border-bottom: 1px solid #1f1f1f; padding: 3px 4px; text-align: left; font-size: 7.5px; text-transform: uppercase; letter-spacing: .05em; }
+  th { background: #f1efe9; border-top: 1px solid #1f1f1f; border-bottom: 1px solid #1f1f1f; padding: 3px 4px; text-align: left; font-size: 9px; text-transform: uppercase; letter-spacing: .05em; }
   td { padding: 2.5px 4px; border-bottom: 1px solid #d3d0c7; vertical-align: top; } .r { text-align: right; white-space: nowrap; }
   tr.open td { background: #faf9f5; font-style: italic; }
   tr.total td { background: #f1efe9; font-weight: 700; border-top: 1px solid #1f1f1f; border-bottom: 1px solid #1f1f1f; }
   .end { break-inside: avoid; margin-top: 8px; }
   .summary { border: 1px solid #1f1f1f; padding: 4px 7px; display: flex; justify-content: space-between; gap: 10px; }
-  .summary p { margin: 0; } .summary .fig { font-size: 10px; font-weight: 700; }
+  .summary p { margin: 0; } .summary .fig { font-size: 12px; font-weight: 700; }
   .words { margin: 4px 0 0; font-weight: 700; }
   .foot { display: flex; gap: 10px; margin-top: 8px; border-top: 1px solid #1f1f1f; padding-top: 6px; }
-  .foot > div { flex: 1; } .foot > .sign { flex: 0 0 150px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; min-height: 78px; }
-  .foot h4 { margin: 0 0 2px; font-size: 7.5px; text-transform: uppercase; letter-spacing: .06em; color: #4a4a4a; }
+  .foot > div { flex: 1; } .foot > .sign { flex: 0 0 150px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; min-height: 90px; }
+  .foot h4 { margin: 0 0 2px; font-size: 9px; text-transform: uppercase; letter-spacing: .06em; color: #4a4a4a; }
   .bank dl { display: grid; grid-template-columns: auto 1fr; gap: 1px 7px; margin: 0; } .bank dt { color: #4a4a4a; } .bank dd { margin: 0; font-weight: 600; }
-  .note { font-size: 8px; color: #4a4a4a; margin: 6px 0 0; text-align: center; }
-  .sign img { max-height: 34px; max-width: 120px; margin: 0 auto; } .sign .for { font-weight: 700; } .sign .line { border-top: 1px solid #1f1f1f; padding-top: 2px; font-size: 8px; color: #4a4a4a; }
+  .note { font-size: 9.5px; color: #4a4a4a; margin: 6px 0 0; text-align: center; }
+  .sign img { max-height: 44px; max-width: 120px; margin: 0 auto; } .sign .for { font-weight: 700; } .sign .line { border-top: 1px solid #1f1f1f; padding-top: 2px; font-size: 9.5px; color: #4a4a4a; }
 </style></head>
 <body>
 <div class="party">
@@ -39,7 +39,7 @@
   </div>
 </div>
 <table>
-  <thead><tr><th style="width:62px">Date</th><th style="width:105px">Document</th><th>Detail</th><th class="r" style="width:70px">Debit (₹)</th><th class="r" style="width:70px">Credit (₹)</th><th class="r" style="width:78px">Balance (₹)</th></tr></thead>
+  <thead><tr><th style="width:74px">Date</th><th style="width:126px">Document</th><th>Detail</th><th class="r" style="width:84px">Debit (₹)</th><th class="r" style="width:84px">Credit (₹)</th><th class="r" style="width:94px">Balance (₹)</th></tr></thead>
   <tbody>
     <tr class="open"><td></td><td>Opening balance</td><td></td><td class="r"></td><td class="r"></td><td class="r">{{ opening }}</td></tr>
   {{ for r in rows }}

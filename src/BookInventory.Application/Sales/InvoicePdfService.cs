@@ -20,7 +20,7 @@ public sealed class InvoicePdfService(
     InvoiceQueryService queries, ICompanyInvoiceIdentity company, ITemplateRenderer templates, IHtmlToPdfRenderer renderer)
 {
     /// <summary>The header repeats on every page, so its height is the top margin; the footer is the bottom margin (R30).</summary>
-    private static readonly HtmlToPdfOptions Page = new() { MarginTopInches = 1.18m, MarginBottomInches = 0.5m, MarginLeftInches = 0.3m, MarginRightInches = 0.3m };
+    private static readonly HtmlToPdfOptions Page = new() { MarginTopInches = 1.55m, MarginBottomInches = 0.65m, MarginLeftInches = 0.3m, MarginRightInches = 0.3m };
 
     public async Task<InvoicePdf> RenderAsync(Guid id, InvoiceLayout? layout, CancellationToken cancellationToken)
     {

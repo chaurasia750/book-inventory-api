@@ -23,7 +23,7 @@ public sealed class LedgerPdfService(
     private static readonly TimeZoneInfo Zone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Kolkata");
 
     /// <summary>A4 portrait; the top margin holds the company header (R20) and the bottom margin the footer (made-at time and page numbers), both repeated on every page.</summary>
-    private static readonly HtmlToPdfOptions Page = new() { MarginTopInches = 1.0m, MarginBottomInches = 0.6m, MarginLeftInches = 0.3m, MarginRightInches = 0.3m };
+    private static readonly HtmlToPdfOptions Page = new() { MarginTopInches = 1.45m, MarginBottomInches = 0.7m, MarginLeftInches = 0.3m, MarginRightInches = 0.3m };
 
     public async Task<LedgerPdf> SchoolAsync(Guid schoolId, LedgerStatementQuery query, CancellationToken cancellationToken)
     {

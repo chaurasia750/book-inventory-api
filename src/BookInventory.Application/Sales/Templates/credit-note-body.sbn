@@ -3,32 +3,32 @@
 <style>
   /* Spec sales R71: the A4 credit note body. The company header and the footer are the page margins (credit-note-header.sbn, credit-note-footer.sbn). */
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; font-size: 9px; line-height: 1.25; color: #141414; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-variant-numeric: tabular-nums; }
-  .caps { text-transform: uppercase; letter-spacing: .06em; font-size: 7.5px; color: #4a4a4a; font-weight: 600; }
+  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; font-size: 11px; line-height: 1.25; color: #141414; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-variant-numeric: tabular-nums; }
+  .caps { text-transform: uppercase; letter-spacing: .06em; font-size: 9px; color: #4a4a4a; font-weight: 600; }
   .party { display: flex; border: 1px solid #1f1f1f; margin-bottom: 6px; break-inside: avoid; }
   .party > div { flex: 1; padding: 5px 7px; } .party > div + div { border-left: 1px solid #1f1f1f; } .party > div:first-child { flex: 1.4; }
-  .party p { margin: 0; } .party .who { font-size: 11px; font-weight: 700; margin-bottom: 1px; }
+  .party p { margin: 0; } .party .who { font-size: 13px; font-weight: 700; margin-bottom: 1px; }
   table.lines { width: 100%; border-collapse: collapse; }
   table.lines thead { display: table-header-group; }
-  table.lines th { background: #f1efe9; border-top: 1px solid #1f1f1f; border-bottom: 1px solid #1f1f1f; padding: 3px 4px; text-align: left; font-size: 7.5px; text-transform: uppercase; letter-spacing: .05em; }
+  table.lines th { background: #f1efe9; border-top: 1px solid #1f1f1f; border-bottom: 1px solid #1f1f1f; padding: 3px 4px; text-align: left; font-size: 9px; text-transform: uppercase; letter-spacing: .05em; }
   table.lines td { padding: 2px 4px; border-bottom: 1px solid #d3d0c7; vertical-align: top; }
   table.lines tr { break-inside: avoid; }
   table.lines .r { text-align: right; } table.lines .c { text-align: center; }
-  .code { color: #4a4a4a; font-size: 8px; }
+  .code { color: #4a4a4a; font-size: 9.5px; }
   .closing { break-inside: avoid; margin-top: 8px; }
   .bottom { display: flex; gap: 8px; align-items: flex-start; }
   .bottom > .left { flex: 1; } .bottom > .right { width: 225px; }
   .box { border: 1px solid #1f1f1f; }
-  .gst table { width: 100%; border-collapse: collapse; } .gst th, .gst td { padding: 2px 5px; font-size: 8.5px; }
-  .gst th { background: #f1efe9; text-align: left; border-bottom: 1px solid #1f1f1f; font-size: 7.5px; text-transform: uppercase; letter-spacing: .05em; }
+  .gst table { width: 100%; border-collapse: collapse; } .gst th, .gst td { padding: 2px 5px; font-size: 10px; }
+  .gst th { background: #f1efe9; text-align: left; border-bottom: 1px solid #1f1f1f; font-size: 9px; text-transform: uppercase; letter-spacing: .05em; }
   .gst td { border-bottom: 1px solid #d3d0c7; } .gst tr:last-child td { border-bottom: 0; font-weight: 600; }
-  .words { border: 1px solid #1f1f1f; padding: 4px 7px; margin-top: 5px; } .words b { font-size: 9.5px; }
+  .words { border: 1px solid #1f1f1f; padding: 4px 7px; margin-top: 5px; } .words b { font-size: 11.5px; }
   .totals div { display: flex; justify-content: space-between; padding: 2px 7px; border-bottom: 1px solid #d3d0c7; }
-  .totals div.strong { border-bottom: 0; background: #f1efe9; font-weight: 700; font-size: 11px; padding: 5px 7px; }
+  .totals div.strong { border-bottom: 0; background: #f1efe9; font-weight: 700; font-size: 13px; padding: 5px 7px; }
   .foot { display: flex; gap: 10px; margin-top: 8px; border-top: 1px solid #1f1f1f; padding-top: 6px; }
-  .foot > div { flex: 1; } .foot > .sign { flex: 0 0 150px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; min-height: 78px; }
-  .sign img { max-height: 34px; max-width: 120px; margin: 0 auto; } .sign .for { font-weight: 700; } .sign .line { border-top: 1px solid #1f1f1f; padding-top: 2px; font-size: 8px; color: #4a4a4a; }
-  .note { font-size: 8px; color: #4a4a4a; margin: 4px 0 0; } .center { text-align: center; }
+  .foot > div { flex: 1; } .foot > .sign { flex: 0 0 150px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; min-height: 90px; }
+  .sign img { max-height: 44px; max-width: 120px; margin: 0 auto; } .sign .for { font-weight: 700; } .sign .line { border-top: 1px solid #1f1f1f; padding-top: 2px; font-size: 9.5px; color: #4a4a4a; }
+  .note { font-size: 9.5px; color: #4a4a4a; margin: 4px 0 0; } .center { text-align: center; }
   .wm { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 5; }
   .wm span { font-size: 80px; font-weight: 700; color: rgba(180, 30, 30, .14); transform: rotate(-28deg); letter-spacing: .2em; border: 6px solid rgba(180, 30, 30, .14); padding: 4px 28px; border-radius: 12px; }
 </style></head>
@@ -56,8 +56,8 @@
 
 <table class="lines">
   <thead><tr>
-    <th class="c" style="width:22px">#</th><th>Item</th><th style="width:58px">Code</th><th style="width:38px">HSN</th><th style="width:52px">Condition</th>
-    <th class="r" style="width:54px">Rate (₹)</th><th class="r" style="width:34px">Qty</th><th class="r" style="width:54px">Discount (₹)</th><th class="r" style="width:68px">Amount (₹)</th>
+    <th class="c" style="width:26px">#</th><th>Item</th><th style="width:70px">Code</th><th style="width:46px">HSN</th><th style="width:62px">Condition</th>
+    <th class="r" style="width:65px">Rate (₹)</th><th class="r" style="width:41px">Qty</th><th class="r" style="width:65px">Discount (₹)</th><th class="r" style="width:82px">Amount (₹)</th>
   </tr></thead>
   <tbody>
   {{ for l in lines }}

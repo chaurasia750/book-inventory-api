@@ -3,22 +3,22 @@
 <style>
   /* Spec sales R68: the A5 refund slip handed to the school: company header, title, number and date, school, amount in figures and words, mode, credit note, remark, signatures. */
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; font-size: 10px; line-height: 1.35; color: #141414; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-variant-numeric: tabular-nums; position: relative; }
+  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; font-size: 12px; line-height: 1.35; color: #141414; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-variant-numeric: tabular-nums; position: relative; }
   .head { display: flex; gap: 8px; align-items: flex-start; border-bottom: 1.2px solid #1f1f1f; padding-bottom: 5px; }
-  .head img { height: 56px; width: auto; max-width: 170px; object-fit: contain; flex: none; }
-  .head .co { flex: 1; } .head .name { font-size: 15px; font-weight: 700; line-height: 1.1; } .muted { color: #4a4a4a; }
-  .title { text-align: center; margin: 10px 0 6px; font-size: 14px; font-weight: 700; letter-spacing: .14em; }
+  .head img { height: 80px; width: auto; max-width: 230px; object-fit: contain; flex: none; }
+  .head .co { flex: 1; } .head .name { font-size: 18px; font-weight: 700; line-height: 1.1; } .muted { color: #4a4a4a; }
+  .title { text-align: center; margin: 10px 0 6px; font-size: 17px; font-weight: 700; letter-spacing: .14em; }
   .meta { display: flex; justify-content: space-between; border: 1px solid #1f1f1f; padding: 4px 7px; margin: 6px 0; }
-  .caps { text-transform: uppercase; letter-spacing: .06em; font-size: 7.5px; color: #4a4a4a; font-weight: 600; }
-  .party { border: 1px solid #1f1f1f; padding: 5px 7px; margin-bottom: 6px; } .party .who { font-size: 12px; font-weight: 700; margin: 0; }
+  .caps { text-transform: uppercase; letter-spacing: .06em; font-size: 9px; color: #4a4a4a; font-weight: 600; }
+  .party { border: 1px solid #1f1f1f; padding: 5px 7px; margin-bottom: 6px; } .party .who { font-size: 14px; font-weight: 700; margin: 0; }
   table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
-  th { background: #f1efe9; border-top: 1px solid #1f1f1f; border-bottom: 1px solid #1f1f1f; padding: 3px 4px; text-align: left; font-size: 7.5px; text-transform: uppercase; letter-spacing: .05em; }
+  th { background: #f1efe9; border-top: 1px solid #1f1f1f; border-bottom: 1px solid #1f1f1f; padding: 3px 4px; text-align: left; font-size: 9px; text-transform: uppercase; letter-spacing: .05em; }
   td { padding: 3px 4px; border-bottom: 1px solid #d3d0c7; vertical-align: top; } .r { text-align: right; white-space: nowrap; }
-  .total { display: flex; justify-content: space-between; background: #f1efe9; font-weight: 700; font-size: 12px; padding: 6px 7px; border: 1px solid #1f1f1f; }
-  .words { border: 1px solid #1f1f1f; border-top: 0; padding: 4px 7px; margin-bottom: 6px; } .words b { font-size: 10px; }
-  .note { font-size: 8.5px; color: #4a4a4a; }
+  .total { display: flex; justify-content: space-between; background: #f1efe9; font-weight: 700; font-size: 14px; padding: 6px 7px; border: 1px solid #1f1f1f; }
+  .words { border: 1px solid #1f1f1f; border-top: 0; padding: 4px 7px; margin-bottom: 6px; } .words b { font-size: 12px; }
+  .note { font-size: 10px; color: #4a4a4a; }
   .sign { display: flex; justify-content: space-between; gap: 24px; margin-top: 46px; }
-  .sign div { flex: 1; text-align: center; border-top: 1px solid #1f1f1f; padding-top: 2px; font-size: 8.5px; } .sign img { max-width: 120px; max-height: 44px; object-fit: contain; display: block; margin: -48px auto 4px; }
+  .sign div { flex: 1; text-align: center; border-top: 1px solid #1f1f1f; padding-top: 2px; font-size: 10px; } .sign img { max-width: 120px; max-height: 56px; object-fit: contain; display: block; margin: -48px auto 4px; }
   .stamp { position: absolute; top: 30%; left: 8%; width: 84%; text-align: center; transform: rotate(-24deg); font-size: 58px; font-weight: 800; letter-spacing: .12em; color: rgba(190, 30, 30, .22); border: 5px solid rgba(190, 30, 30, .22); padding: 6px 0; pointer-events: none; }
 </style></head>
 <body>
@@ -44,7 +44,7 @@
   <p class="muted">School code {{ school.code }}</p>
 </div>
 <table>
-  <thead><tr><th>Paid by</th><th>Reference</th>{{ if refund.credit_note }}<th>Credit note</th>{{ end }}<th class="r" style="width:90px">Amount (₹)</th></tr></thead>
+  <thead><tr><th>Paid by</th><th>Reference</th>{{ if refund.credit_note }}<th>Credit note</th>{{ end }}<th class="r" style="width:108px">Amount (₹)</th></tr></thead>
   <tbody><tr><td>{{ refund.mode }}</td><td>{{ refund.reference }}</td>{{ if refund.credit_note }}<td>{{ refund.credit_note }}</td>{{ end }}<td class="r">{{ refund.amount }}</td></tr></tbody>
 </table>
 <div class="total"><span>Amount refunded</span><span>{{ refund.total }}</span></div>
