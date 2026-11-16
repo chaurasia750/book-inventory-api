@@ -19,6 +19,7 @@ public sealed class CreditNoteConfiguration() : ModuleEntityConfiguration<Credit
         builder.Property(n => n.SchoolName).HasMaxLength(150).IsRequired();
         builder.Property(n => n.SchoolState).HasMaxLength(100);
         builder.Property(n => n.SchoolGstin).HasMaxLength(15);
+        builder.Property(n => n.SchoolAddress).HasMaxLength(500);
         builder.Property(n => n.CompanyState).HasMaxLength(100);
         builder.Property(n => n.InvoiceNumber).HasMaxLength(40);
         builder.Property(n => n.Session).HasMaxLength(Counter.SessionMaxLength).IsRequired();

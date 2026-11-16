@@ -24,10 +24,10 @@ public static class CreditNotePdfModelBuilder
             ["company"] = Company(note.CompanySnapshot, live),
             ["note"] = new Dictionary<string, object?>
             {
-                ["number"] = E(note.Number), ["date"] = InvoiceFormat.Date(note.NoteDate), ["invoice"] = E(note.InvoiceNumber),
+                ["number"] = E(note.Number), ["date"] = InvoiceFormat.Date(note.NoteDate), ["invoice"] = E(note.InvoiceNumber), ["invoice_date"] = note.InvoiceDate is { } invoiceDate ? InvoiceFormat.Date(invoiceDate) : null,
                 ["session"] = E(note.Session), ["year"] = E(note.FinancialYear), ["reason"] = ReasonLabel(note.Reason), ["tax_type"] = TaxType(note.GstMode)
             },
-            ["school"] = new Dictionary<string, object?> { ["name"] = E(note.SchoolName), ["code"] = E(note.SchoolCode), ["state"] = E(note.SchoolState), ["gstin"] = E(note.SchoolGstin) },
+            ["school"] = new Dictionary<string, object?> { ["name"] = E(note.SchoolName), ["code"] = E(note.SchoolCode), ["address"] = E(note.SchoolAddress), ["state"] = E(note.SchoolState), ["gstin"] = E(note.SchoolGstin) },
             ["lines"] = note.Lines.Select((l, i) => Line(l, i + 1)).ToList(),
             ["line_count"] = note.Lines.Count,
             ["total_quantity"] = note.Lines.Sum(l => l.Quantity),
