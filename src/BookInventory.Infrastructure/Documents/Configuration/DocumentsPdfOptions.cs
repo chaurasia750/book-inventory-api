@@ -17,8 +17,14 @@ namespace BookInventory.Infrastructure.Documents.Configuration
         /// <summary>How long one render (launch, load, print) may take.</summary>
         public int TimeoutSeconds { get; set; } = 60;
 
+        /// <summary>How many browsers may run at once; each one holds roughly 100-200 MB, so more requests wait their turn.</summary>
+        public int MaxConcurrentRenders { get; set; } = 2;
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
+            if (MaxConcurrentRenders is < 1 or > 16)
+                yield return new ValidationResult("Documents:Pdf:MaxConcurrentRenders must be between 1 and 16.", [nameof(MaxConcurrentRenders)]);
+
             if (TimeoutSeconds is < 1 or > 600)
                 yield return new ValidationResult("Documents:Pdf:TimeoutSeconds must be between 1 and 600.", [nameof(TimeoutSeconds)]);
         }

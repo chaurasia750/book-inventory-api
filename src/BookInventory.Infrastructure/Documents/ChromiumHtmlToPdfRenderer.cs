@@ -22,6 +22,8 @@ public sealed class ChromiumHtmlToPdfRenderer(
     IOptions<DocumentsPdfOptions> options,
     ILogger<ChromiumHtmlToPdfRenderer> logger) : IHtmlToPdfRenderer
 {
+    private readonly SemaphoreSlim _browserSlots = new(options.Value.MaxConcurrentRenders);
+
     public async Task<byte[]> RenderAsync(string html, HtmlToPdfOptions? pageOptions = null, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(html);
@@ -30,8 +32,7 @@ public sealed class ChromiumHtmlToPdfRenderer(
         var settings = options.Value;
         var executablePath = ResolveExecutablePath(settings.BrowserPath);
 
-        cancellationToken.ThrowIfCancellationRequested();
-
+        await _browserSlots.WaitAsync(cancellationToken);
         try
         {
             var pdf = await RenderCoreAsync(html, layout, executablePath, settings.TimeoutSeconds);
@@ -46,6 +47,10 @@ public sealed class ChromiumHtmlToPdfRenderer(
         {
             logger.LogError(ex, "Document render failed with {Browser}.", executablePath);
             throw new ServerFailureException(DocumentMessages.RenderFailed, ex.Message, ex);
+        }
+        finally
+        {
+            _browserSlots.Release();
         }
     }
 

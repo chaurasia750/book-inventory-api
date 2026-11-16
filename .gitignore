@@ -32,3 +32,6 @@ coverage/
 
 # Claude Code local state
 .claude/settings.local.json
+
+# Published UI build (served from the API)
+src/BookInventory.Api/wwwroot/

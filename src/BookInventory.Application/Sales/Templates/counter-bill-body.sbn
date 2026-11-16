@@ -5,7 +5,7 @@
   * { box-sizing: border-box; }
   body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; font-size: 9.5px; line-height: 1.3; color: #141414; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-variant-numeric: tabular-nums; position: relative; }
   .head { display: flex; gap: 8px; align-items: flex-start; border-bottom: 1.2px solid #1f1f1f; padding-bottom: 5px; }
-  .head img { width: 46px; height: 46px; object-fit: contain; }
+  .head img { height: 56px; width: auto; max-width: 170px; object-fit: contain; flex: none; }
   .head .co { flex: 1; } .head .name { font-size: 15px; font-weight: 700; line-height: 1.1; } .muted { color: #4a4a4a; }
   .title { text-align: center; margin: 8px 0 2px; font-size: 13px; font-weight: 700; letter-spacing: .14em; }
   .exempt { text-align: center; font-size: 8px; color: #4a4a4a; margin-bottom: 4px; }

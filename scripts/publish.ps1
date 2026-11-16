@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Builds the three Angular apps and publishes the API with them in its wwwroot, ready for IIS.
+  Builds the three Angular apps and publishes the API with them in its wwwroot, ready for IIS (Plan 0010).
 .DESCRIPTION
   1. builds public-site (/), admin (/admin/) and member (/member/) with the production configuration in the UI repository,
   2. publishes the API (Release) to -Output,
@@ -10,8 +10,8 @@
   -Output must not exist or must be empty unless -Clean is given, so a stale file can never be published by accident.
 #>
 param(
-    [string]$Output = (Join-Path $PSScriptRoot '..\publish\book-inventory'),
-    [string]$UiPath = (Join-Path $PSScriptRoot '..\..\book-inventory-ui'),
+    [string]$Output = (Join-Path $PSScriptRoot '..\publish\ingo-tech'),
+    [string]$UiPath = (Join-Path $PSScriptRoot '..\..\ingo-tech-ui'),
     [switch]$SkipUiBuild,
     [switch]$Clean
 )
@@ -42,7 +42,7 @@ if (-not $SkipUiBuild) {
 }
 
 Write-Host '== publishing the API'
-& dotnet publish (Join-Path $repo 'src\BookInventory.Api\BookInventory.Api.csproj') -c Release -o $Output
+& dotnet publish (Join-Path $repo 'src\IngoTech.Api\IngoTech.Api.csproj') -c Release -o $Output
 if ($LASTEXITCODE -ne 0) { throw 'dotnet publish failed' }
 
 foreach ($app in $apps) {
@@ -55,4 +55,4 @@ foreach ($app in $apps) {
 Get-ChildItem (Join-Path $Output 'wwwroot') -Recurse -Filter web.config | Remove-Item -Force
 
 Write-Host "== done: $Output"
-Write-Host 'Set the secrets as environment variables (docs/Release_Checklist.md), then run: dotnet BookInventory.Api.dll'
+Write-Host 'Set the secrets as environment variables (docs/Release_Checklist.md), then run: dotnet IngoTech.Api.dll'
