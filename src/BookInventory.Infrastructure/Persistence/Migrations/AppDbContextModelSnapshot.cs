@@ -2375,6 +2375,286 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                     b.ToTable("price_version", "price");
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Purchase.VendorReturn", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CancelReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("cancel_reason");
+
+                    b.Property<DateOnly?>("CancelledOn")
+                        .HasColumnType("date")
+                        .HasColumnName("cancelled_on");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("FinancialYear")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("financial_year");
+
+                    b.Property<decimal>("GrandTotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("grand_total_amount");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("number");
+
+                    b.Property<string>("Remark")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("remark");
+
+                    b.Property<DateOnly>("ReturnDate")
+                        .HasColumnType("date")
+                        .HasColumnName("return_date");
+
+                    b.Property<decimal>("RoundOffAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("round_off_amount");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<decimal>("SubtotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("subtotal_amount");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<string>("VendorCode")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("vendor_code");
+
+                    b.Property<Guid>("VendorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("vendor_id");
+
+                    b.Property<string>("VendorName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("vendor_name");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "CompanySnapshot", "BookInventory.Domain.Purchase.VendorReturn.CompanySnapshot#CompanyInvoiceSnapshot", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("Address")
+                                .HasMaxLength(500)
+                                .HasColumnType("character varying(500)")
+                                .HasColumnName("company_address");
+
+                            b1.Property<string>("BankAccountHolder")
+                                .HasMaxLength(150)
+                                .HasColumnType("character varying(150)")
+                                .HasColumnName("company_bank_account_holder");
+
+                            b1.Property<string>("BankAccountNumber")
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("company_bank_account_number");
+
+                            b1.Property<string>("BankBranch")
+                                .HasMaxLength(150)
+                                .HasColumnType("character varying(150)")
+                                .HasColumnName("company_bank_branch");
+
+                            b1.Property<string>("BankIfsc")
+                                .HasMaxLength(11)
+                                .HasColumnType("character varying(11)")
+                                .HasColumnName("company_bank_ifsc");
+
+                            b1.Property<string>("BankName")
+                                .HasMaxLength(150)
+                                .HasColumnType("character varying(150)")
+                                .HasColumnName("company_bank_name");
+
+                            b1.Property<string>("Email")
+                                .HasMaxLength(254)
+                                .HasColumnType("character varying(254)")
+                                .HasColumnName("company_email");
+
+                            b1.Property<string>("Footer")
+                                .HasMaxLength(200)
+                                .HasColumnType("character varying(200)")
+                                .HasColumnName("company_footer");
+
+                            b1.Property<string>("Gstin")
+                                .HasMaxLength(15)
+                                .HasColumnType("character varying(15)")
+                                .HasColumnName("company_gstin");
+
+                            b1.Property<string>("Mobile")
+                                .HasMaxLength(20)
+                                .HasColumnType("character varying(20)")
+                                .HasColumnName("company_mobile");
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasMaxLength(150)
+                                .HasColumnType("character varying(150)")
+                                .HasColumnName("company_name");
+
+                            b1.Property<string>("Pan")
+                                .HasMaxLength(10)
+                                .HasColumnType("character varying(10)")
+                                .HasColumnName("company_pan");
+
+                            b1.Property<bool>("PrintGstin")
+                                .HasColumnType("boolean")
+                                .HasColumnName("company_print_gstin");
+
+                            b1.Property<string>("State")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)")
+                                .HasColumnName("company_snapshot_state");
+
+                            b1.Property<string>("Tagline")
+                                .HasMaxLength(200)
+                                .HasColumnType("character varying(200)")
+                                .HasColumnName("company_tagline");
+
+                            b1.Property<string>("Terms")
+                                .HasMaxLength(4000)
+                                .HasColumnType("character varying(4000)")
+                                .HasColumnName("company_terms");
+
+                            b1.Property<string>("UpiId")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)")
+                                .HasColumnName("company_upi_id");
+                        });
+
+                    b.HasKey("Id")
+                        .HasName("pk_vendor_return");
+
+                    b.HasIndex("CompanyId", "Number")
+                        .IsUnique()
+                        .HasDatabaseName("ix_vendor_return_company_id_number");
+
+                    b.HasIndex("CompanyId", "ReturnDate")
+                        .HasDatabaseName("ix_vendor_return_company_id_return_date");
+
+                    b.HasIndex("CompanyId", "VendorId")
+                        .HasDatabaseName("ix_vendor_return_company_id_vendor_id");
+
+                    b.ToTable("vendor_return", "purchase", t =>
+                        {
+                            t.HasCheckConstraint("ck_vendor_return_status", "\"status\" IN ('ACTIVE', 'CANCELLED')");
+                        });
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Purchase.VendorReturnLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("ItemCode")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("item_code");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("item_id");
+
+                    b.Property<string>("ItemName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("item_name");
+
+                    b.Property<decimal>("LineAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("line_amount");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity");
+
+                    b.Property<decimal>("RateAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("rate_amount");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<string>("StockSource")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("stock_source");
+
+                    b.Property<Guid>("VendorReturnId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("vendor_return_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_vendor_return_line");
+
+                    b.HasIndex("VendorReturnId", "SortOrder")
+                        .HasDatabaseName("ix_vendor_return_line_vendor_return_id_sort_order");
+
+                    b.ToTable("vendor_return_line", "purchase", t =>
+                        {
+                            t.HasCheckConstraint("ck_vendor_return_line_stock_source", "\"stock_source\" IN ('MAIN', 'DAMAGED')");
+                        });
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Sales.Counter", b =>
                 {
                     b.Property<Guid>("Id")
@@ -5202,6 +5482,16 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_class_book_list_line_class_book_list_class_book_list_id");
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Purchase.VendorReturnLine", b =>
+                {
+                    b.HasOne("BookInventory.Domain.Purchase.VendorReturn", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("VendorReturnId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_vendor_return_line_vendor_return_vendor_return_id");
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Sales.CounterBillLine", b =>
                 {
                     b.HasOne("BookInventory.Domain.Sales.CounterBill", null)
@@ -5302,6 +5592,11 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                 });
 
             modelBuilder.Entity("BookInventory.Domain.Planning.ClassBookList", b =>
+                {
+                    b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Purchase.VendorReturn", b =>
                 {
                     b.Navigation("Lines");
                 });

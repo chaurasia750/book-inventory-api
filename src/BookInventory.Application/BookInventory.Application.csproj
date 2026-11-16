@@ -11,6 +11,7 @@
 		<EmbeddedResource Include="Sales\Templates\*.sbn" />
 		<EmbeddedResource Include="Payment\Templates\*.sbn" />
 		<EmbeddedResource Include="Finance\Templates\*.sbn" />
+		<EmbeddedResource Include="Purchase\Templates\*.sbn" />
 	</ItemGroup>
 
 </Project>
