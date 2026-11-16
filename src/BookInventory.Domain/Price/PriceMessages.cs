@@ -13,4 +13,5 @@ public static class PriceMessages
     public const string InvalidAmount = "price.invalid_amount";
     public const string InvalidChange = "price.invalid_change";
     public const string NothingSelected = "price.nothing_selected";
+    public const string TooManyItems = "price.too_many_items";
 }

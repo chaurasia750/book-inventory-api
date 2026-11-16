@@ -14,6 +14,7 @@ public static class PriceMessageCatalog
             [PriceMessages.InvalidName] = "The version name must be 2 to 30 characters.",
             [PriceMessages.InvalidAmount] = "A price must be zero or more, with at most two decimals.",
             [PriceMessages.InvalidChange] = "A price change needs a direction, a kind and a value of zero or more.",
-            [PriceMessages.NothingSelected] = "No item matches the selection."
+            [PriceMessages.NothingSelected] = "No item matches the selection.",
+            [PriceMessages.TooManyItems] = "At most 500 items can be asked at once."
         };
 }

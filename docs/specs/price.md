@@ -1,10 +1,10 @@
 # Spec: price - Price management
 
 - **Module:** `price` (PostgreSQL schema `price`)
-- **Status:** R1-R17 Approved by abhishek in chat on 2026-11-14 (Q1-Q12 answered one by one, all with the recommended answers; D1-D5 with them); R18 and AC13 Approved by abhishek on 2026-11-15 (for the sales spec)
-- **Last updated:** 2026-11-14; 2026-11-15 (menu: one "Items" menu); 2026-11-15 (for the sales spec)
+- **Status:** R19 and AC14 (the purchase-price capability) Approved by abhishek in chat on 2026-11-16 (purchase Q3 answered with the recommended answer); R1-R17 Approved by abhishek in chat on 2026-11-14 (Q1-Q12 answered one by one, all with the recommended answers; D1-D5 with them); R18 and AC13 Approved by abhishek on 2026-11-15 (for the sales spec)
+- **Last updated:** 2026-11-14; 2026-11-15 (menu: one "Items" menu); 2026-11-15 (for the sales spec); 2026-11-16 (R19, AC14: the purchase-price capability, Approved)
 - **Source docs:** [BRD §1.2, §3 (who may change prices), §4.5 Price Management (FR-PRC-01 to FR-PRC-08), §5.2 BR-PRC, §5.3 BR-DIS, §7.1, §8 Data Model (ItemPriceVersion)](../bussiness/BRD-Book-Inventory-Phase1.md); [specs/platform.md](platform.md) P18-P23; [specs/company.md](company.md); [specs/item.md](item.md); [specs/core.md](core.md) (the audit trail it reuses for history)
-- **Plans:** [price#05](../plans/price/2026-11-15-05-price-directory.md) (Done, R18, AC13), [price#01](../plans/price/2026-11-14-01-price-versions.md) (Done), [price#02](../plans/price/2026-11-14-02-ui-price-versions.md) (In progress), [price#03](../plans/price/2026-11-14-03-bulk-price-change.md) (Done), [price#04](../plans/price/2026-11-14-04-ui-bulk-price-change.md) (In progress); the capability it needs from item: [item#03](../plans/item/2026-11-14-03-item-directory.md) (Done)
+- **Plans:** [price#06](../plans/price/2026-11-16-06-purchase-price-directory.md) (Done 2026-11-16, R19, AC14), [price#05](../plans/price/2026-11-15-05-price-directory.md) (Done, R18, AC13), [price#01](../plans/price/2026-11-14-01-price-versions.md) (Done), [price#02](../plans/price/2026-11-14-02-ui-price-versions.md) (In progress), [price#03](../plans/price/2026-11-14-03-bulk-price-change.md) (Done), [price#04](../plans/price/2026-11-14-04-ui-bulk-price-change.md) (In progress); the capability it needs from item: [item#03](../plans/item/2026-11-14-03-item-directory.md) (Done)
 
 > One spec per module. It says WHAT the module does and WHY, never implementation steps (those live in plans).
 
@@ -50,6 +50,7 @@ Out of scope for these features: Excel upload of prices (FR-PRC-05, NFR-12: its 
 
 **Reading prices from other modules**
 - **R18** Other modules (the sales module first) read prices only through the price module's **directory capability**, never by joining its tables: the versions of a list of items (id, name, effective from, MRP, sale price) with each item's default version on a given date (R4), and one version by id. It answers only for the session's company, returns plain values, never the purchase price, and changes nothing. Proposed by the assistant on 2026-11-15 for the sales spec; Approved by abhishek on 2026-11-15.
+- **R19** Other modules (the purchase module first, for the vendor return) read a **purchase price** only through a second **directory capability**, never by joining the price tables: the purchase price of each item of a list (at most 500) in its **default version on a given date** (R4), with the version's id and name. It answers only for the session's company, changes nothing and never returns the sale price or the MRP (the sales capability of R18 is the one for those). Proposed by the assistant 2026-11-16 for the purchase spec (the BRD puts the vendor return at "the purchase rate", FR-RET-10); Approved by abhishek 2026-11-16.
 
 ## 4. Data
 
@@ -101,6 +102,7 @@ Raised by the `PriceVersion` aggregate (past tense, ids and values only): `Price
 - **AC11** Money, worked out independently first (rounding of Q1: halves away from zero): MRP 2.50 with +1 percent is 2.525 and becomes 2.53; 100.00 with -33.33 percent is 66.67; 125.00 with +10 percent is 137.50; 10.00 with an amount decrease of 10.01 would be -0.01 and is skipped; 99.99 with +0 percent stays 99.99; the maximum `numeric(18,2)` value with +1 percent is refused (overflow) rather than stored wrong (R2, R11, R17).
 - **AC12** The history of a version, read by the Owner, shows creation and each edit with the actor, the time and the old and new values; Staff cannot read it (R15, R16).
 - **AC13** For the Owner of A the directory returns an item's versions with the default on a date (a version effective tomorrow is not the default today), a version by id, nothing for B's item, and no purchase price (R18).
+- **AC14** The purchase-price capability asked for an item whose default version on 2026-11-16 has purchase price 180 returns 180 with that version's name; an item with no version on the date is left out; the sale price and the MRP are not in the answer (R19).
 
 ## 10. Decisions
 

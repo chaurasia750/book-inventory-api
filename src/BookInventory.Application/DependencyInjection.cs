@@ -10,6 +10,7 @@ using BookInventory.Application.Payment;
 using BookInventory.Application.Planning;
 using BookInventory.Application.Platform;
 using BookInventory.Application.Price;
+using BookInventory.Application.Purchase;
 using BookInventory.Application.Sales;using BookInventory.Application.Stock;
 using BookInventory.Application.School;
 using BookInventory.Application.Customer;
@@ -38,6 +39,7 @@ namespace BookInventory.Application
             services.AddMessages(SalesMessageCatalog.Messages); // sales message codes
             services.AddMessages(CounterMessageCatalog.Messages); // school counter sale message codes
             services.AddMessages(ReturnMessageCatalog.Messages); // school return (credit note and refund) message codes
+            services.AddMessages(PurchaseMessageCatalog.Messages); // vendor return (purchase) message codes
             services.AddMessages(PlanningMessageCatalog.Messages); // planning message codes
             services.AddMessages(PaymentMessageCatalog.Messages); // payment message codes
             services.AddMessages(PlatformMessageCatalog.Messages); // platform (BuildingBlocks) message codes, e.g. document.render_failed

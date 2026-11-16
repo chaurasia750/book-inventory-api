@@ -1,0 +1,83 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  /* Spec purchase R11: the A4 Debit Note body. The company header and the footer are the page margins (debit-note-header.sbn, debit-note-footer.sbn). */
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; font-size: 9px; line-height: 1.25; color: #141414; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-variant-numeric: tabular-nums; }
+  .caps { text-transform: uppercase; letter-spacing: .06em; font-size: 7.5px; color: #4a4a4a; font-weight: 600; }
+  .party { display: flex; border: 1px solid #1f1f1f; margin-bottom: 6px; break-inside: avoid; }
+  .party > div { flex: 1; padding: 5px 7px; } .party > div + div { border-left: 1px solid #1f1f1f; } .party > div:first-child { flex: 1.6; }
+  .party p { margin: 0; } .party .who { font-size: 11px; font-weight: 700; margin-bottom: 1px; }
+  table.lines { width: 100%; border-collapse: collapse; }
+  table.lines thead { display: table-header-group; }
+  table.lines th { background: #f1efe9; border-top: 1px solid #1f1f1f; border-bottom: 1px solid #1f1f1f; padding: 3px 4px; text-align: left; font-size: 7.5px; text-transform: uppercase; letter-spacing: .05em; }
+  table.lines td { padding: 2px 4px; border-bottom: 1px solid #d3d0c7; vertical-align: top; }
+  table.lines tr { break-inside: avoid; }
+  table.lines .r { text-align: right; } table.lines .c { text-align: center; }
+  .code { color: #4a4a4a; font-size: 8px; }
+  .closing { break-inside: avoid; margin-top: 8px; }
+  .bottom { display: flex; gap: 8px; align-items: flex-start; }
+  .bottom > .left { flex: 1; } .bottom > .right { width: 225px; }
+  .box { border: 1px solid #1f1f1f; }
+  .words { border: 1px solid #1f1f1f; padding: 4px 7px; } .words b { font-size: 9.5px; }
+  .totals div { display: flex; justify-content: space-between; padding: 2px 7px; border-bottom: 1px solid #d3d0c7; }
+  .totals div.strong { border-bottom: 0; background: #f1efe9; font-weight: 700; font-size: 11px; padding: 5px 7px; }
+  .foot { display: flex; gap: 10px; margin-top: 8px; border-top: 1px solid #1f1f1f; padding-top: 6px; }
+  .foot > div { flex: 1; } .foot > .sign { flex: 0 0 150px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; min-height: 78px; }
+  .sign img { max-height: 34px; max-width: 120px; margin: 0 auto; } .sign .for { font-weight: 700; } .sign .line { border-top: 1px solid #1f1f1f; padding-top: 2px; font-size: 8px; color: #4a4a4a; }
+  .note { font-size: 8px; color: #4a4a4a; margin: 4px 0 0; } .center { text-align: center; }
+  .wm { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 5; }
+  .wm span { font-size: 80px; font-weight: 700; color: rgba(180, 30, 30, .14); transform: rotate(-28deg); letter-spacing: .2em; border: 6px solid rgba(180, 30, 30, .14); padding: 4px 28px; border-radius: 12px; }
+</style></head>
+<body>
+{{ if cancelled }}<div class="wm"><span>CANCELLED</span></div>{{ end }}
+
+<div class="party">
+  <div>
+    <p class="caps">Debited to (vendor)</p>
+    <p class="who">{{ vendor.name }}</p>
+    <p>Vendor code {{ vendor.code }}</p>
+  </div>
+  <div>
+    <p class="caps">Document</p>
+    <p>Return of goods to the vendor</p>
+    <p>Debit note {{ note.number }}</p>
+  </div>
+</div>
+
+<table class="lines">
+  <thead><tr>
+    <th class="c" style="width:22px">#</th><th>Item</th><th style="width:70px">Code</th><th style="width:64px">From stock</th>
+    <th class="r" style="width:60px">Rate</th><th class="r" style="width:40px">Qty</th><th class="r" style="width:74px">Amount</th>
+  </tr></thead>
+  <tbody>
+  {{ for l in lines }}
+    <tr><td class="c">{{ l.no }}</td><td>{{ l.name }}</td><td class="code">{{ l.code }}</td><td>{{ l.source }}</td><td class="r">{{ l.rate }}</td><td class="r">{{ l.qty }}</td><td class="r">{{ l.amount }}</td></tr>
+  {{ end }}
+  </tbody>
+</table>
+
+<div class="closing">
+  <div class="bottom">
+    <div class="left">
+      <div class="words"><span class="caps">Amount in words</span><br><b>{{ words }}</b></div>
+      {{ if remark }}<p class="note"><span class="caps">Remark</span> {{ remark }}</p>{{ end }}
+      {{ if cancel_note }}<p class="note"><b>Cancelled</b>: {{ cancel_note }}</p>{{ end }}
+      <p class="note">{{ line_count }} lines · {{ total_quantity }} pieces</p>
+    </div>
+    <div class="right box totals">
+      {{ for t in totals }}<div{{ if t.strong }} class="strong"{{ end }}><span>{{ t.label }}</span><span>{{ t.value }}</span></div>{{ end }}
+    </div>
+  </div>
+
+  <div class="foot">
+    <div></div>
+    <div class="sign">
+      <div class="for">For {{ company.name }}</div>
+      {{ if signature }}<img src="{{ signature }}" alt="">{{ end }}
+      <div class="line">Authorised signatory</div>
+    </div>
+  </div>
+  {{ if footer_line }}<p class="note center">{{ footer_line }}</p>{{ end }}
+</div>
+</body></html>
