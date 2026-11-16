@@ -37,6 +37,7 @@ namespace BookInventory.Application
             services.AddMessages(FinanceMessageCatalog.Messages); // finance message codes
             services.AddMessages(SalesMessageCatalog.Messages); // sales message codes
             services.AddMessages(CounterMessageCatalog.Messages); // school counter sale message codes
+            services.AddMessages(ReturnMessageCatalog.Messages); // school return (credit note and refund) message codes
             services.AddMessages(PlanningMessageCatalog.Messages); // planning message codes
             services.AddMessages(PaymentMessageCatalog.Messages); // payment message codes
             services.AddMessages(PlatformMessageCatalog.Messages); // platform (BuildingBlocks) message codes, e.g. document.render_failed

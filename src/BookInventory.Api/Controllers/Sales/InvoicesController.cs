@@ -10,7 +10,7 @@ namespace BookInventory.Api.Controllers.Sales;
 /// Spec sales R8-R15: invoices. The Owner, Staff and an entered Super Admin make an invoice from a confirmed order and read
 /// invoices; only the Owner and an entered Super Admin cancel one.
 /// </summary>
-public sealed class InvoicesController(InvoiceService invoices, InvoiceQueryService queries, InvoicePdfService pdfs) : ApiControllerBase
+public sealed class InvoicesController(InvoiceService invoices, InvoiceQueryService queries, InvoicePdfService pdfs, CreditNoteQueryService returns) : ApiControllerBase
 {
     private const string Sellers = "OWNER,STAFF,SUPER_ADMIN";
     private const string Owners = "OWNER,SUPER_ADMIN";
@@ -31,6 +31,10 @@ public sealed class InvoicesController(InvoiceService invoices, InvoiceQueryServ
     public async Task<IActionResult> Get(Guid id, [FromQuery] InvoiceLayout? layout, CancellationToken cancellationToken) => Ok(await queries.GetAsync(id, layout, cancellationToken));
 
     /// <summary>R28-R33: the invoice as an A4 PDF, rendered on demand and never stored; <c>layout</c> overrides the school's default (R26).</summary>
+    /// <summary>R54, R61: what each line of the invoice sold, what live credit notes returned and what can still be returned, and its credit notes.</summary>
+    [HttpGet("invoices/{id:guid}/returnable"), Authorize(Roles = Sellers)]
+    public async Task<IActionResult> Returnable(Guid id, CancellationToken cancellationToken) => Ok(await returns.OfInvoiceAsync(id, cancellationToken));
+
     [HttpGet("invoices/{id:guid}/pdf"), Authorize(Roles = Sellers)]
     public async Task<IActionResult> Pdf(Guid id, [FromQuery] InvoiceLayout? layout, CancellationToken cancellationToken)
     {

@@ -240,6 +240,17 @@ public class SchoolOrder : CompanyOwnedRoot
             Status = SchoolOrderStatus.Confirmed;
     }
 
+    /// <summary>R62, R58: a cancelled credit note takes its returned quantities back; an order whose lines are all invoiced again closes as it did before the return.</summary>
+    public void TakeReturnBack(OrderDelivery delivery)
+    {
+        Take(delivery, sign: 1);
+        if (Status == SchoolOrderStatus.Confirmed && Lines.All(l => l.RemainingQuantity == 0))
+        {
+            Status = SchoolOrderStatus.Closed;
+            AddDomainEvent(new SchoolOrderClosed(Id, SchoolId, Number));
+        }
+    }
+
     /// <summary>R8: a percentage as it is; a rupee total discount by the delivery's share of the order subtotal, the last delivery taking the rest.</summary>
     private Discount TotalDiscountFor(IReadOnlyList<DeliveryLine> delivery, bool emptiesOrder)
     {

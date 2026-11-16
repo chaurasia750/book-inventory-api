@@ -19,7 +19,8 @@ namespace BookInventory.Application.Sales;
 /// invoice fails when a posting fails; a cancel reverses both and gives the delivery back to the order.
 /// </summary>
 [AutoRegister(ServiceLifetime.Scoped)]
-public sealed class InvoiceService(ISalesStore store, InvoicePostings postings, ICompanyCodes codes, InvoiceParties parties, BusinessCalendar calendar)
+public sealed class InvoiceService(
+    ISalesStore store, InvoicePostings postings, ICompanyCodes codes, InvoiceParties parties, BusinessCalendar calendar, ICreditNoteStore creditNotes)
 {
     public async Task<InvoiceMade> MakeAsync(Guid orderId, MakeInvoiceRequest request, CancellationToken cancellationToken)
     {
@@ -48,6 +49,9 @@ public sealed class InvoiceService(ISalesStore store, InvoicePostings postings, 
     public async Task CancelAsync(Guid invoiceId, CancelInvoiceRequest request, CancellationToken cancellationToken)
     {
         var invoice = await store.FindInvoiceForManagementAsync(invoiceId, cancellationToken) ?? throw new NotFoundException(SalesMessages.InvoiceNotFound);
+        if (await creditNotes.HasLiveForInvoiceAsync(invoiceId, cancellationToken))
+            throw new ConflictException(ReturnMessages.InvoiceHasCreditNotes);
+
         var today = calendar.Today();
         invoice.Cancel(request.Reason, today);
 
