@@ -51,7 +51,7 @@
   <p class="muted">{{ school.name }} ({{ school.code }}){{ if bill.counter }} · {{ bill.counter }}{{ end }} · Session {{ bill.session }}</p>
 </div>
 <table>
-  <thead><tr><th style="width:18px">#</th><th>Item</th><th class="r" style="width:30px">Qty</th><th class="r" style="width:55px">MRP</th><th class="r" style="width:50px">Disc.</th><th class="r" style="width:62px">Amount</th></tr></thead>
+  <thead><tr><th style="width:18px">#</th><th>Item</th><th class="r" style="width:30px">Qty</th><th class="r" style="width:55px">MRP (₹)</th><th class="r" style="width:50px">Disc. (₹)</th><th class="r" style="width:62px">Amount (₹)</th></tr></thead>
   <tbody>
   {{ for l in lines }}
     <tr><td>{{ l.n }}</td><td>{{ l.name }} <span class="muted">{{ l.code }}</span></td><td class="r">{{ l.qty }}</td><td class="r">{{ l.mrp }}</td><td class="r">{{ l.discount }}</td><td class="r">{{ l.amount }}</td></tr>
@@ -61,18 +61,18 @@
 <table class="tot"><tbody>
   {{ for r in totals }}<tr><td class="r">{{ r.label }}</td><td class="r" style="width:80px">{{ r.value }}</td></tr>{{ end }}
 </tbody></table>
-<div class="total"><span>Grand total</span><span>₹ {{ grand_total }}</span></div>
+<div class="total"><span>Grand total</span><span>{{ grand_total }}</span></div>
 <div class="words"><span class="caps">Amount in words</span><br><b>{{ words }}</b></div>
 {{ if has_summary }}
 <table class="gst">
-  <thead><tr><th>HSN</th><th>GST rate</th><th class="r">Taxable</th>{{ if same_state }}<th class="r">CGST</th><th class="r">SGST</th>{{ else }}<th class="r">IGST</th>{{ end }}<th class="r">Total GST</th></tr></thead>
+  <thead><tr><th>HSN</th><th>GST rate</th><th class="r">Taxable (₹)</th>{{ if same_state }}<th class="r">CGST (₹)</th><th class="r">SGST (₹)</th>{{ else }}<th class="r">IGST (₹)</th>{{ end }}<th class="r">Total GST (₹)</th></tr></thead>
   <tbody>
   {{ for r in summary }}<tr><td>{{ r.hsn }}</td><td>{{ r.rate }} %</td><td class="r">{{ r.taxable }}</td>{{ if same_state }}<td class="r">{{ r.cgst }}</td><td class="r">{{ r.sgst }}</td>{{ else }}<td class="r">{{ r.igst }}</td>{{ end }}<td class="r">{{ r.tax }}</td></tr>{{ end }}
   </tbody>
 </table>
 {{ end }}
 <table>
-  <thead><tr><th>Paid by</th><th>Reference</th><th class="r" style="width:80px">Amount</th></tr></thead>
+  <thead><tr><th>Paid by</th><th>Reference</th><th class="r" style="width:80px">Amount (₹)</th></tr></thead>
   <tbody>
   {{ for p in payments }}<tr><td>{{ p.mode }}</td><td>{{ p.reference }}</td><td class="r">{{ p.amount }}</td></tr>{{ end }}
   </tbody>

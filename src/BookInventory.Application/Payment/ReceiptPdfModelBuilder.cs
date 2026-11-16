@@ -26,7 +26,7 @@ public static class ReceiptPdfModelBuilder
             ["company"] = Company(company),
             ["receipt"] = new Dictionary<string, object?>
             {
-                ["number"] = E(s.Number), ["date"] = InvoiceFormat.Date(s.ReceiptDate), ["total"] = InvoiceFormat.Money(s.TotalAmount), ["remark"] = E(receipt.Remark)
+                ["number"] = E(s.Number), ["date"] = InvoiceFormat.Date(s.ReceiptDate), ["total"] = InvoiceFormat.Amount(s.TotalAmount), ["remark"] = E(receipt.Remark)
             },
             ["school"] = new Dictionary<string, object?> { ["name"] = E(s.SchoolName ?? school?.Name), ["code"] = E(s.SchoolCode ?? school?.Code), ["address"] = E(school?.Address) },
             ["modes"] = receipt.Modes.Select(Mode).ToList(),

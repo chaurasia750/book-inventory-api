@@ -114,25 +114,25 @@ public static class InvoicePdfModelBuilder
     private static List<Dictionary<string, object?>> Totals(InvoiceDetail d)
     {
         var t = d.Totals;
-        var rows = new List<Dictionary<string, object?>> { Row("Subtotal", InvoiceFormat.Money(t.Subtotal)) };
+        var rows = new List<Dictionary<string, object?>> { Row("Subtotal", InvoiceFormat.Amount(t.Subtotal)) };
         if (t.TotalDiscount > 0m)
-            rows.Add(Row("Total discount" + (d.TotalDiscount.Kind == DiscountKind.Percent ? $" ({d.TotalDiscount.Value:0.##} %)" : string.Empty), "− " + InvoiceFormat.Money(t.TotalDiscount)));
+            rows.Add(Row("Total discount" + (d.TotalDiscount.Kind == DiscountKind.Percent ? $" ({d.TotalDiscount.Value:0.##} %)" : string.Empty), "− " + InvoiceFormat.Amount(t.TotalDiscount)));
         if (d.IsGstApplied)
         {
-            rows.Add(Row("Taxable value", InvoiceFormat.Money(t.Taxable)));
+            rows.Add(Row("Taxable value", InvoiceFormat.Amount(t.Taxable)));
             if (t.Cgst > 0m || d.GstMode == GstMode.SameState)
             {
-                rows.Add(Row("CGST", InvoiceFormat.Money(t.Cgst)));
-                rows.Add(Row("SGST", InvoiceFormat.Money(t.Sgst)));
+                rows.Add(Row("CGST", InvoiceFormat.Amount(t.Cgst)));
+                rows.Add(Row("SGST", InvoiceFormat.Amount(t.Sgst)));
             }
 
             if (t.Igst > 0m || d.GstMode == GstMode.OtherState)
-                rows.Add(Row("IGST", InvoiceFormat.Money(t.Igst)));
+                rows.Add(Row("IGST", InvoiceFormat.Amount(t.Igst)));
         }
 
         if (t.RoundOff != 0m)
-            rows.Add(Row("Round-off", (t.RoundOff < 0m ? "− " : "+ ") + InvoiceFormat.Money(Math.Abs(t.RoundOff))));
-        rows.Add(Row("Grand total", "₹ " + InvoiceFormat.Money(t.GrandTotal), strong: true));
+            rows.Add(Row("Round-off", (t.RoundOff < 0m ? "− " : "+ ") + InvoiceFormat.Amount(Math.Abs(t.RoundOff))));
+        rows.Add(Row("Grand total", InvoiceFormat.Amount(t.GrandTotal), strong: true));
         return rows;
     }
 

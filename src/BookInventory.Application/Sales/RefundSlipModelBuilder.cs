@@ -24,7 +24,8 @@ public static class RefundSlipModelBuilder
                 ["mode"] = ModeLabel(refund.Mode),
                 ["reference"] = E(refund.Reference),
                 ["credit_note"] = E(refund.CreditNoteNumber),
-                ["amount"] = InvoiceFormat.Money(refund.Amount)
+                ["amount"] = InvoiceFormat.Money(refund.Amount),
+                ["total"] = InvoiceFormat.Amount(refund.Amount)
             },
             ["school"] = new Dictionary<string, object?> { ["name"] = E(refund.SchoolName), ["code"] = E(refund.SchoolCode) },
             ["words"] = E(AmountInWords.Of(refund.Amount)),

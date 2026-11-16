@@ -63,8 +63,8 @@
 <table class="lines">
   <thead><tr>
     <th class="c" style="width:22px">#</th><th>Item</th><th style="width:58px">Code</th><th style="width:38px">HSN</th>
-    <th class="r" style="width:54px">MRP</th><th class="r" style="width:54px">Rate</th><th class="r" style="width:34px">Qty</th>
-    {{ if show_discount }}<th class="r" style="width:54px">Discount</th>{{ end }}<th class="r" style="width:68px">Amount</th>
+    <th class="r" style="width:54px">MRP (₹)</th><th class="r" style="width:54px">Rate (₹)</th><th class="r" style="width:34px">Qty</th>
+    {{ if show_discount }}<th class="r" style="width:54px">Discount (₹)</th>{{ end }}<th class="r" style="width:68px">Amount (₹)</th>
   </tr></thead>
   <tbody>
   {{ for g in groups }}
@@ -82,7 +82,7 @@
     <div class="left">
       {{ if has_summary }}
       <div class="box gst"><table>
-        <thead><tr><th>HSN</th><th>GST rate</th><th class="r">Taxable value</th>{{ if same_state }}<th class="r">CGST</th><th class="r">SGST</th>{{ else }}<th class="r">IGST</th>{{ end }}<th class="r">Total GST</th></tr></thead>
+        <thead><tr><th>HSN</th><th>GST rate</th><th class="r">Taxable value (₹)</th>{{ if same_state }}<th class="r">CGST (₹)</th><th class="r">SGST (₹)</th>{{ else }}<th class="r">IGST (₹)</th>{{ end }}<th class="r">Total GST (₹)</th></tr></thead>
         <tbody>
         {{ for r in summary }}<tr><td>{{ r.hsn }}</td><td>{{ r.rate }} %</td><td class="r">{{ r.taxable }}</td>{{ if same_state }}<td class="r">{{ r.cgst }}</td><td class="r">{{ r.sgst }}</td>{{ else }}<td class="r">{{ r.igst }}</td>{{ end }}<td class="r">{{ r.tax }}</td></tr>{{ end }}
         </tbody>

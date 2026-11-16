@@ -60,20 +60,20 @@ public static class CreditNotePdfModelBuilder
     private static List<Dictionary<string, object?>> Totals(CreditNote note)
     {
         var t = note.Totals;
-        var rows = new List<Dictionary<string, object?>> { Row("Subtotal", InvoiceFormat.Money(t.Subtotal)) };
+        var rows = new List<Dictionary<string, object?>> { Row("Subtotal", InvoiceFormat.Amount(t.Subtotal)) };
         if (t.TotalDiscount > 0m)
-            rows.Add(Row("Total discount" + (note.TotalDiscountKind == DiscountKind.Percent ? $" ({note.TotalDiscountValue:0.##} %)" : string.Empty), "- " + InvoiceFormat.Money(t.TotalDiscount)));
+            rows.Add(Row("Total discount" + (note.TotalDiscountKind == DiscountKind.Percent ? $" ({note.TotalDiscountValue:0.##} %)" : string.Empty), "- " + InvoiceFormat.Amount(t.TotalDiscount)));
         if (note.IsGstApplied)
         {
-            rows.Add(Row("Taxable value", InvoiceFormat.Money(t.Taxable)));
+            rows.Add(Row("Taxable value", InvoiceFormat.Amount(t.Taxable)));
             rows.AddRange(note.GstMode == GstMode.SameState
-                ? [Row("CGST", InvoiceFormat.Money(t.Cgst)), Row("SGST", InvoiceFormat.Money(t.Sgst))]
-                : [Row("IGST", InvoiceFormat.Money(t.Igst))]);
+                ? [Row("CGST", InvoiceFormat.Amount(t.Cgst)), Row("SGST", InvoiceFormat.Amount(t.Sgst))]
+                : [Row("IGST", InvoiceFormat.Amount(t.Igst))]);
         }
 
         if (t.RoundOff != 0m)
-            rows.Add(Row("Round-off", (t.RoundOff < 0m ? "- " : "+ ") + InvoiceFormat.Money(Math.Abs(t.RoundOff))));
-        rows.Add(Row("Grand total", "₹ " + InvoiceFormat.Money(t.GrandTotal), strong: true));
+            rows.Add(Row("Round-off", (t.RoundOff < 0m ? "- " : "+ ") + InvoiceFormat.Amount(Math.Abs(t.RoundOff))));
+        rows.Add(Row("Grand total", InvoiceFormat.Amount(t.GrandTotal), strong: true));
         return rows;
     }
 

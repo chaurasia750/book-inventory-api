@@ -46,18 +46,18 @@
   <p class="muted">{{ school.code }}{{ if school.address }} · {{ school.address }}{{ end }}</p>
 </div>
 <table>
-  <thead><tr><th>Mode</th><th>Reference</th><th class="r" style="width:80px">Amount</th></tr></thead>
+  <thead><tr><th>Mode</th><th>Reference</th><th class="r" style="width:80px">Amount (₹)</th></tr></thead>
   <tbody>
   {{ for m in modes }}
     <tr><td>{{ m.mode }}</td><td>{{ m.reference }}</td><td class="r">{{ m.amount }}</td></tr>
   {{ end }}
   </tbody>
 </table>
-<div class="total"><span>Total received</span><span>₹ {{ receipt.total }}</span></div>
+<div class="total"><span>Total received</span><span>{{ receipt.total }}</span></div>
 <div class="words"><span class="caps">Amount in words</span><br><b>{{ words }}</b></div>
 {{ if has_allocations || advance }}
 <table>
-  <thead><tr><th>Applied to invoice</th><th class="r" style="width:80px">Amount</th></tr></thead>
+  <thead><tr><th>Applied to invoice</th><th class="r" style="width:80px">Amount (₹)</th></tr></thead>
   <tbody>
   {{ for a in allocations }}
     <tr><td>{{ a.invoice }}</td><td class="r">{{ a.amount }}</td></tr>

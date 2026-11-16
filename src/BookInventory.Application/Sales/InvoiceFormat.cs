@@ -29,5 +29,8 @@ public static class InvoiceFormat
         return (amount < 0m ? "-" : string.Empty) + whole + text[dot..];
     }
 
+    /// <summary>Platform P26: an amount standing on its own is written with the rupee symbol, <c>₹ 1,200.00</c>; a negative one is <c>-₹ 1,200.00</c>. Table cells use <see cref="Money"/> and carry the symbol in the column heading.</summary>
+    public static string Amount(decimal amount) => (amount < 0m ? "-" : string.Empty) + "₹ " + Money(Math.Abs(amount));
+
     public static string Date(DateOnly date) => date.ToString("dd MMM yyyy", CultureInfo.InvariantCulture);
 }

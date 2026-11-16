@@ -48,7 +48,7 @@
 <table class="lines">
   <thead><tr>
     <th class="c" style="width:22px">#</th><th>Item</th><th style="width:70px">Code</th><th style="width:64px">From stock</th>
-    <th class="r" style="width:60px">Rate</th><th class="r" style="width:40px">Qty</th><th class="r" style="width:74px">Amount</th>
+    <th class="r" style="width:60px">Rate (₹)</th><th class="r" style="width:40px">Qty</th><th class="r" style="width:74px">Amount (₹)</th>
   </tr></thead>
   <tbody>
   {{ for l in lines }}
