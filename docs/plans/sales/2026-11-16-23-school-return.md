@@ -4,7 +4,7 @@
 - **Kind:** Backend
 - **Spec:** [../../specs/sales.md](../../specs/sales.md) - rules covered: R53-R63; AC44-AC52
 - **Owner:** abhishek
-- **Status:** In progress (code done and checked on the real database; closes with its UI plan)
+- **Status:** Done (2026-11-16)
 - **Base branch:** `main` (one branch `feature/sales-school-return` for sales#23-#26 in both repositories, the owner's instruction)
 - **Depends on:** `sales#05` to `sales#07` (the invoice, Done), stock R11 (`SCHOOL_RETURN_GOOD`, `SCHOOL_RETURN_DAMAGED`), finance R5 (`SALES_RETURN`), platform P23
 - **UI plan:** sales#24
@@ -43,7 +43,10 @@ The credit note is its own aggregate: it computes its amounts in the domain with
 | `R61`, `R63`, `AC51` | 5, 6 | company B's credit note is `404` for A; list filters; the invoice shows its credit notes ; unknown id `404`; the list filters (school, status) answer `200`; the invoice's `returnable` lists its 3 credit notes. Another company's record `404` NOT run. |
 
 ## 6. Not verified
-(filled when the plan is closed)
+Observed (2026-11-16, scratch API on the real `book_inventory`, owner login; build `dotnet build book-inventory.slnx` 0 warnings, 0 errors; the migration `Sales_SchoolReturn` (three new tables and their indexes, no drop) was applied to `book_inventory`): 44 checks of the scratch script all passed, plus the cancelled-invoice, unknown-school and no-lines cases.
+
+NOT verified: the GST split of AC48 (the only item has GST 0%); Staff `403` on cancel (no staff login for this company); another company's record `404` and the number restart for company B; the snapshot after a price change; the rupee (`AMOUNT`) item and total discount share on a partial return; the first-page-only price lookup for a school with very many invoice lines.
+Decision to confirm: R70 (an invoice with a live credit note cannot be cancelled) was added while building and is marked proposed in the spec.
 
 ## 7. Risks and notes
 Money and migration: a person reviews it (CLAUDE.md "Money"). Q34-Q40 were answered by abhishek on 2026-11-16 (Q39 differs from the recommendation: R62).
