@@ -36,7 +36,7 @@ public static class CounterBillPdfModelBuilder
             ["has_summary"] = bill.IsGstApplied,
             ["same_state"] = bill.GstMode == GstMode.SameState,
             ["summary"] = GstRateSummary.Of(bill.Lines).Select(Summary).ToList(),
-            ["grand_total"] = InvoiceFormat.Money(t.GrandTotal),
+            ["grand_total"] = InvoiceFormat.Amount(t.GrandTotal),
             ["words"] = E(AmountInWords.Of(t.GrandTotal)),
             ["payments"] = bill.Payments.Select(Payment).ToList(),
             ["remark"] = E(bill.Remark),
@@ -57,25 +57,25 @@ public static class CounterBillPdfModelBuilder
     private static List<Dictionary<string, object?>> Totals(CounterBill bill)
     {
         var t = bill.Totals;
-        var rows = new List<Dictionary<string, object?>> { Row("Subtotal", InvoiceFormat.Money(t.Subtotal)) };
+        var rows = new List<Dictionary<string, object?>> { Row("Subtotal", InvoiceFormat.Amount(t.Subtotal)) };
         if (t.TotalDiscount > 0m)
-            rows.Add(Row("Total discount" + (bill.TotalDiscountKind == DiscountKind.Percent ? $" ({bill.TotalDiscountValue:0.##} %)" : string.Empty), "-" + InvoiceFormat.Money(t.TotalDiscount)));
+            rows.Add(Row("Total discount" + (bill.TotalDiscountKind == DiscountKind.Percent ? $" ({bill.TotalDiscountValue:0.##} %)" : string.Empty), "-" + InvoiceFormat.Amount(t.TotalDiscount)));
         if (bill.IsGstApplied)
         {
-            rows.Add(Row("Taxable value", InvoiceFormat.Money(t.Taxable)));
+            rows.Add(Row("Taxable value", InvoiceFormat.Amount(t.Taxable)));
             if (bill.GstMode == GstMode.SameState)
             {
-                rows.Add(Row("CGST", InvoiceFormat.Money(t.Cgst)));
-                rows.Add(Row("SGST", InvoiceFormat.Money(t.Sgst)));
+                rows.Add(Row("CGST", InvoiceFormat.Amount(t.Cgst)));
+                rows.Add(Row("SGST", InvoiceFormat.Amount(t.Sgst)));
             }
             else
             {
-                rows.Add(Row("IGST", InvoiceFormat.Money(t.Igst)));
+                rows.Add(Row("IGST", InvoiceFormat.Amount(t.Igst)));
             }
         }
 
         if (t.RoundOff != 0m)
-            rows.Add(Row("Round off", InvoiceFormat.Money(t.RoundOff)));
+            rows.Add(Row("Round off", InvoiceFormat.Amount(t.RoundOff)));
         return rows;
     }
 

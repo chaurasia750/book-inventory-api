@@ -42,10 +42,10 @@ public static class DebitNotePdfModelBuilder
     /// <summary>R11: the subtotal, the round-off when there is one and the total.</summary>
     private static List<Dictionary<string, object?>> Totals(VendorReturn r)
     {
-        var rows = new List<Dictionary<string, object?>> { Row("Subtotal", InvoiceFormat.Money(r.SubtotalAmount)) };
+        var rows = new List<Dictionary<string, object?>> { Row("Subtotal", InvoiceFormat.Amount(r.SubtotalAmount)) };
         if (r.RoundOffAmount != 0m)
-            rows.Add(Row("Round-off", (r.RoundOffAmount < 0m ? "- " : "+ ") + InvoiceFormat.Money(Math.Abs(r.RoundOffAmount))));
-        rows.Add(Row("Total", "₹ " + InvoiceFormat.Money(r.GrandTotalAmount), strong: true));
+            rows.Add(Row("Round-off", (r.RoundOffAmount < 0m ? "- " : "+ ") + InvoiceFormat.Amount(Math.Abs(r.RoundOffAmount))));
+        rows.Add(Row("Total", InvoiceFormat.Amount(r.GrandTotalAmount), strong: true));
         return rows;
     }
 

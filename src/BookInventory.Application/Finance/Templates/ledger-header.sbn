@@ -1,0 +1,16 @@
+<div style="width:100%;box-sizing:border-box;padding:0 0.3in;font-family:'Segoe UI',Arial,sans-serif;font-size:8px;line-height:1.25;color:#141414;-webkit-print-color-adjust:exact;">
+  <div style="display:flex;gap:8px;align-items:flex-start;border-bottom:1.2px solid #1f1f1f;padding-bottom:4px;">
+    {{ if company.logo }}<img src="{{ company.logo }}" style="height:56px;width:auto;max-width:170px;object-fit:contain;flex:none;" alt="">{{ end }}
+    <div style="flex:1;">
+      <div style="font-size:14px;font-weight:700;line-height:1.1;">{{ company.name }}</div>
+      {{ if company.address }}<div>{{ company.address }}</div>{{ end }}
+      {{ if company.contact }}<div>{{ company.contact }}</div>{{ end }}
+      {{ if company.gstin || company.pan }}<div>{{ if company.gstin }}GSTIN <b>{{ company.gstin }}</b>{{ end }}{{ if company.gstin && company.pan }} · {{ end }}{{ if company.pan }}PAN <b>{{ company.pan }}</b>{{ end }}</div>{{ end }}
+    </div>
+    <div style="text-align:right;white-space:nowrap;">
+      <div style="font-size:12px;font-weight:700;letter-spacing:.1em;">LEDGER STATEMENT</div>
+      <div style="color:#4a4a4a;">Period</div>
+      <div><b>{{ filter }}</b></div>
+    </div>
+  </div>
+</div>

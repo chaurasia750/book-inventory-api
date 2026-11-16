@@ -44,10 +44,10 @@
   <p class="muted">School code {{ school.code }}</p>
 </div>
 <table>
-  <thead><tr><th>Paid by</th><th>Reference</th>{{ if refund.credit_note }}<th>Credit note</th>{{ end }}<th class="r" style="width:90px">Amount</th></tr></thead>
+  <thead><tr><th>Paid by</th><th>Reference</th>{{ if refund.credit_note }}<th>Credit note</th>{{ end }}<th class="r" style="width:90px">Amount (₹)</th></tr></thead>
   <tbody><tr><td>{{ refund.mode }}</td><td>{{ refund.reference }}</td>{{ if refund.credit_note }}<td>{{ refund.credit_note }}</td>{{ end }}<td class="r">{{ refund.amount }}</td></tr></tbody>
 </table>
-<div class="total"><span>Amount refunded</span><span>₹ {{ refund.amount }}</span></div>
+<div class="total"><span>Amount refunded</span><span>{{ refund.total }}</span></div>
 <div class="words"><span class="caps">Amount in words</span><br><b>{{ words }}</b></div>
 {{ if remark }}<p class="note"><span class="caps">Remark</span> {{ remark }}</p>{{ end }}
 {{ if cancelled }}<p class="note"><b>Cancelled</b>{{ if cancel_note }}: {{ cancel_note }}{{ end }}</p>{{ end }}
