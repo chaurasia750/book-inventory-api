@@ -25,7 +25,7 @@ public sealed class DebitNotePdfService(IVendorReturnStore returns, ICompanyInvo
     private static readonly string Footer = Read("debit-note-footer.sbn");
 
     /// <summary>The header repeats on every page, so its height is the top margin; the footer is the bottom margin.</summary>
-    private static readonly HtmlToPdfOptions Page = new() { MarginTopInches = 1.18m, MarginBottomInches = 0.5m, MarginLeftInches = 0.3m, MarginRightInches = 0.3m };
+    private static readonly HtmlToPdfOptions Page = new() { MarginTopInches = 1.55m, MarginBottomInches = 0.65m, MarginLeftInches = 0.3m, MarginRightInches = 0.3m };
 
     public async Task<DebitNotePdf> RenderAsync(Guid id, CancellationToken cancellationToken)
     {

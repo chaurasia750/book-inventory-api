@@ -4,6 +4,7 @@ using BookInventory.Application.Company;
 using BookInventory.Application.Sales;
 using BookInventory.Domain.Purchase;
 using BookInventory.Domain.Sales;
+using BookInventory.BuildingBlocks.Domain.Documents;
 
 namespace BookInventory.Application.Purchase;
 
