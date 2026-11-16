@@ -13,4 +13,7 @@ public sealed class BusinessCalendar(TimeProvider timeProvider)
     private static readonly TimeZoneInfo Zone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Kolkata");
 
     public DateOnly Today() => DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(timeProvider.GetUtcNow(), Zone).DateTime);
+
+    /// <summary>The business date of an instant: its date in the business time zone.</summary>
+    public DateOnly DateOf(DateTimeOffset instant) => DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(instant, Zone).DateTime);
 }
