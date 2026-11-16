@@ -4,7 +4,7 @@
 - **Kind:** UI
 - **Spec:** [../../specs/sales.md](../../specs/sales.md) - rules covered: R53-R61 (the screen side); AC44-AC51
 - **Owner:** abhishek
-- **Status:** Approved
+- **Status:** In progress
 - **Base branch:** `main` of `book-inventory-ui` (one branch `feature/sales-school-return` for sales#23-#26 in both repositories, the owner's instruction)
 - **Depends on:** sales#23
 - **UI plan:** this is itself a UI plan

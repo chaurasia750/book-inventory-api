@@ -2963,6 +2963,464 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Sales.CreditNote", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CancelReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("cancel_reason");
+
+                    b.Property<DateOnly?>("CancelledOn")
+                        .HasColumnType("date")
+                        .HasColumnName("cancelled_on");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<string>("CompanyState")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("company_state");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("FinancialYear")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("financial_year");
+
+                    b.Property<string>("GstMode")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("gst_mode");
+
+                    b.Property<Guid?>("InvoiceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("invoice_id");
+
+                    b.Property<string>("InvoiceNumber")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("invoice_number");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<bool>("IsGstApplied")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_gst_applied");
+
+                    b.Property<DateOnly>("NoteDate")
+                        .HasColumnType("date")
+                        .HasColumnName("note_date");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("number");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("reason");
+
+                    b.Property<string>("Remark")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("remark");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<string>("SchoolCode")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("school_code");
+
+                    b.Property<string>("SchoolGstin")
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)")
+                        .HasColumnName("school_gstin");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("school_id");
+
+                    b.Property<string>("SchoolName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("school_name");
+
+                    b.Property<string>("SchoolState")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("school_state");
+
+                    b.Property<string>("Session")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("session");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<string>("TotalDiscountKind")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("total_discount_kind");
+
+                    b.Property<decimal>("TotalDiscountValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("total_discount_value");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "CompanySnapshot", "BookInventory.Domain.Sales.CreditNote.CompanySnapshot#CompanyInvoiceSnapshot", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("Address")
+                                .HasMaxLength(500)
+                                .HasColumnType("character varying(500)")
+                                .HasColumnName("company_address");
+
+                            b1.Property<string>("BankAccountHolder")
+                                .HasMaxLength(150)
+                                .HasColumnType("character varying(150)")
+                                .HasColumnName("company_bank_account_holder");
+
+                            b1.Property<string>("BankAccountNumber")
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("company_bank_account_number");
+
+                            b1.Property<string>("BankBranch")
+                                .HasMaxLength(150)
+                                .HasColumnType("character varying(150)")
+                                .HasColumnName("company_bank_branch");
+
+                            b1.Property<string>("BankIfsc")
+                                .HasMaxLength(11)
+                                .HasColumnType("character varying(11)")
+                                .HasColumnName("company_bank_ifsc");
+
+                            b1.Property<string>("BankName")
+                                .HasMaxLength(150)
+                                .HasColumnType("character varying(150)")
+                                .HasColumnName("company_bank_name");
+
+                            b1.Property<string>("Email")
+                                .HasMaxLength(254)
+                                .HasColumnType("character varying(254)")
+                                .HasColumnName("company_email");
+
+                            b1.Property<string>("Footer")
+                                .HasMaxLength(200)
+                                .HasColumnType("character varying(200)")
+                                .HasColumnName("company_footer");
+
+                            b1.Property<string>("Gstin")
+                                .HasMaxLength(15)
+                                .HasColumnType("character varying(15)")
+                                .HasColumnName("company_gstin");
+
+                            b1.Property<string>("Mobile")
+                                .HasMaxLength(20)
+                                .HasColumnType("character varying(20)")
+                                .HasColumnName("company_mobile");
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasMaxLength(150)
+                                .HasColumnType("character varying(150)")
+                                .HasColumnName("company_name");
+
+                            b1.Property<string>("Pan")
+                                .HasMaxLength(10)
+                                .HasColumnType("character varying(10)")
+                                .HasColumnName("company_pan");
+
+                            b1.Property<bool>("PrintGstin")
+                                .HasColumnType("boolean")
+                                .HasColumnName("company_print_gstin");
+
+                            b1.Property<string>("State")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)")
+                                .HasColumnName("company_snapshot_state");
+
+                            b1.Property<string>("Tagline")
+                                .HasMaxLength(200)
+                                .HasColumnType("character varying(200)")
+                                .HasColumnName("company_tagline");
+
+                            b1.Property<string>("Terms")
+                                .HasMaxLength(4000)
+                                .HasColumnType("character varying(4000)")
+                                .HasColumnName("company_terms");
+
+                            b1.Property<string>("UpiId")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)")
+                                .HasColumnName("company_upi_id");
+                        });
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Totals", "BookInventory.Domain.Sales.CreditNote.Totals#SaleTotals", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<decimal>("Cgst")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("cgst_amount");
+
+                            b1.Property<decimal>("GrandTotal")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("grand_total_amount");
+
+                            b1.Property<decimal>("Igst")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("igst_amount");
+
+                            b1.Property<decimal>("RoundOff")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("round_off_amount");
+
+                            b1.Property<decimal>("Sgst")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("sgst_amount");
+
+                            b1.Property<decimal>("Subtotal")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("subtotal_amount");
+
+                            b1.Property<decimal>("Taxable")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("taxable_amount");
+
+                            b1.Property<decimal>("TotalDiscount")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("total_discount_amount");
+                        });
+
+                    b.HasKey("Id")
+                        .HasName("pk_credit_note");
+
+                    b.HasIndex("CompanyId", "InvoiceId")
+                        .HasDatabaseName("ix_credit_note_company_id_invoice_id");
+
+                    b.HasIndex("CompanyId", "Number")
+                        .IsUnique()
+                        .HasDatabaseName("ix_credit_note_company_id_number");
+
+                    b.HasIndex("CompanyId", "SchoolId")
+                        .HasDatabaseName("ix_credit_note_company_id_school_id");
+
+                    b.ToTable("credit_note", "sales", t =>
+                        {
+                            t.HasCheckConstraint("ck_credit_note_gst_mode", "\"gst_mode\" IN ('NOT_APPLIED', 'SAME_STATE', 'OTHER_STATE')");
+
+                            t.HasCheckConstraint("ck_credit_note_reason", "\"reason\" IN ('SESSION_END', 'DAMAGED', 'WRONG_BOOK', 'OTHER')");
+
+                            t.HasCheckConstraint("ck_credit_note_status", "\"status\" IN ('ACTIVE', 'CANCELLED')");
+
+                            t.HasCheckConstraint("ck_credit_note_total_discount_kind", "\"total_discount_kind\" IN ('NONE', 'PERCENT', 'AMOUNT')");
+                        });
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Sales.CreditNoteLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("CgstAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("cgst_amount");
+
+                    b.Property<string>("ClassName")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("class_name");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<string>("Condition")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("condition");
+
+                    b.Property<Guid>("CreditNoteId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("credit_note_id");
+
+                    b.Property<decimal>("GrossAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("gross_amount");
+
+                    b.Property<decimal>("GstRatePercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("numeric(5,2)")
+                        .HasColumnName("gst_rate_percent");
+
+                    b.Property<string>("HsnCode")
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)")
+                        .HasColumnName("hsn_code");
+
+                    b.Property<decimal>("IgstAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("igst_amount");
+
+                    b.Property<Guid?>("InvoiceLineId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("invoice_line_id");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("ItemCode")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("item_code");
+
+                    b.Property<decimal>("ItemDiscountAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("item_discount_amount");
+
+                    b.Property<string>("ItemDiscountKind")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("item_discount_kind");
+
+                    b.Property<decimal>("ItemDiscountValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("item_discount_value");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("item_id");
+
+                    b.Property<string>("ItemName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("item_name");
+
+                    b.Property<decimal>("LineAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("line_amount");
+
+                    b.Property<decimal>("MrpAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("mrp_amount");
+
+                    b.Property<Guid?>("OrderLineId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("order_line_id");
+
+                    b.Property<Guid>("PriceVersionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("price_version_id");
+
+                    b.Property<string>("PriceVersionName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("price_version_name");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity");
+
+                    b.Property<decimal>("RateAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("rate_amount");
+
+                    b.Property<decimal>("SgstAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("sgst_amount");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<decimal>("TaxableAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("taxable_amount");
+
+                    b.Property<decimal>("TotalDiscountShareAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("total_discount_share_amount");
+
+                    b.HasKey("Id")
+                        .HasName("pk_credit_note_line");
+
+                    b.HasIndex("InvoiceLineId")
+                        .HasDatabaseName("ix_credit_note_line_invoice_line_id");
+
+                    b.HasIndex("CreditNoteId", "SortOrder")
+                        .HasDatabaseName("ix_credit_note_line_credit_note_id_sort_order");
+
+                    b.ToTable("credit_note_line", "sales", t =>
+                        {
+                            t.HasCheckConstraint("ck_credit_note_line_condition", "\"condition\" IN ('GOOD', 'DAMAGED')");
+
+                            t.HasCheckConstraint("ck_credit_note_line_item_discount_kind", "\"item_discount_kind\" IN ('NONE', 'PERCENT', 'AMOUNT')");
+                        });
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Sales.Invoice", b =>
                 {
                     b.Property<Guid>("Id")
@@ -3802,6 +4260,138 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Sales.SchoolRefund", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<string>("CancelReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("cancel_reason");
+
+                    b.Property<DateOnly?>("CancelledOn")
+                        .HasColumnType("date")
+                        .HasColumnName("cancelled_on");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("company_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<Guid?>("CreditNoteId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("credit_note_id");
+
+                    b.Property<string>("CreditNoteNumber")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("credit_note_number");
+
+                    b.Property<string>("FinancialYear")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("financial_year");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Mode")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("mode");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("number");
+
+                    b.Property<string>("Reference")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("reference");
+
+                    b.Property<DateOnly>("RefundDate")
+                        .HasColumnType("date")
+                        .HasColumnName("refund_date");
+
+                    b.Property<string>("Remark")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("remark");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<string>("SchoolCode")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("school_code");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("school_id");
+
+                    b.Property<string>("SchoolName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("school_name");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id")
+                        .HasName("pk_school_refund");
+
+                    b.HasIndex("CompanyId", "CreditNoteId")
+                        .HasDatabaseName("ix_school_refund_company_id_credit_note_id");
+
+                    b.HasIndex("CompanyId", "Number")
+                        .IsUnique()
+                        .HasDatabaseName("ix_school_refund_company_id_number");
+
+                    b.HasIndex("CompanyId", "SchoolId")
+                        .HasDatabaseName("ix_school_refund_company_id_school_id");
+
+                    b.ToTable("school_refund", "sales", t =>
+                        {
+                            t.HasCheckConstraint("ck_school_refund_mode", "\"mode\" IN ('CASH', 'UPI', 'BANK_TRANSFER')");
+
+                            t.HasCheckConstraint("ck_school_refund_status", "\"status\" IN ('ACTIVE', 'CANCELLED')");
+                        });
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Sales.Student", b =>
                 {
                     b.Property<Guid>("Id")
@@ -4632,6 +5222,16 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_counter_bill_payment_counter_bill_counter_bill_id");
                 });
 
+            modelBuilder.Entity("BookInventory.Domain.Sales.CreditNoteLine", b =>
+                {
+                    b.HasOne("BookInventory.Domain.Sales.CreditNote", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("CreditNoteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_credit_note_line_credit_note_credit_note_id");
+                });
+
             modelBuilder.Entity("BookInventory.Domain.Sales.InvoiceLine", b =>
                 {
                     b.HasOne("BookInventory.Domain.Sales.Invoice", null)
@@ -4711,6 +5311,11 @@ namespace BookInventory.Infrastructure.Persistence.Migrations
                     b.Navigation("Lines");
 
                     b.Navigation("Payments");
+                });
+
+            modelBuilder.Entity("BookInventory.Domain.Sales.CreditNote", b =>
+                {
+                    b.Navigation("Lines");
                 });
 
             modelBuilder.Entity("BookInventory.Domain.Sales.Invoice", b =>
